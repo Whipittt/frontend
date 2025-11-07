@@ -29,7 +29,8 @@ export function SignupForm({ onFormSubmit }: SignupFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const pwdsMatch = confirmPassword.length > 0 && confirmPassword !== password;
+  const isPasswordMatchError =
+    confirmPassword.length > 0 && confirmPassword !== password;
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
@@ -54,10 +55,9 @@ export function SignupForm({ onFormSubmit }: SignupFormProps) {
     <form noValidate onSubmit={handleSubmit} className={"flex flex-col gap-6"}>
       <FieldGroup>
         <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-bold">Create your account</h1>
-          <p className="text-muted-foreground text-sm text-balance">
-            Fill in the form below to create your account
-          </p>
+          <h1 className="font-serif text-primary text-5xl font-normal">
+            Create an account
+          </h1>
         </div>
         {error && (
           <Alert variant="destructive" role="alert" aria-live="assertive">
@@ -108,12 +108,13 @@ export function SignupForm({ onFormSubmit }: SignupFormProps) {
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className={pwdsMatch ? "border-red-500" : "border-gray-200"}
               />
             </Field>
           </Field>
-          {pwdsMatch && (
-            <p className="text-red-500 text-sm mt-1">Passwords do not match</p>
+          {isPasswordMatchError && (
+            <p className="text-destructive text-sm mt-1">
+              Passwords do not match
+            </p>
           )}
           <FieldDescription>
             Must be at least 8 characters long and include at least one letter

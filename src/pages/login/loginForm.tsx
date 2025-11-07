@@ -32,17 +32,16 @@ export function LoginForm({ onFormSubmit }: LoginFormProps) {
       setError(err?.message || "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
-    } 
+    }
   };
 
   return (
     <form noValidate onSubmit={handleSubmit} className={"flex flex-col gap-6"}>
       <FieldGroup>
         <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-bold">Welcome Back!</h1>
-          <p className="text-muted-foreground text-sm text-balance">
-            Enter your email below to login to your account
-          </p>
+          <h1 className="font-serif text-primary text-5xl font-normal">
+            Welcome Back!
+          </h1>
         </div>
 
         {error && (
