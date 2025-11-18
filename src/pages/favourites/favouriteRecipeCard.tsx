@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { RecipeBrief } from "@/types/types";
 import { Link } from "react-router-dom";
 
@@ -57,6 +58,21 @@ export default function FavouriteRecipeCard({
       >
         Remove
       </Button>
+    </div>
+  );
+}
+
+export function FavouriteRecipeCardSkeleton() {
+  return (
+    <div className="flex justify-between items-start gap-4">
+      <div className="flex flex-col gap-1 w-full">
+        <Skeleton className="h-4 w-48" />
+        <div className="flex gap-2 text-xs">
+          <Skeleton className="h-3 w-16" />
+          <Skeleton className="h-3 w-10" />
+        </div>
+      </div>
+      <Skeleton className="h-9 w-24 rounded-full" />
     </div>
   );
 }

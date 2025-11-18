@@ -1,24 +1,30 @@
-import { RecipeCardSm } from "@/components/recipeCard";
+import { RecipeCardSm, RecipeCardSmSkeleton } from "@/components/recipeCard";
 import HomeSectionLayout from "./homeSectionLayout";
 import { useRecommendations } from "@/hooks/useRecipes";
 import type { RecipeBrief } from "@/types/types";
 
 export default function RecommendationSection() {
-  const { data, error } = useRecommendations();
+  const { data, error, isLoading } = useRecommendations();
 
   if (error) {
     return (
       <HomeSectionLayout header="Recommended for you">
-        <p>Failed to fetch recommendations</p>
+        <p className="text-center">Failed to fetch recommendations</p>
       </HomeSectionLayout>
     );
   }
 
   return (
     <HomeSectionLayout header="Recommended for you">
-      {data?.map((recipe: RecipeBrief) => (
-        <RecipeCardSm key={recipe.id} recipe={recipe} />
-      ))}
+      <div className="flex gap-4" aria-busy={isLoading} aria-live="polite">
+        {isLoading
+          ? Array.from({ length: 8 }).map((_, i) => (
+              <RecipeCardSmSkeleton key={i} />
+            ))
+          : data?.map((recipe: RecipeBrief) => (
+              <RecipeCardSm key={recipe.id} recipe={recipe} />
+            ))}
+      </div>
     </HomeSectionLayout>
   );
 }

@@ -3,6 +3,8 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import FavouriteButton from "./favouriteButton";
 import type { RecipeBrief } from "@/types/types";
 import { Link } from "react-router-dom";
+import { Skeleton } from "@/components/ui/skeleton";
+
 
 interface RecipeCardProps {
   recipe: RecipeBrief;
@@ -139,3 +141,44 @@ export const RecipeCardLg: React.FC<RecipeCardProps> = ({ recipe }) => {
     </Link>
   );
 };
+
+export function RecipeCardSmSkeleton() {
+  return (
+    <Card className="w-[10rem] h-auto flex flex-col shrink-0 gap-5 border-none rounded-sm bg-transparent shadow-none text-sm text-[#FFFFFFBF]">
+      <AspectRatio ratio={1 / 1}>
+        <Skeleton className="w-full h-full rounded-md" />
+      </AspectRatio>
+
+      <div className="flex flex-col gap-1 w-full">
+        <Skeleton className="h-4 w-3/4" />
+        <div className="flex gap-2 text-xs">
+          <Skeleton className="h-3 w-10" />
+          <Skeleton className="h-3 w-8" />
+        </div>
+      </div>
+    </Card>
+  );
+}
+
+export function RecipeCardLgSkeleton() {
+  return (
+    <Card className="w-[15rem] flex flex-col shrink-0 gap-6 border-none rounded-sm bg-transparent shadow-none text-sm text-[#FFFFFFBF]">
+      <AspectRatio ratio={16 / 9}>
+        <Skeleton className="w-full h-full rounded-md" />
+      </AspectRatio>
+
+      <div className="flex gap-1 items-start">
+        <div className="flex flex-col gap-1 w-full">
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-2/3" />
+          <div className="flex gap-2 text-xs">
+            <Skeleton className="h-3 w-12" />
+            <Skeleton className="h-3 w-8" />
+          </div>
+        </div>
+        {/* Placeholder for FavouriteButton */}
+        <Skeleton className="h-6 w-6 rounded-full" />
+      </div>
+    </Card>
+  );
+}

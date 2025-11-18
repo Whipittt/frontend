@@ -1,9 +1,11 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/services/authService";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { Button } from "./ui/button";
 
 export default function UserAvatar() {
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   const initials = user?.fullname
     .trim()
@@ -13,11 +15,21 @@ export default function UserAvatar() {
     .join("");
 
   return (
-    <Link to={"/profile"}>
-      <Avatar>
-        <AvatarImage src={user?.avatar} />
-        <AvatarFallback>{initials}</AvatarFallback>
-      </Avatar>
-    </Link>
+    <>
+      <Link to={"/profile"} className={isAuthenticated ? "" : "hidden"}>
+        <Avatar>
+          <AvatarImage src={user?.avatar} />
+          <AvatarFallback>{initials}</AvatarFallback>
+        </Avatar>
+      </Link>
+
+      <Button
+        variant={"outline"}
+        className={!isAuthenticated ? "rounded-full" : "hidden"}
+        onClick={() => navigate("/login")}
+      >
+        Sign in
+      </Button>
+    </>
   );
 }
