@@ -1,4 +1,4 @@
-@import './styles/fonts.css'; 
+@import "./styles/fonts.css";
 
 @tailwind base;
 @tailwind components;
@@ -6,38 +6,39 @@
 
 @layer base {
   :root {
-    --background: 160 100% 6%; /*Very dark green*/
-    --foreground: 0 0% 74.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 47 98% 50%; /*Yellow*/
-    --primary-foreground: 158 100 10; /*Black*/
-    --secondary: 159 100% 22%; /*Light green*/
-    --secondary-foreground: 0 0% 100%;/*White*/  
-    --muted: 240 4.8% 95.9%;
+    --background: 0 0% 17%;
+    --foreground: 0 0% 96%;
+    --card: 0 0% 11%;
+    --card-foreground: 0 0% 96%;
+    --card-line: 0 0% 40%;
+    --popover: 0 0% 13%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 47 98% 50%; 
+    --primary-foreground: 158 100 10;  
+    --secondary: 149 71% 39%;  
+    --secondary-foreground: 0 0% 100%;  
+    --muted: 0 0% 20%;
     --muted-foreground: 280 7% 70%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
+    --accent: 0 0% 41%;
+    --accent-foreground: 0 0% 96%;
+    --destructive: 0 100% 72%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
+    --border: 0 0% 30%;
     --input: 240 5.9% 90%;
     --ring: 47 98% 50%;
-    --chart-1: 12 76% 61%;
+    --chart-1: 142 83% 46%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-background: 0 0% 13%;
+    --sidebar-foreground: 0 0% 100%;
     --sidebar-primary: 240 5.9% 10%;
     --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
+    --sidebar-accent: 0 0% 20%;
+    --sidebar-accent-foreground: 149, 71%, 39%;   
+    --sidebar-border: 0 0% 40%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
   .dark {
@@ -75,6 +76,40 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
+
+@layer utilities {
+  /* width */
+  .scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  /* Track */
+  .scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+    margin: 5px 0px;
+  }
+
+  /* Handle */
+  .scrollbar::-webkit-scrollbar-thumb {
+    background: #5e5e5e;  
+    border-radius: 10px;
+  }
+
+  /* Handle on hover */
+  .scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #8f8f8f;  
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+}
+
 
 @layer base {
   * {

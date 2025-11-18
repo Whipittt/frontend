@@ -1,0 +1,98 @@
+[
+  {
+    "id": "1a1d8c7e-4cb8-4b96-9c41-0a12c1000001",
+    "fullname": "System Admin",
+    "email": "admin@nweike.com",
+    "is_active": true,
+    "is_superuser": true,
+    "created_at": "2025-11-16T10:02:08.259731-08:00"
+  },
+  {
+    "id": "1a1d8c7e-4cb8-4b96-9c41-0a12c1000002",
+    "fullname": "Test User",
+    "email": "testuser@nweike.com",
+    "is_active": true,
+    "is_superuser": false,
+    "created_at": "2025-11-16T10:02:08.259731-08:00"
+  },
+  {
+    "id": "1a1d8c7e-4cb8-4b96-9c41-0a12c1000003",
+    "fullname": "John Doe",
+    "email": "john@nweike.com",
+    "is_active": true,
+    "is_superuser": false,
+    "created_at": "2025-11-16T10:02:08.259731-08:00"
+  },
+  {
+    "id": "1a1d8c7e-4cb8-4b96-9c41-0a12c1000004",
+    "fullname": "Jane Doe",
+    "email": "jane@nweike.com",
+    "is_active": true,
+    "is_superuser": false,
+    "created_at": "2025-11-16T10:02:08.259731-08:00"
+  },
+  {
+    "id": "1a1d8c7e-4cb8-4b96-9c41-0a12c1000005",
+    "fullname": "Finance Officer",
+    "email": "finance@nweike.com",
+    "is_active": true,
+    "is_superuser": false,
+    "created_at": "2025-11-16T10:02:08.259731-08:00"
+  },
+  {
+    "id": "1a1d8c7e-4cb8-4b96-9c41-0a12c1000006",
+    "fullname": "HR Manager",
+    "email": "hr@nweike.com",
+    "is_active": true,
+    "is_superuser": false,
+    "created_at": "2025-11-16T10:02:08.259731-08:00"
+  },
+  {
+    "id": "1a1d8c7e-4cb8-4b96-9c41-0a12c1000007",
+    "fullname": "Customer Support",
+    "email": "support@nweike.com",
+    "is_active": true,
+    "is_superuser": false,
+    "created_at": "2025-11-16T10:02:08.259731-08:00"
+  },
+  {
+    "id": "1a1d8c7e-4cb8-4b96-9c41-0a12c1000008",
+    "fullname": "Developer One",
+    "email": "dev1@nweike.com",
+    "is_active": true,
+    "is_superuser": false,
+    "created_at": "2025-11-16T10:02:08.259731-08:00"
+  },
+  {
+    "id": "1a1d8c7e-4cb8-4b96-9c41-0a12c1000009",
+    "fullname": "Developer Two",
+    "email": "dev2@nweike.com",
+    "is_active": true,
+    "is_superuser": false,
+    "created_at": "2025-11-16T10:02:08.259731-08:00"
+  },
+  {
+    "id": "1a1d8c7e-4cb8-4b96-9c41-0a12c1000010",
+    "fullname": "QA Tester",
+    "email": "qa@nweike.com",
+    "is_active": true,
+    "is_superuser": false,
+    "created_at": "2025-11-16T10:02:08.259731-08:00"
+  },
+  {
+    "id": "1a1d8c7e-4cb8-4b96-9c41-0a12c1000011",
+    "fullname": "Operations Lead",
+    "email": "ops@nweike.com",
+    "is_active": true,
+    "is_superuser": false,
+    "created_at": "2025-11-16T10:02:08.259731-08:00"
+  },
+  {
+    "id": "1a1d8c7e-4cb8-4b96-9c41-0a12c1000012",
+    "fullname": "Marketing Manager",
+    "email": "marketing@nweike.com",
+    "is_active": true,
+    "is_superuser": false,
+    "created_at": "2025-11-16T10:02:08.259731-08:00"
+  }
+]

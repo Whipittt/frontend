@@ -19,6 +19,7 @@ type User = {
   id: number;
   email: string;
   fullname: string;
+  avatar: string
 };
 
 type Credentials = {
