@@ -1,6 +1,6 @@
 import "./index.css";
 import { createRoot } from "react-dom/client";
-import { StrictMode } from "react";
+// import { StrictMode } from "react";
 import { BrowserRouter } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "./services/authService.tsx";
@@ -11,7 +11,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
+  // <StrictMode>
     <HelmetProvider>
       <BrowserRouter>
         <AuthProvider>
@@ -22,5 +22,5 @@ createRoot(document.getElementById("root")!).render(
         </AuthProvider>
       </BrowserRouter>
     </HelmetProvider>
-  </StrictMode>
+  // </StrictMode>
 );
