@@ -1,7 +1,6 @@
 import DashboardLayout from '@/layouts/dashboardLayout';
 import { Helmet } from 'react-helmet-async'
 import UserTable from './usersTable';
-import { SectionCards } from './sectionCards';
 
 const APP_NAME = import.meta.env.VITE_APP_NAME;
 
@@ -13,7 +12,6 @@ export default function Users() {
       </Helmet>
 
       <DashboardLayout>
-        <SectionCards/>
         <UserTable/>
       </DashboardLayout>
     </>

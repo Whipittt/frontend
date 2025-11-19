@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type JSX } from "react";
+import { useCallback, useEffect, useMemo, useState, type JSX } from "react";
 import { useParams } from "react-router-dom";
 import MainLayout from "@/layouts/mainLayout";
 import { AspectRatio } from "@radix-ui/react-aspect-ratio";
@@ -15,9 +15,15 @@ import type { Recipe } from "@/types/types";
 import { useAuth } from "@/services/authService";
 import { RecipeAPI } from "@/api/recipes";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useFavourites } from "@/hooks/useRecipes";
 
 type Params = {
   recipe_id: string;
+};
+
+type Ingredient = {
+  id?: string | number;
+  name: string;
 };
 
 function IngredientsSkeleton(): JSX.Element {
@@ -63,10 +69,16 @@ export default function Detail(): JSX.Element {
   const [error, setError] = useState<string | null>(null);
   const [imgError, setImgError] = useState<boolean>(false);
 
+  // Favourite toggle specific state
+  const [favouriteLoading, setFavouriteLoading] = useState<boolean>(false);
+  const [favouriteError, setFavouriteError] = useState<string | null>(null);
+  const { refetch: refreshFavouritesCache } = useFavourites();
+
+  // Fetch recipe
   useEffect(() => {
     let isActive = true;
 
-    const run = async () => {
+    const fetchRecipe = async () => {
       try {
         if (!recipe_id) {
           setRecipe(null);
@@ -98,13 +110,13 @@ export default function Detail(): JSX.Element {
       }
     };
 
-    run();
-
+    fetchRecipe();
     return () => {
       isActive = false;
     };
   }, [authFetch, recipe_id]);
 
+  // Derived HTML
   const descriptionHtml = useMemo<string>(
     () =>
       recipe?.description
@@ -119,6 +131,38 @@ export default function Detail(): JSX.Element {
         ? recipe.instructions
         : "<p>No instructions provided.</p>",
     [recipe?.instructions]
+  );
+
+  // Toggle favourite (optimistic update)
+  const handleToggleFavourite = useCallback(async () => {
+    if (!recipe || favouriteLoading) return;
+    setFavouriteError(null);
+    setFavouriteLoading(true);
+
+    const previous = recipe.favourited;
+    // Optimistic UI
+    setRecipe((r) => (r ? { ...r, favourited: !r.favourited } : r));
+
+    try {
+      const updated = await RecipeAPI.toggleFavourite(authFetch, recipe.id);
+      // Backend returns updated recipe object
+      setRecipe(updated);
+      refreshFavouritesCache();
+    } catch (e: unknown) {
+      // Revert optimistic update
+      setRecipe((r) => (r ? { ...r, favourited: previous } : r));
+      const message =
+        e instanceof Error ? e.message : "Failed to toggle favourite.";
+      setFavouriteError(message);
+    } finally {
+      setFavouriteLoading(false);
+    }
+  }, [authFetch, recipe, favouriteLoading]);
+
+  // Safe rating conversion
+  const rating: Rating = useMemo<Rating>(
+    () => Number(recipe?.rating ?? 0) as Rating,
+    [recipe?.rating]
   );
 
   return (
@@ -144,11 +188,9 @@ export default function Detail(): JSX.Element {
             </div>
             <Skeleton className="h-8 w-24" />
           </div>
-
           <AspectRatio ratio={21 / 9} className="relative">
             <Skeleton className="absolute inset-0 h-full w-full rounded-md" />
           </AspectRatio>
-
           <IngredientsSkeleton />
           <SectionSkeleton titleWidth="w-40" lines={5} />
           <SectionSkeleton titleWidth="w-44" lines={6} />
@@ -156,27 +198,36 @@ export default function Detail(): JSX.Element {
       )}
 
       {!loading && error && (
-        <div className="py-12 text-center text-destructive">{error}</div>
+        <div className="py-12 text-center text-destructive" role="alert">
+          {error}
+        </div>
       )}
 
       {!loading && !error && recipe && (
         <section className="flex flex-col gap-8">
           <div className="flex justify-between items-start">
             <div className="flex flex-col gap-2">
-              <div className="flex gap-2 items-center flex-wrap">
+              <div className="flex gap-3 items-center flex-wrap">
                 <h1 className="text-xl font-medium">{recipe.title}</h1>
-                <FavouriteButton
-                  state={recipe.favourited ? "filled" : "outline"}
-                  aria-label={
-                    recipe.favourited
-                      ? "Remove from favourites"
-                      : "Add to favourites"
-                  }
-                />
+                <div className="relative flex items-center">
+                  <FavouriteButton
+                    state={recipe.favourited ? "filled" : "outline"}
+                    onClick={handleToggleFavourite}
+                    aria-label={
+                      recipe.favourited
+                        ? "Remove from favourites"
+                        : "Add to favourites"
+                    }
+                    aria-pressed={recipe.favourited}
+                  />
+                </div>
               </div>
-              <StarRating
-                rating={Number(recipe.rating ?? 0) as unknown as Rating}
-              />
+              <StarRating rating={rating} />
+              {favouriteError && (
+                <p className="text-xs text-destructive" role="alert">
+                  {favouriteError}
+                </p>
+              )}
             </div>
             <CookTime time={Number(recipe.time_minutes ?? 0)} />
           </div>
@@ -220,8 +271,8 @@ export default function Detail(): JSX.Element {
             <div>
               {recipe.ingredients?.length ? (
                 <ul className="list-disc list-inside leading-relaxed">
-                  {recipe.ingredients.map((ing) => (
-                    <li key={(ing as any).id ?? ing.name}>{ing.name}</li>
+                  {recipe.ingredients.map((ing: Ingredient) => (
+                    <li key={ing.id ?? ing.name}>{ing.name}</li>
                   ))}
                 </ul>
               ) : (

@@ -10,6 +10,7 @@ import DashboardMetrics from "./pages/admin/metrics/metrics";
 import Profile from "./pages/profile/profile";
 import Favourites from "./pages/favourites/favourites";
 import SearchResults from "./pages/searchResults";
+import CreateMealPaln from "./pages/mealplan/mealplan";
 
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
       <Route path="/profile" element={<Profile />} />
       <Route path="/favourites" element={<Favourites />} />
       <Route path="/recipes/ingredients" element={<SearchResults />} />
+      <Route path="/mealplan" element={<CreateMealPaln />} />
       <Route path="/dashboard" element={<DashboardMetrics />} />
       <Route path="/users" element={<Users />} />
     </Routes>

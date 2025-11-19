@@ -135,7 +135,7 @@ export const RecipeCardLg: React.FC<RecipeCardProps> = ({ recipe }) => {
             </div>
           </div>
           {/* Favourite button - pass a state derived from recipe?.favourited */}
-          <FavouriteButton state={favState as any} />
+          {/* <FavouriteButton state={favState as any} /> */}
         </div>
       </Card>
     </Link>

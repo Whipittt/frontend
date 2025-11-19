@@ -14,6 +14,9 @@ const RECIPE_ENDPOINTS = {
 
     return `${API_URL}/recipes/s/?${params.toString()}`;
   },
+  toggleFavourite: (recipeId: string) => {
+    return `${API_URL}/recipes/${recipeId}/favourite/toggle`;
+  },
 };
 
 export const RecipeAPI = {
@@ -87,5 +90,23 @@ export const RecipeAPI = {
     if (!recipes.ok)
       throw new Error("An error occured while searching recipes");
     return await recipes.json();
+  },
+
+
+  toggleFavourite: async (
+    authFetch: typeof fetch,
+    recipeId: string
+  ) => {
+    const recipe = await authFetch(
+      RECIPE_ENDPOINTS.toggleFavourite(recipeId),
+      {
+        method: "POST",
+        credentials: "include",
+      }
+    );
+
+    if (!recipe.ok)
+      throw new Error("An error occured while searching recipes");
+    return await recipe.json();
   },
 };

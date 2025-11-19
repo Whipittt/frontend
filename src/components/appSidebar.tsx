@@ -32,14 +32,14 @@ const menuItems = [
   },
   {
     title: "Meal Planner",
-    url: "#",
+    url: "/mealplan",
     icon: CalendarTodayRoundedIcon,
   },
-  {
-    title: "Dashboard",
-    url: "#",
-    icon: DashboardRoundedIcon,
-  },
+  // {
+  //   title: "Dashboard",
+  //   url: "#",
+  //   icon: DashboardRoundedIcon,
+  // },
 ];
 
 const menuFooterItems = [
