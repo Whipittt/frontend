@@ -9,6 +9,7 @@ import Users from "./pages/admin/user/users";
 import DashboardMetrics from "./pages/admin/metrics/metrics";
 import Profile from "./pages/profile/profile";
 import Favourites from "./pages/favourites/favourites";
+import SearchResults from "./pages/searchResults";
 
 
 function App() {
@@ -21,7 +22,7 @@ function App() {
       <Route path="/logout" element={<Logout />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/favourites" element={<Favourites />} />
-
+      <Route path="/recipes/ingredients" element={<SearchResults />} />
       <Route path="/dashboard" element={<DashboardMetrics />} />
       <Route path="/users" element={<Users />} />
     </Routes>

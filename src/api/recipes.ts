@@ -5,6 +5,15 @@ const RECIPE_ENDPOINTS = {
   getRecommendations: `${API_URL}/recipes/recommendations`,
   getLocalFavourites: `${API_URL}/recipes/local-favourites`,
   getRecipesOfTheWeek: `${API_URL}/recipes/weekly`,
+  searchecipesByIngredient: (ingredients: string[]) => {
+    const params = new URLSearchParams();
+
+    ingredients.forEach((item) => {
+      if (item.trim()) params.append("ingredients", item.trim());
+    });
+
+    return `${API_URL}/recipes/s/?${params.toString()}`;
+  },
 };
 
 export const RecipeAPI = {
@@ -61,5 +70,22 @@ export const RecipeAPI = {
     if (!recipe.ok)
       throw new Error(`Unable to load recipe with id ${recipeId}`);
     return recipe.json();
+  },
+
+  searcRecipesByIngredient: async (
+    authFetch: typeof fetch,
+    ingredients: string[]
+  ) => {
+    const recipes = await authFetch(
+      RECIPE_ENDPOINTS.searchecipesByIngredient(ingredients),
+      {
+        method: "GET",
+        credentials: "include",
+      }
+    );
+
+    if (!recipes.ok)
+      throw new Error("An error occured while searching recipes");
+    return await recipes.json();
   },
 };

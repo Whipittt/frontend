@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import { type DialogProps } from "@radix-ui/react-dialog";
 import { Command as CommandPrimitive } from "cmdk";
@@ -37,8 +35,10 @@ const CommandDialog = ({ children, ...props }: DialogProps) => {
 
 const CommandInput = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Input>,
-  React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
->(({ className, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input> & {
+    onSearchClick?: () => void;
+  }
+>(({ className, onSearchClick, ...props }, ref) => (
   <div className="flex items-center px-5" cmdk-input-wrapper="">
     <CommandPrimitive.Input
       ref={ref}
@@ -48,7 +48,10 @@ const CommandInput = React.forwardRef<
       )}
       {...props}
     />
-    <SearchRoundedIcon className="h-4 w-4 shrink-0 opacity-50 text-[#14D85C]" />
+
+    <button onClick={onSearchClick}>
+      <SearchRoundedIcon className="h-4 w-4 shrink-0 opacity-50 text-[#14D85C]" />
+    </button>
   </div>
 ));
 
@@ -87,7 +90,7 @@ const CommandGroup = React.forwardRef<
   <CommandPrimitive.Group
     ref={ref}
     className={cn(
-      "overflow-hidden p-1 text-foreground [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground",
+      "overflow-hidden p-1 py-2 text-foreground [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground",
       className
     )}
     {...props}

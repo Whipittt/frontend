@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useMemo, useState, type JSX } from "react";
 import { useParams } from "react-router-dom";
 import MainLayout from "@/layouts/mainLayout";
 import { AspectRatio } from "@radix-ui/react-aspect-ratio";
@@ -14,45 +14,110 @@ import BackButton from "@/components/backButton";
 import type { Recipe } from "@/types/types";
 import { useAuth } from "@/services/authService";
 import { RecipeAPI } from "@/api/recipes";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export default function Detail() {
-  const { authFetch } = useAuth()
-  const { recipe_id } = useParams(); 
+type Params = {
+  recipe_id: string;
+};
+
+function IngredientsSkeleton(): JSX.Element {
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex justify-between items-center">
+        <Skeleton className="h-6 w-40" />
+        <Skeleton className="h-5 w-32" />
+      </div>
+      <ul className="list-disc list-inside space-y-2">
+        <Skeleton className="h-4 w-64" />
+        <Skeleton className="h-4 w-52" />
+        <Skeleton className="h-4 w-72" />
+        <Skeleton className="h-4 w-40" />
+      </ul>
+    </div>
+  );
+}
+
+function SectionSkeleton(props: {
+  titleWidth?: string;
+  lines?: number;
+}): JSX.Element {
+  const { titleWidth = "w-48", lines = 4 } = props;
+  return (
+    <div className="flex flex-col gap-3">
+      <Skeleton className={`h-6 ${titleWidth}`} />
+      <div className="space-y-2">
+        {Array.from({ length: lines }).map((_, i) => (
+          <Skeleton key={i} className="h-4 w-full" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default function Detail(): JSX.Element {
+  const { authFetch } = useAuth();
+  const { recipe_id } = useParams<Params>();
+
   const [recipe, setRecipe] = useState<Recipe | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
-  const loadRecipe = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await RecipeAPI.fetchRecipebyID(authFetch, recipe_id || "");
-      if (!data) {
-        setError("Recipe not found.");
-      }
-      setRecipe(data);
-    } catch (e: any) {
-      setError(e?.message || "Failed to load recipe.");
-    } finally {
-      setLoading(false);
-    }
-  }, [recipe_id]);
+  const [imgError, setImgError] = useState<boolean>(false);
 
   useEffect(() => {
-    if (recipe_id) {
-      loadRecipe();
-    } else {
-      setLoading(false);
-      setError("No recipe id provided in URL.");
-    }
-  }, [recipe_id, loadRecipe]);
+    let isActive = true;
 
-  const descriptionHtml = useMemo(
-    () => recipe?.description || "<p>No description provided.</p>",
+    const run = async () => {
+      try {
+        if (!recipe_id) {
+          setRecipe(null);
+          setError("No recipe id provided in URL.");
+          setLoading(false);
+          return;
+        }
+
+        setLoading(true);
+        setError(null);
+
+        const data = await RecipeAPI.fetchRecipebyID(authFetch, recipe_id);
+        if (!isActive) return;
+
+        if (!data) {
+          setRecipe(null);
+          setError("Recipe not found.");
+        } else {
+          setRecipe(data);
+        }
+      } catch (e: unknown) {
+        if (!isActive) return;
+        const message =
+          e instanceof Error ? e.message : "Failed to load recipe.";
+        setRecipe(null);
+        setError(message);
+      } finally {
+        if (isActive) setLoading(false);
+      }
+    };
+
+    run();
+
+    return () => {
+      isActive = false;
+    };
+  }, [authFetch, recipe_id]);
+
+  const descriptionHtml = useMemo<string>(
+    () =>
+      recipe?.description
+        ? recipe.description
+        : "<p>No description provided.</p>",
     [recipe?.description]
   );
-  const instructionsHtml = useMemo(
-    () => recipe?.instructions || "<p>No instructions provided.</p>",
+
+  const instructionsHtml = useMemo<string>(
+    () =>
+      recipe?.instructions
+        ? recipe.instructions
+        : "<p>No instructions provided.</p>",
     [recipe?.instructions]
   );
 
@@ -64,12 +129,35 @@ export default function Detail() {
       </section>
 
       {loading && (
-        <div className="py-12 text-center text-muted-foreground">
-          Loading recipe...
-        </div>
+        <section
+          className="flex flex-col gap-8 py-2"
+          aria-busy="true"
+          aria-live="polite"
+        >
+          <div className="flex justify-between items-start">
+            <div className="flex flex-col gap-2">
+              <Skeleton className="h-7 w-56" />
+              <div className="flex items-center gap-2">
+                <Skeleton className="h-6 w-24" />
+                <Skeleton className="h-6 w-28" />
+              </div>
+            </div>
+            <Skeleton className="h-8 w-24" />
+          </div>
+
+          <AspectRatio ratio={21 / 9} className="relative">
+            <Skeleton className="absolute inset-0 h-full w-full rounded-md" />
+          </AspectRatio>
+
+          <IngredientsSkeleton />
+          <SectionSkeleton titleWidth="w-40" lines={5} />
+          <SectionSkeleton titleWidth="w-44" lines={6} />
+        </section>
       )}
 
-      {!loading && error && <div className="py-12 text-center">{error}</div>}
+      {!loading && error && (
+        <div className="py-12 text-center text-destructive">{error}</div>
+      )}
 
       {!loading && !error && recipe && (
         <section className="flex flex-col gap-8">
@@ -79,28 +167,37 @@ export default function Detail() {
                 <h1 className="text-xl font-medium">{recipe.title}</h1>
                 <FavouriteButton
                   state={recipe.favourited ? "filled" : "outline"}
+                  aria-label={
+                    recipe.favourited
+                      ? "Remove from favourites"
+                      : "Add to favourites"
+                  }
                 />
-                {/* {recipe.favourites_count != null && (
-                  <span className="text-xs text-muted-foreground">
-                    {recipe.favourites_count} favourites
-                  </span>
-                )} */}
               </div>
-              <StarRating rating={recipe.rating ?? 0} />
+              <StarRating
+                rating={Number(recipe.rating ?? 0) as unknown as Rating}
+              />
             </div>
-            <CookTime time={recipe.time_minutes ?? 0} />
+            <CookTime time={Number(recipe.time_minutes ?? 0)} />
           </div>
 
           <AspectRatio ratio={21 / 9} className="relative">
             <img
-              src={recipe.display_image || placeholderimage}
-              alt={recipe.title}
+              src={
+                imgError
+                  ? placeholderimage
+                  : recipe.display_image || placeholderimage
+              }
+              alt={recipe.title || "Recipe image"}
               className="h-full w-full object-cover brightness-[0.85]"
+              onError={() => setImgError(true)}
+              loading="lazy"
             />
             <div className="absolute bottom-0 left-0 w-full h-28 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
             <Button
               variant="ghost"
               className="absolute bottom-2 left-2 text-white hover:bg-white/20"
+              aria-label="Add to meal plan"
             >
               <AddRoundedIcon />
               Add to meal plan
@@ -110,7 +207,12 @@ export default function Detail() {
           <div className="flex flex-col gap-4">
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-medium">Ingredients</h2>
-              <Button variant="ghost" className="text-primary text-sm">
+              <Button
+                variant="ghost"
+                className="text-primary text-sm"
+                disabled={!recipe.ingredients?.length}
+                aria-disabled={!recipe.ingredients?.length}
+              >
                 Get Shopping List
               </Button>
             </div>
@@ -119,7 +221,7 @@ export default function Detail() {
               {recipe.ingredients?.length ? (
                 <ul className="list-disc list-inside leading-relaxed">
                   {recipe.ingredients.map((ing) => (
-                    <li key={ing.id}>{ing.name}</li>
+                    <li key={(ing as any).id ?? ing.name}>{ing.name}</li>
                   ))}
                 </ul>
               ) : (
@@ -131,7 +233,6 @@ export default function Detail() {
           </div>
 
           <RenderRawHTML header="Description" content={descriptionHtml} />
-
           <RenderRawHTML header="Instructions" content={instructionsHtml} />
         </section>
       )}
