@@ -1,9 +1,21 @@
-import { useCategories } from "@/hooks/useCategories";
-import type { RecipeCategory } from "@/types/types";
+import { useRecipeCategoryCache } from "@/hooks/useRecipeCategories";
+import type { RecipeCategory } from "@/types";
 import { CategoryPill, CategoryPillSkeleton } from "./categoryPill";
 
-export default function CategorySection() {
-  const { data, isError, isLoading } = useCategories();
+type CategorySectionProps = {
+  activeCategory: RecipeCategory | "all";
+  setActiveCategory: React.Dispatch<
+    React.SetStateAction<RecipeCategory | "all">
+  >;
+  onCategoryChange?: () => void;
+};
+
+export default function CategorySection({
+  activeCategory,
+  setActiveCategory,
+  onCategoryChange: onChange,
+}: CategorySectionProps) {
+  const { data, isError, isLoading } = useRecipeCategoryCache();
 
   if (isError) {
     return (
@@ -44,14 +56,24 @@ export default function CategorySection() {
       <h2 className="text-sm md:px-0 px-4">Categories</h2>
 
       <div className="md:pl-0 pl-4 w-full flex gap-2 overflow-x-scroll snap-x snap-mandatory hide-scrollbar">
-        <CategoryPill to="/" label="All" variant="active" />
+        <CategoryPill
+          label="All"
+          onActive={() => {
+            setActiveCategory("all");
+            onChange?.();
+          }}
+          variant={activeCategory === "all" ? "active" : "muted"}
+        />
 
         {categories.map((category: RecipeCategory) => (
           <CategoryPill
             key={category.id}
-            to="/"
             label={category.name}
-            variant="muted"
+            onActive={() => {
+              setActiveCategory(category);
+              onChange?.();
+            }}
+            variant={activeCategory === category ? "active" : "muted"}
           />
         ))}
       </div>

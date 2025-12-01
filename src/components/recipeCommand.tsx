@@ -8,10 +8,9 @@ import {
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command";
-import { CategoryPill, PillWithClose } from "@/pages/home/categorySection/categoryPill";
+import { PillWithClose } from "@/pages/home/categorySection/categoryPill";
 import { useNavigate } from "react-router-dom";
-import { IngredientAPI } from "@/api/ingredients";
-import { useAuth } from "@/services/authService";
+import { ingredientsAPI } from "@/api/ingredients";
 
 type IngredientLike = string | { id?: string | number; name: string };
 
@@ -22,7 +21,6 @@ function toName(item: IngredientLike): string {
 
 export function RecipeCommand() {
   const navigate = useNavigate();
-  const { authFetch } = useAuth();
 
   const [query, setQuery] = useState<string>("");
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -60,7 +58,7 @@ export function RecipeCommand() {
       setLoading(true);
       try {
         const results: IngredientLike[] =
-          (await IngredientAPI.searchByKeyword(authFetch, trimmedQuery)) ?? [];
+          (await ingredientsAPI.searchByKeyword(trimmedQuery)) ?? [];
         if (!active) return;
 
         const names = results
@@ -88,7 +86,7 @@ export function RecipeCommand() {
       controller.abort();
       clearTimeout(t);
     };
-  }, [trimmedQuery, authFetch, selectedIngredients]);
+  }, [trimmedQuery, selectedIngredients]);
 
   const addIngredient = (name: string) => {
     if (!name) return;
@@ -169,7 +167,10 @@ export function RecipeCommand() {
                     </span>
                   ) : (
                     selectedIngredients.map((text) => (
-                        <PillWithClose label={text} onRemove={() => removeIngredient(text)}/>
+                      <PillWithClose
+                        label={text}
+                        onRemove={() => removeIngredient(text)}
+                      />
                     ))
                   )}
                 </div>

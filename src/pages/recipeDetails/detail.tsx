@@ -11,11 +11,11 @@ import { Button } from "@/components/ui/button";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import CookTime from "./cookTime";
 import BackButton from "@/components/backButton";
-import type { Recipe } from "@/types/types";
+import type { Recipe } from "@/types";
 import { useAuth } from "@/services/authService";
 import { RecipeAPI } from "@/api/recipes";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useFavourites } from "@/hooks/useRecipes";
+import { useFavouriteRecipesCache } from "@/hooks/useRecipes";
 
 type Params = {
   recipe_id: string;
@@ -60,7 +60,7 @@ function SectionSkeleton(props: {
   );
 }
 
-export default function Detail(): JSX.Element {
+export default function RecipeDetails(): JSX.Element {
   const { authFetch } = useAuth();
   const { recipe_id } = useParams<Params>();
 
@@ -72,7 +72,7 @@ export default function Detail(): JSX.Element {
   // Favourite toggle specific state
   const [favouriteLoading, setFavouriteLoading] = useState<boolean>(false);
   const [favouriteError, setFavouriteError] = useState<string | null>(null);
-  const { refetch: refreshFavouritesCache } = useFavourites();
+  const { refetch: refreshFavouritesCache } = useFavouriteRecipesCache();
 
   // Fetch recipe
   useEffect(() => {
@@ -82,7 +82,7 @@ export default function Detail(): JSX.Element {
       try {
         if (!recipe_id) {
           setRecipe(null);
-          setError("No recipe id provided in URL.");
+          setError("No Recipe ID provided in URL.");
           setLoading(false);
           return;
         }
@@ -96,7 +96,7 @@ export default function Detail(): JSX.Element {
         if (!data) {
           setRecipe(null);
           setError("Recipe not found.");
-        } else {
+        } else {    
           setRecipe(data);
         }
       } catch (e: unknown) {

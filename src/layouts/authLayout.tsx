@@ -4,9 +4,6 @@ import logo from "@/assets/images/primary-logo.png";
 import loginHeroImage from "@/assets/images/login-hero.webp";
 import signupHeroImage from "@/assets/images/signup-hero.webp";
 import { Link } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
-
-const APP_NAME = import.meta.env.VITE_APP_NAME;
 
 interface AuthPageLayoutProps {
   children: React.ReactNode;
@@ -19,15 +16,9 @@ export default function AuthPageLayout({
 }: AuthPageLayoutProps) {
   return (
     <>
-      <Helmet>
-        <title>
-          {`${
-            mode === "login" ? "Welcome Back!" : "Create your account"
-          } - ${APP_NAME}`}
-        </title>
-      </Helmet>
-
-      <RootLayout>
+      <RootLayout
+        pageTitle={mode === "login" ? "Welcome Back!" : "Create your account"}
+      >
         <div className="grid min-h-svh lg:grid-cols-2">
           <div className="bg-muted relative hidden lg:block">
             <img

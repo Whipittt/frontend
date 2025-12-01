@@ -7,12 +7,17 @@ import { cn } from "@/lib/utils";
 interface MainLayoutProps {
   children: React.ReactNode;
   className?: string;
+  pageTitle?: string;
 }
 
-export default function MainLayout({ className, children }: MainLayoutProps) {
+export default function MainLayout({
+  className,
+  children,
+  pageTitle
+}: MainLayoutProps) {
   return (
     <SidebarProvider>
-      <RootLayout>
+      <RootLayout pageTitle={pageTitle}>
         <div className="flex h-screen">
           <aside className="flex-shrink-0">
             <AppSidebar />

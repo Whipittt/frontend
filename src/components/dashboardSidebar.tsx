@@ -31,13 +31,13 @@ const menuItems = [
     icon: PeopleAltRoundedIcon,
   },
   {
-    title: "Meal Planner",
-    url: "#",
+    title: "Ingredients",
+    url: "/ingredients",
     icon: CalendarTodayRoundedIcon,
   },
   {
-    title: "Dashboard",
-    url: "#",
+    title: "Recipes",
+    url: "/recipes",
     icon: DashboardRoundedIcon,
   },
 ];
@@ -45,7 +45,7 @@ const menuItems = [
 const menuFooterItems = [
   {
     title: "Logout",
-    url: "#",
+    url: "/logout",
     icon: LogoutIcon,
   },
 ];
@@ -68,7 +68,7 @@ export function DashboardSidebar() {
               {menuItems.map((item) => {
                 const active = useLocation().pathname === item.url;
                 return (
-                  <>
+                  <Link to={item.url}>
                     <SidebarMenuItem
                       key={item.title}
                       className={`px-4 py-2 font-medium hover:bg-sidebar-accent ${
@@ -80,16 +80,16 @@ export function DashboardSidebar() {
                         isActive={active}
                         className="gap-4"
                       >
-                        <Link to={item.url}>
+                        <div>
                           <item.icon className="!w-5 !h-5" />
                           <span className="text-sidebar-foreground">
                             {item.title}
                           </span>
-                        </Link>
+                        </div>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                     <SidebarSeparator orientation="horizontal" />
-                  </>
+                  </Link>
                 );
               })}
             </SidebarMenu>

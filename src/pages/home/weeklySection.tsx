@@ -1,10 +1,10 @@
 import { RecipeCardSm, RecipeCardSmSkeleton } from "@/components/recipeCard";
 import HomeSectionLayout from "./homeSectionLayout";
-import { useRecipesOfTheWeek } from "@/hooks/useRecipes";
-import type { RecipeBrief } from "@/types/types";
+import { useRecipesOfTheWeekCache } from "@/hooks/useRecipes";
+import type { RecipeBrief } from "@/types";
 
 export default function WeeklySection() {
-  const { data, error, isLoading } = useRecipesOfTheWeek();
+  const { data, error, isLoading } = useRecipesOfTheWeekCache();
 
   if (error) {
     return (

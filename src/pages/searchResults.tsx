@@ -5,7 +5,7 @@ import { Helmet } from "react-helmet-async";
 import { RecipeCardSm, RecipeCardSmSkeleton } from "@/components/recipeCard";
 import { useAuth } from "@/services/authService";
 import { RecipeAPI } from "@/api/recipes";
-import type { RecipeBrief } from "@/types/types";
+import type { RecipeBrief } from "@/types";
 
 const APP_NAME = import.meta.env.VITE_APP_NAME;
 
@@ -39,7 +39,7 @@ export default function SearchResults() {
       setFetchError("");
 
       try {
-        const data = await RecipeAPI.searcRecipesByIngredient(
+        const data = await RecipeAPI.filterRecipesByIngredient(
           authFetch,
           ingredients
         );

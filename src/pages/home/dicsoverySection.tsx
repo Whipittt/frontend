@@ -1,10 +1,10 @@
 import { RecipeCardLg, RecipeCardLgSkeleton } from "@/components/recipeCard";
 import HomeSectionLayout from "./homeSectionLayout";
-import { useLocalFavourites } from "@/hooks/useRecipes";
-import type { RecipeBrief } from "@/types/types";
+import { useLocalFavouriteRecipeCache } from "@/hooks/useRecipes";
+import type { RecipeBrief } from "@/types";
 
 export default function DiscoverySection() {
-  const { data, error, isLoading } = useLocalFavourites();
+  const { data, error, isLoading } = useLocalFavouriteRecipeCache();
 
   if (error) {
     return (

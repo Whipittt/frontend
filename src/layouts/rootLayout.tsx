@@ -1,9 +1,21 @@
 import React from "react";
+import { Helmet } from "react-helmet-async";
 
-export default function RootLayout({
-  children,
-}: {
+const APP_NAME = import.meta.env.VITE_APP_NAME;
+
+type RootLayoutProps = {
   children: React.ReactNode;
-}) {
-  return <main className="w-full">{children}</main>;
+  pageTitle?: string;
+};
+
+export default function RootLayout({ children, pageTitle }: RootLayoutProps) {
+  return (
+    <>
+      <Helmet>
+        <title>{`${pageTitle ? `${pageTitle} - ` : ""}${APP_NAME}`}</title>
+      </Helmet>
+
+      <main className="w-full">{children}</main>
+    </>
+  );
 }

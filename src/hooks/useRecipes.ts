@@ -3,7 +3,7 @@ import { UserAPI } from "@/api/users";
 import { useAuth } from "@/services/authService";
 import { useQuery } from "@tanstack/react-query";
 
-export function useRecommendations() {
+export function useRecipeRecommendationsCache() {
   const { authFetch } = useAuth();
 
   const queryFunction = () => {
@@ -18,7 +18,7 @@ export function useRecommendations() {
   });
 }
 
-export function useLocalFavourites() {
+export function useLocalFavouriteRecipeCache() {
   const { authFetch } = useAuth();
 
   const queryFunction = () => {
@@ -33,7 +33,7 @@ export function useLocalFavourites() {
   });
 }
 
-export function useRecipesOfTheWeek() {
+export function useRecipesOfTheWeekCache() {
   const { authFetch } = useAuth();
 
   const queryFunction = () => {
@@ -48,7 +48,7 @@ export function useRecipesOfTheWeek() {
   });
 }
 
-export function useFavourites() {
+export function useFavouriteRecipesCache() {
   const { authFetch } = useAuth();
 
   const queryFunction = () => {
@@ -57,6 +57,21 @@ export function useFavourites() {
 
   return useQuery({
     queryKey: ["favourites"],
+    queryFn: queryFunction,
+    staleTime: 1000 * 60 * 5,
+    retry: 1,
+  });
+}
+
+export function useCategorizedRecipesCache(category_name: string) {
+  const { authFetch } = useAuth();
+
+  const queryFunction = () => {
+    return RecipeAPI.filterRecipesByCategory(authFetch, category_name);
+  };
+
+  return useQuery({
+    queryKey: [`${category_name}_recipes`],
     queryFn: queryFunction,
     staleTime: 1000 * 60 * 5,
     retry: 1,

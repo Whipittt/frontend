@@ -1,21 +1,29 @@
 const API_URL = import.meta.env.VITE_BACKEND_BASE_URL;
+const RECIPE_ENDPOINTS_BASE = `${API_URL}/recipes`;
 
 const RECIPE_ENDPOINTS = {
   base: `${API_URL}/recipes/`,
-  getRecommendations: `${API_URL}/recipes/recommendations`,
-  getLocalFavourites: `${API_URL}/recipes/local-favourites`,
-  getRecipesOfTheWeek: `${API_URL}/recipes/weekly`,
-  searchecipesByIngredient: (ingredients: string[]) => {
+  getRecommendations: `${RECIPE_ENDPOINTS_BASE}/recommendations`,
+  getLocalFavourites: `${RECIPE_ENDPOINTS_BASE}/local-favourites`,
+  getRecipesOfTheWeek: `${RECIPE_ENDPOINTS_BASE}/weekly`,
+  filerRecipesByIngredient: (ingredients: string[]) => {
     const params = new URLSearchParams();
 
     ingredients.forEach((item) => {
       if (item.trim()) params.append("ingredients", item.trim());
     });
 
-    return `${API_URL}/recipes/s/?${params.toString()}`;
+    return `${RECIPE_ENDPOINTS_BASE}/s/?${params.toString()}`;
+  },
+  filterRecipesByCategory: (category: string) => {
+    const params = new URLSearchParams();
+
+    params.append("category", category.trim());
+
+    return `${RECIPE_ENDPOINTS_BASE}/s/categories?${params.toString()}`;
   },
   toggleFavourite: (recipeId: string) => {
-    return `${API_URL}/recipes/${recipeId}/favourite/toggle`;
+    return `${RECIPE_ENDPOINTS_BASE}/${recipeId}/favourite/toggle`;
   },
 };
 
@@ -75,12 +83,12 @@ export const RecipeAPI = {
     return recipe.json();
   },
 
-  searcRecipesByIngredient: async (
+  filterRecipesByIngredient: async (
     authFetch: typeof fetch,
     ingredients: string[]
   ) => {
     const recipes = await authFetch(
-      RECIPE_ENDPOINTS.searchecipesByIngredient(ingredients),
+      RECIPE_ENDPOINTS.filerRecipesByIngredient(ingredients),
       {
         method: "GET",
         credentials: "include",
@@ -92,21 +100,32 @@ export const RecipeAPI = {
     return await recipes.json();
   },
 
-
-  toggleFavourite: async (
+  filterRecipesByCategory: async (
     authFetch: typeof fetch,
-    recipeId: string
+    category: string
   ) => {
-    const recipe = await authFetch(
-      RECIPE_ENDPOINTS.toggleFavourite(recipeId),
+    const recipes = await authFetch(
+      RECIPE_ENDPOINTS.filterRecipesByCategory(category),
       {
-        method: "POST",
+        method: "GET",
         credentials: "include",
       }
     );
 
-    if (!recipe.ok)
-      throw new Error("An error occured while searching recipes");
+    if (!recipes.ok)
+      throw new Error(
+        `An error occured while filtering recipes with category ${category}`
+      );
+    return await recipes.json();
+  },
+
+  toggleFavourite: async (authFetch: typeof fetch, recipeId: string) => {
+    const recipe = await authFetch(RECIPE_ENDPOINTS.toggleFavourite(recipeId), {
+      method: "POST",
+      credentials: "include",
+    });
+
+    if (!recipe.ok) throw new Error("An error occured while searching recipes");
     return await recipe.json();
   },
 };

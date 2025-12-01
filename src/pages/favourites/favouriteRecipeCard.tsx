@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { RecipeBrief } from "@/types/types";
+import type { RecipeBrief } from "@/types";
 import { Link } from "react-router-dom";
 
 type FavouriteRecipeCardProps = {

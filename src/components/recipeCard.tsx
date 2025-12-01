@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import FavouriteButton from "./favouriteButton";
-import type { RecipeBrief } from "@/types/types";
+// import FavouriteButton from "./favouriteButton";
+import type { RecipeBrief } from "@/types";
 import { Link } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -86,7 +86,7 @@ export const RecipeCardLg: React.FC<RecipeCardProps> = ({ recipe }) => {
     "https://via.placeholder.com/640x360?text=No+image";
   const rating = formatRating(recipe?.rating);
   const time = formatTime(recipe?.time_minutes);
-  const favState = recipe?.favourited ? "filled" : "outline";
+  // const favState = recipe?.favourited ? "filled" : "outline";
 
   return (
     <Link to={`/recipe/${recipe.id}`}>

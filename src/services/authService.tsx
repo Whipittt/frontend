@@ -16,10 +16,10 @@ import type { PropsWithChildren } from "react";
  */
 
 type User = {
-  id: number;
-  email: string;
+  id: string;
   fullname: string;
-  avatar: string
+  email: string;
+  is_superuser: boolean;
 };
 
 type Credentials = {
@@ -30,6 +30,7 @@ type Credentials = {
 type AuthServiceType = {
   user: User | null;
   isAuthenticated: boolean;
+  isSuperuser: boolean;
   loading: boolean;
   login: (creds: Credentials) => Promise<void>;
   logout: () => Promise<void>;
@@ -169,6 +170,11 @@ export function AuthProvider({ children }: PropsWithChildren) {
   // Fetch with auto-refresh-once and retry.
   const authFetch: AuthServiceType["authFetch"] = async (input, init) => {
     const first = await baseFetch(input, init);
+    if (first.status === 401) { // Experimental
+      // toast.warning("login required");
+      // navigate("/login");
+    }
+    
     if (first.status !== 401 && first.status !== 419) return first;
 
     const refreshed = await ensureFreshAccess();
@@ -245,6 +251,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     () => ({
       user,
       isAuthenticated: !!user,
+      isSuperuser: !!user?.is_superuser,
       loading,
       login,
       logout,

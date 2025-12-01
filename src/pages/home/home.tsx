@@ -1,21 +1,25 @@
 import MainLayout from "@/layouts/mainLayout";
-import { Helmet } from "react-helmet-async";
-import { RecipeCommand } from "@/components/recipe-command";
+import { RecipeCommand } from "@/components/recipeCommand";
 import CategorySection from "./categorySection/categorySection";
-import RecommendationSection from "./recommendationSection";
-import DicsoverySection from "./dicsoverySection";
-import WeeklySection from "./weeklySection";
-import UserAvatar from "@/components/userAvatar";
 
-const APP_NAME = import.meta.env.VITE_APP_NAME;
+import UserAvatar from "@/components/userAvatar";
+import AllCategory from "./allCategory";
+import type { RecipeCategory } from "@/types";
+import { useState } from "react";
+import ActiveCategorySection from "./activeCategorySection";
 
 export default function Home() {
+  const [activeCategory, setActiveCategory] = useState<RecipeCategory | "all">(
+    "all"
+  );
+
+  const handleCategoryChange = () => {
+    if (activeCategory !== "all") {
+    }
+  };
+
   return (
     <>
-      <Helmet>
-        <title>{`${APP_NAME}`}</title>
-      </Helmet>
-
       <MainLayout>
         <section className="flex flex-col gap-6 md:px-0 px-4">
           <div className="flex gap-4  justify-between items-center">
@@ -29,13 +33,17 @@ export default function Home() {
           <RecipeCommand />
         </section>
 
-        <CategorySection />
+        <CategorySection
+          activeCategory={activeCategory}
+          setActiveCategory={setActiveCategory}
+          onCategoryChange={() => handleCategoryChange()}
+        />
 
-        <RecommendationSection />
-
-        <DicsoverySection />
-
-        <WeeklySection />
+        {activeCategory === "all" ? (
+          <AllCategory />
+        ) : (
+          <ActiveCategorySection category={activeCategory} />
+        )}
       </MainLayout>
     </>
   );

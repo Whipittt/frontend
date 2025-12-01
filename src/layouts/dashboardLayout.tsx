@@ -7,12 +7,17 @@ import { DashboardSidebar } from "@/components/dashboardSidebar";
 interface MainLayoutProps {
   children: React.ReactNode;
   className?: string;
+  pageTitle: string;
 }
 
-export default function DashboardLayout({ className, children }: MainLayoutProps) {
+export default function DashboardLayout({
+  className,
+  children,
+  pageTitle,
+}: MainLayoutProps) {
   return (
     <SidebarProvider>
-      <RootLayout>
+      <RootLayout pageTitle={pageTitle}>
         <div className="flex h-screen">
           <aside className="flex-shrink-0">
             <DashboardSidebar />

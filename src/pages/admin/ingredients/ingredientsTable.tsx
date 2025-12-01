@@ -1,4 +1,3 @@
-import * as React from "react";
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -33,11 +32,11 @@ import {
 } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
-import { Badge } from "@/components/ui/badge";
-import type { User } from "@/types";
-import { useAllUsersCache } from "@/hooks/useUsers";
+import type { Ingredient } from "@/types";
+import useIngredientsCache from "@/hooks/useIngredients";
+import { useMemo, useState } from "react";
 
-export const columns: ColumnDef<User>[] = [
+export const columns: ColumnDef<Ingredient>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -61,101 +60,27 @@ export const columns: ColumnDef<User>[] = [
     enableHiding: false,
   },
   {
-    accessorFn: (row) => row.fullname.split(" ")[0] || "",
-    id: "firstname",
+    accessorKey: "id",
+    header: "ID",
+    cell: ({ row }) => {
+      return <div>{row.getValue("id")}</div>;
+    },
+  },
+  {
+    accessorKey: "name",
     header: ({ column }) => {
       return (
         <Button
           variant="zombie"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          First Name
+          Name
           <ArrowUpDown />
         </Button>
       );
     },
     cell: ({ row }) => {
-      return <div className="capitalize">{row.getValue("firstname")}</div>;
-    },
-  },
-
-  {
-    accessorFn: (row) => {
-      const parts = row.fullname.split(" ");
-      return parts.slice(1).join(" ") || "";
-    },
-    id: "lastname",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="zombie"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Last Name
-          <ArrowUpDown />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      return <div className="capitalize">{row.getValue("lastname")}</div>;
-    },
-  },
-  {
-    accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="zombie"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Email
-          <ArrowUpDown />
-        </Button>
-      );
-    },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
-  },
-  {
-    accessorKey: "created_at",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="zombie"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Date created
-          <ArrowUpDown />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      const value = row.getValue("created_at") as string;
-      const date = value ? new Date(value) : null;
-
-      const formatted = date
-        ? date.toLocaleString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-            hour: "numeric",
-            minute: "2-digit",
-          })
-        : "-";
-
-      return <div className="lowercase">{formatted}</div>;
-    },
-  },
-  {
-    accessorKey: "is_superuser",
-    header: () => <div>User Role</div>,
-    cell: ({ row }) => {
-      return (
-        <div>
-          <Badge variant={"outline"} className="font-normal rounded-full">
-            {row.original.is_superuser ? "Admin" : "User"}
-          </Badge>
-        </div>
-      );
+      return <div>{row.getValue("name")}</div>;
     },
   },
   {
@@ -173,9 +98,9 @@ export const columns: ColumnDef<User>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem
-              onClick={() => navigate(`/users/${row.original.id}`)}
+              onClick={() => navigate(`/ingredients/${row.original.id}`)}
             >
-              Update user
+              Update ingredient
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -184,26 +109,23 @@ export const columns: ColumnDef<User>[] = [
   },
 ];
 
-export default function UserTable() {
+export default function Ingredientstable() {
   const { data, isLoading, isError, error, refetch, isFetching } =
-    useAllUsersCache();
+    useIngredientsCache();
 
   const navigate = useNavigate();
 
-  const users = React.useMemo<User[]>(() => {
+  const ingredients = useMemo<Ingredient[]>(() => {
     return !data ? [] : data;
   }, [data]);
 
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState({});
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = useState({});
 
   const table = useReactTable({
-    data: users,
+    data: ingredients,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -225,10 +147,10 @@ export default function UserTable() {
     <Card className="w-full p-6 rounded-3xl">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+          placeholder="Filter names..."
+          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
+            table.getColumn("name")?.setFilterValue(event.target.value)
           }
           className="max-w-sm bg-muted/60 "
           disabled={isLoading || isError}
@@ -237,10 +159,10 @@ export default function UserTable() {
           <Button
             variant="outline"
             disabled={isLoading}
-            onClick={() => navigate("/users/add-new")}
+            onClick={() => navigate("/ingredients/add-new")}
           >
             <AddIcon />
-            <span>Add New user</span>
+            <span>Add New Ingredient</span>
           </Button>
 
           <DropdownMenu>
@@ -304,7 +226,6 @@ export default function UserTable() {
 
           <TableBody>
             {isLoading ? (
-              // Simple loading rows; replace with skeletons if you prefer
               Array.from({ length: 5 }).map((_, idx) => (
                 <TableRow key={`skeleton-${idx}`}>
                   {table.getAllLeafColumns().map((col) => (
@@ -321,8 +242,8 @@ export default function UserTable() {
                   className="h-24 text-center"
                 >
                   <div className="flex flex-col items-center gap-2">
-                    <span className="text-red-500">
-                      Failed to load users
+                    <span className="text-destructive">
+                      Failed to load ingredients
                       {(error as any)?.message
                         ? `: ${(error as any).message}`
                         : "."}

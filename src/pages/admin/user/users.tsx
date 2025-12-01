@@ -1,19 +1,14 @@
-import DashboardLayout from '@/layouts/dashboardLayout';
-import { Helmet } from 'react-helmet-async'
-import UserTable from './usersTable';
-
-const APP_NAME = import.meta.env.VITE_APP_NAME;
+import DashboardLayout from "@/layouts/dashboardLayout";
+import UserTable from "./usersTable";
+import { OverviewSection } from "../metrics/sectionCards";
 
 export default function Users() {
   return (
     <>
-      <Helmet>
-        <title>{`Users - ${APP_NAME}`}</title>
-      </Helmet>
-
-      <DashboardLayout>
-        <UserTable/>
+      <DashboardLayout pageTitle="Users">
+        <OverviewSection/>
+        <UserTable />
       </DashboardLayout>
     </>
-  )
+  );
 }

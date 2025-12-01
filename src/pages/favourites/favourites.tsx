@@ -4,8 +4,8 @@ import FavouriteRecipeCard, {
   FavouriteRecipeCardSkeleton,
 } from "./favouriteRecipeCard";
 import UserAvatar from "@/components/userAvatar";
-import { useFavourites } from "@/hooks/useRecipes";
-import type { RecipeBrief } from "@/types/types";
+import { useFavouriteRecipesCache } from "@/hooks/useRecipes";
+import type { RecipeBrief } from "@/types";
 import { useAuth } from "@/services/authService";
 import { RecipeAPI } from "@/api/recipes";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -19,7 +19,7 @@ export default function Favourites(): JSX.Element {
   const queryClient = useQueryClient();
   const { authFetch } = useAuth();
 
-  const { data: favourites, error, isLoading, isFetching } = useFavourites();
+  const { data: favourites, error, isLoading, isFetching } = useFavouriteRecipesCache();
 
   const toggleFavouriteMutation = useMutation({
     mutationFn: async (recipeId: string ) =>

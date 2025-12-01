@@ -159,7 +159,7 @@ export function VisitorChart() {
   });
 
   return (
-    <Card className="@container/card">
+    <Card className="@container/card py-4 rounded-3xl">
       <CardHeader className="flex flex-row justify-between">
         <div className="flex flex-col gap-2">
           <CardTitle className="font-normal">Total Visitors</CardTitle>

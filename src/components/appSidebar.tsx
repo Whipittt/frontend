@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import { useAuth } from "@/services/authService";
 
 const menuItems = [
   {
@@ -35,11 +36,11 @@ const menuItems = [
     url: "/mealplan",
     icon: CalendarTodayRoundedIcon,
   },
-  // {
-  //   title: "Dashboard",
-  //   url: "#",
-  //   icon: DashboardRoundedIcon,
-  // },
+  {
+    title: "Dashboard",
+    url: "#",
+    icon: DashboardRoundedIcon,
+  },
 ];
 
 const menuFooterItems = [
@@ -51,6 +52,7 @@ const menuFooterItems = [
 ];
 
 export function AppSidebar() {
+  const { isSuperuser } = useAuth()
   return (
     <Sidebar className="!border-none">
       <SidebarHeader>
@@ -69,26 +71,28 @@ export function AppSidebar() {
                 const active = useLocation().pathname === item.url;
                 return (
                   <>
-                    <SidebarMenuItem
-                      key={item.title}
-                      className={`px-4 py-2 font-medium hover:bg-sidebar-accent ${
-                        active ? "bg-sidebar-accent" : ""
-                      }`}
-                    >
-                      <SidebarMenuButton
-                        asChild
-                        isActive={active}
-                        className="gap-4"
+                    <Link to={item.url}>
+                      <SidebarMenuItem
+                        key={item.title}
+                        className={`px-4 py-2 font-medium hover:bg-sidebar-accent ${
+                          active ? "bg-sidebar-accent" : ""
+                        }`}
                       >
-                        <Link to={item.url}>
-                          <item.icon className="!w-5 !h-5" />
-                          <span className="text-sidebar-foreground">
-                            {item.title}
-                          </span>
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                    <SidebarSeparator orientation="horizontal" />
+                        <SidebarMenuButton
+                          asChild
+                          isActive={active}
+                          className="gap-4"
+                        >
+                          <div>
+                            <item.icon className="!w-5 !h-5" />
+                            <span className="text-sidebar-foreground">
+                              {item.title}
+                            </span>
+                          </div>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                      <SidebarSeparator orientation="horizontal" />
+                    </Link>
                   </>
                 );
               })}

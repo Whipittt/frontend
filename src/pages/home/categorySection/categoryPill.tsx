@@ -1,23 +1,22 @@
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { X } from "lucide-react";
-import { Link } from "react-router-dom";
 
 type BadgeVariant = React.ComponentProps<typeof Badge>["variant"];
 
 export function CategoryPill({
-  to,
   label,
   variant = "muted",
+  onActive
 }: {
-  to: string;
   label: string;
   variant?: BadgeVariant;
+  onActive?: () => void
 }) {
   return (
-    <Badge variant={variant}>
-      <Link to={to}>{label}</Link>
-    </Badge>
+    <button onClick={() => onActive?.()}>
+      <Badge variant={variant}>{label}</Badge>
+    </button>
   );
 }
 

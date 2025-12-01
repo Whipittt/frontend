@@ -6,6 +6,9 @@ import ProfileCard from "./profileCard";
 import EditButton from "./editButton";
 import { useAuth } from "@/services/authService";
 import UserAvatar from "@/components/userAvatar";
+import { Button } from "@/components/ui/button";
+import { LogOut } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const APP_NAME = import.meta.env.VITE_APP_NAME;
 
@@ -44,7 +47,7 @@ export default function Profile() {
         <section className="flex flex-col gap-2 md:gap-6">
           <Card className="p-8 rounded-3xl flex justify-between items-center">
             <div className="flex gap-4 items-center">
-              <UserAvatar/>
+              <UserAvatar />
               <div className="flex flex-col gap-1">
                 <span className="font-semibold text-lg capitalize">
                   {user?.fullname}
@@ -59,6 +62,18 @@ export default function Profile() {
         <ProfileCard header="Personal Information" details={userDetails} />
 
         <ProfileCard header="Meal Preferences" details={preferenceDetails} />
+
+        <Card className="p-8 px-4 rounded-3xl flex justify-between items-start">
+          <Link to="/logout">
+            <Button
+              variant="outline"
+              className="rounded-full bg-transparent"
+            >
+              <LogOut />
+              <span>Logout</span>
+            </Button>
+          </Link>
+        </Card>
       </MainLayout>
     </>
   );
