@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/sidebar";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-import { useAuth } from "@/services/authService";
 
 const menuItems = [
   {
@@ -52,7 +51,6 @@ const menuFooterItems = [
 ];
 
 export function AppSidebar() {
-  const { isSuperuser } = useAuth()
   return (
     <Sidebar className="!border-none">
       <SidebarHeader>

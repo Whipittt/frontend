@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/services/authService";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
@@ -18,7 +18,6 @@ export default function UserAvatar() {
     <>
       <Link to={"/profile"} className={isAuthenticated ? "" : "hidden"}>
         <Avatar>
-          <AvatarImage src={user?.avatar} />
           <AvatarFallback>{initials}</AvatarFallback>
         </Avatar>
       </Link>
