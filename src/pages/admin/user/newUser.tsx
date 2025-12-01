@@ -10,7 +10,7 @@ import { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import type { User } from "@/types";
-import { useAllUsersCache } from "../../../hooks/useusers";
+import { useAllUsersCache } from "@/hooks/useUsers";
 
 export default function AddNewUser() {
   const [fullname, setFullname] = useState<string>("");

@@ -35,7 +35,7 @@ import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import type { User } from "@/types";
-import { useAllUsersCache } from "../../../hooks/useusers";
+import { useAllUsersCache } from "@/hooks/useUsers";
 
 export const columns: ColumnDef<User>[] = [
   {
