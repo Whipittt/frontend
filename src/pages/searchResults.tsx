@@ -1,13 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import MainLayout from "@/layouts/mainLayout";
-import { Helmet } from "react-helmet-async";
 import { RecipeCardSm, RecipeCardSmSkeleton } from "@/components/recipeCard";
 import { useAuth } from "@/services/authService";
 import { RecipeAPI } from "@/api/recipes";
 import type { RecipeBrief } from "@/types";
-
-const APP_NAME = import.meta.env.VITE_APP_NAME;
 
 export default function SearchResults() {
   const { authFetch } = useAuth();
