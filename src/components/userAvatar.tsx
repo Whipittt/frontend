@@ -25,7 +25,7 @@ export default function UserAvatar() {
       <Button
         variant={"outline"}
         className={!isAuthenticated ? "rounded-full" : "hidden"}
-        onClick={() => navigate("/login")}
+        onClick={() => navigate("/auth/login")}
       >
         Sign in
       </Button>

@@ -53,7 +53,12 @@ export default function SearchResults() {
             message = err.message;
           } else if (typeof err === "string") {
             message = err;
-          } else if (err && typeof err === "object" && "message" in err && typeof (err as any).message === "string") {
+          } else if (
+            err &&
+            typeof err === "object" &&
+            "message" in err &&
+            typeof (err as any).message === "string"
+          ) {
             message = (err as any).message;
           }
           setFetchError(message);
@@ -77,11 +82,7 @@ export default function SearchResults() {
 
   return (
     <>
-      <Helmet>
-        <title>{`${titlePrefix} - ${APP_NAME}`}</title>
-      </Helmet>
-
-      <MainLayout className="px-2 md:px-8">
+      <MainLayout className="px-2 md:px-8" pageTitle={titlePrefix}>
         <section className="mb-4 md:mb-8">
           <h1 className="font-serif text-2xl md:text-5xl">Search Results</h1>
 
@@ -114,6 +115,16 @@ export default function SearchResults() {
             </p>
           )} */}
         </section>
+
+        <h2 className="px-4 md:px-0 font-semibold text-base capitalize">
+          {`Showing results for recipes that include${
+            ingredients.length > 1 ? "s" : ""
+          }  ${
+            ingredients.length > 0
+              ? `${ingredients.join(", ").toLowerCase()}`
+              : ""
+          }`}
+        </h2>
 
         {loading ? (
           <section className="grid grid-cols-2 md:grid-cols-6 gap-2 md:gap-6">

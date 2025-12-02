@@ -9,7 +9,7 @@ const badgeVariants = cva(
     variants: {
       variant: {
         active:
-          "border-transparent bg-[#14D85C] text-[#2C2C2C] shadow hover:bg-[#14D85C]/90 px-3 py-1 font-medium rounded-full",
+          "border-transparent bg-[#14D85C] text-[#2C2C2C] shadow hover:bg-[#14D85C]/90 px-3 py-1 font-medium rounded-full wrap-none text-nowrap",
         muted:
           "border-transparent bg-[#FFFFFF1F] text-[#FFFFFF] shadow hover:bg-[#FFFFFF1F]/10 px-3 py-1 font-light rounded-full wrap-none text-nowrap",
         default:

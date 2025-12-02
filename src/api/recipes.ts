@@ -2,10 +2,14 @@ const API_URL = import.meta.env.VITE_BACKEND_BASE_URL;
 const RECIPE_ENDPOINTS_BASE = `${API_URL}/recipes`;
 
 const RECIPE_ENDPOINTS = {
-  base: `${API_URL}/recipes/`,
+  base: RECIPE_ENDPOINTS_BASE,
+  getUserRecommendations: `${RECIPE_ENDPOINTS_BASE}/user-recommendations`,
   getRecommendations: `${RECIPE_ENDPOINTS_BASE}/recommendations`,
   getLocalFavourites: `${RECIPE_ENDPOINTS_BASE}/local-favourites`,
   getRecipesOfTheWeek: `${RECIPE_ENDPOINTS_BASE}/weekly`,
+  fetchByWithUserFavouriteStatus: (recipeID: string | undefined): string => {
+    return `${RECIPE_ENDPOINTS_BASE}/${recipeID}/favourite-status`;
+  },
   filerRecipesByIngredient: (ingredients: string[]) => {
     const params = new URLSearchParams();
 
@@ -28,9 +32,9 @@ const RECIPE_ENDPOINTS = {
 };
 
 export const RecipeAPI = {
-  fetchRecommendations: async (authFetch: typeof fetch) => {
+  fetchUserRecommendations: async (authFetch: typeof fetch) => {
     const recommendations = await authFetch(
-      RECIPE_ENDPOINTS.getRecommendations,
+      RECIPE_ENDPOINTS.getUserRecommendations,
       {
         method: "GET",
         credentials: "include",
@@ -38,7 +42,15 @@ export const RecipeAPI = {
     );
 
     if (!recommendations.ok)
-      throw new Error("An error occured while fetching recipe categories");
+      throw new Error("An error occured while fetching user recommendations");
+    return await recommendations.json();
+  },
+
+  fetchRecommendations: async () => {
+    const recommendations = await fetch(RECIPE_ENDPOINTS.getRecommendations);
+
+    if (!recommendations.ok)
+      throw new Error("An error occured while fetching recommended recipes");
     return await recommendations.json();
   },
 
@@ -67,17 +79,26 @@ export const RecipeAPI = {
     return await weeklies.json();
   },
 
-  fetchRecipebyID: async (
+  fetchByID: async (recipeId: string | undefined) => {
+    const recipe = await fetch(`${RECIPE_ENDPOINTS.base}/${recipeId}/`);
+
+    if (!recipe.ok)
+      throw new Error(`Unable to load recipe with id ${recipeId}`);
+    return recipe.json();
+  },
+
+  fetchWithFavouriteStatus: async (
     authFetch: typeof fetch,
     recipeId: string | undefined
   ) => {
-    const recipe = await authFetch(`${RECIPE_ENDPOINTS.base}${recipeId}/`, {
-      method: "GET",
-      credentials: "include",
-    });
+    const recipe = await authFetch(
+      RECIPE_ENDPOINTS.fetchByWithUserFavouriteStatus(recipeId),
+      {
+        method: "GET",
+        credentials: "include",
+      }
+    );
 
-    if (recipe.status == 403)
-      throw new Error("You are not allowed to access this recipe");
     if (!recipe.ok)
       throw new Error(`Unable to load recipe with id ${recipeId}`);
     return recipe.json();
@@ -100,10 +121,7 @@ export const RecipeAPI = {
     return await recipes.json();
   },
 
-  filterRecipesByCategory: async (
-    authFetch: typeof fetch,
-    category: string
-  ) => {
+  filterByCategory: async (authFetch: typeof fetch, category: string) => {
     const recipes = await authFetch(
       RECIPE_ENDPOINTS.filterRecipesByCategory(category),
       {

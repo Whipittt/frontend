@@ -77,7 +77,7 @@ export function LoginForm({ onFormSubmit }: LoginFormProps) {
         <Field>
           <FieldDescription className="text-center">
             Don&apos;t have an account?{" "}
-            <Link to="/signup" className="underline underline-offset-4">
+            <Link to="/auth/signup" className="underline underline-offset-4">
               Sign up
             </Link>
           </FieldDescription>

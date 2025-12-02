@@ -8,12 +8,11 @@ import { useAuth } from "@/services/authService";
 import UserAvatar from "@/components/userAvatar";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
-import { Link } from "react-router-dom";
 
 const APP_NAME = import.meta.env.VITE_APP_NAME;
 
 export default function Profile() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   const nameParts = (user?.fullname ?? "").trim().split(/\s+/).filter(Boolean);
 
@@ -64,15 +63,14 @@ export default function Profile() {
         <ProfileCard header="Meal Preferences" details={preferenceDetails} />
 
         <Card className="p-8 px-4 rounded-3xl flex justify-between items-start">
-          <Link to="/logout">
-            <Button
-              variant="outline"
-              className="rounded-full bg-transparent"
-            >
-              <LogOut />
-              <span>Logout</span>
-            </Button>
-          </Link>
+          <Button
+            variant="outline"
+            className="rounded-full bg-transparent"
+            onClick={logout}
+          >
+            <LogOut />
+            <span>Logout</span>
+          </Button>
         </Card>
       </MainLayout>
     </>

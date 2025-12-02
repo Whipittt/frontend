@@ -13,10 +13,10 @@
     --card-line: 0 0% 40%;
     --popover: 0 0% 13%;
     --popover-foreground: 0 0% 100%;
-    --primary: 47 98% 50%; 
-    --primary-foreground: 158 100 10;  
-    --secondary: 149 71% 39%;  
-    --secondary-foreground: 0 0% 100%;  
+    --primary: 47 98% 50%;
+    --primary-foreground: 158 100 10;
+    --secondary: 149 71% 39%;
+    --secondary-foreground: 0 0% 100%;
     --muted: 0 0% 20%;
     --muted-foreground: 280 7% 70%;
     --accent: 0 0% 41%;
@@ -37,7 +37,7 @@
     --sidebar-primary: 240 5.9% 10%;
     --sidebar-primary-foreground: 0 0% 98%;
     --sidebar-accent: 0 0% 20%;
-    --sidebar-accent-foreground: 149, 71%, 39%;   
+    --sidebar-accent-foreground: 149, 71%, 39%;
     --sidebar-border: 0 0% 40%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
@@ -92,24 +92,23 @@
 
   /* Handle */
   .scrollbar::-webkit-scrollbar-thumb {
-    background: #5e5e5e;  
+    background: #5e5e5e;
     border-radius: 10px;
   }
 
   /* Handle on hover */
   .scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #8f8f8f;  
+    background: #8f8f8f;
   }
 
   .hide-scrollbar::-webkit-scrollbar {
-  display: none;
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
 }
-.hide-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;     /* Firefox */
-}
-}
-
 
 @layer base {
   * {

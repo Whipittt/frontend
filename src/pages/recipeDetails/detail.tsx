@@ -61,7 +61,7 @@ function SectionSkeleton(props: {
 }
 
 export default function RecipeDetails(): JSX.Element {
-  const { authFetch } = useAuth();
+  const { isAuthenticated, authFetch } = useAuth();
   const { recipe_id } = useParams<Params>();
 
   const [recipe, setRecipe] = useState<Recipe | null>(null);
@@ -90,13 +90,15 @@ export default function RecipeDetails(): JSX.Element {
         setLoading(true);
         setError(null);
 
-        const data = await RecipeAPI.fetchRecipebyID(authFetch, recipe_id);
+        const data = isAuthenticated
+          ? await RecipeAPI.fetchWithFavouriteStatus(authFetch, recipe_id)
+          : await RecipeAPI.fetchByID(recipe_id);
         if (!isActive) return;
 
         if (!data) {
           setRecipe(null);
           setError("Recipe not found.");
-        } else {    
+        } else {
           setRecipe(data);
         }
       } catch (e: unknown) {
@@ -114,7 +116,7 @@ export default function RecipeDetails(): JSX.Element {
     return () => {
       isActive = false;
     };
-  }, [authFetch, recipe_id]);
+  }, [isAuthenticated, authFetch, recipe_id]);
 
   // Derived HTML
   const descriptionHtml = useMemo<string>(
@@ -135,7 +137,8 @@ export default function RecipeDetails(): JSX.Element {
 
   // Toggle favourite (optimistic update)
   const handleToggleFavourite = useCallback(async () => {
-    if (!recipe || favouriteLoading) return;
+    if (!recipe || favouriteLoading || !isAuthenticated) return;
+
     setFavouriteError(null);
     setFavouriteLoading(true);
 
@@ -157,7 +160,7 @@ export default function RecipeDetails(): JSX.Element {
     } finally {
       setFavouriteLoading(false);
     }
-  }, [authFetch, recipe, favouriteLoading]);
+  }, [isAuthenticated, authFetch, recipe, favouriteLoading]);
 
   // Safe rating conversion
   const rating: Rating = useMemo<Rating>(
@@ -166,7 +169,7 @@ export default function RecipeDetails(): JSX.Element {
   );
 
   return (
-    <MainLayout>
+    <MainLayout className="md:px-8 px-2">
       <section className="flex gap-4 justify-between items-center">
         <BackButton />
         <UserAvatar />
@@ -210,16 +213,18 @@ export default function RecipeDetails(): JSX.Element {
               <div className="flex gap-3 items-center flex-wrap">
                 <h1 className="text-xl font-medium">{recipe.title}</h1>
                 <div className="relative flex items-center">
-                  <FavouriteButton
-                    state={recipe.favourited ? "filled" : "outline"}
-                    onClick={handleToggleFavourite}
-                    aria-label={
-                      recipe.favourited
-                        ? "Remove from favourites"
-                        : "Add to favourites"
-                    }
-                    aria-pressed={recipe.favourited}
-                  />
+                  {isAuthenticated && (
+                    <FavouriteButton
+                      state={recipe.favourited ? "filled" : "outline"}
+                      onClick={handleToggleFavourite}
+                      aria-label={
+                        recipe.favourited
+                          ? "Remove from favourites"
+                          : "Add to favourites"
+                      }
+                      aria-pressed={recipe.favourited}
+                    />
+                  )}
                 </div>
               </div>
               <StarRating rating={rating} />

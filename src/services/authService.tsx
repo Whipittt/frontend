@@ -172,7 +172,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     const first = await baseFetch(input, init);
     if (first.status === 401) { // Experimental
       // toast.warning("login required");
-      // navigate("/login");
+      // navigate("/auth/login");
     }
     
     if (first.status !== 401 && first.status !== 419) return first;

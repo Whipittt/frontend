@@ -157,9 +157,12 @@ export function RecipeCommand() {
             z-50
           "
         >
-          <Command className="rounded-xl scrollbar">
-            <CommandList>
-              <CommandGroup heading="Selected Ingredients">
+          <Command className="rounded-xl ">
+            <CommandList className="scrollbar">
+              <CommandGroup
+                heading="Selected Ingredients"
+                className="sticky top-0 bg-popover z-50"
+              >
                 <div className="flex flex-wrap gap-2 p-2 py-4">
                   {selectedIngredients.length === 0 ? (
                     <span className="text-sm text-muted-foreground px-2">
@@ -174,9 +177,8 @@ export function RecipeCommand() {
                     ))
                   )}
                 </div>
+                <CommandSeparator />
               </CommandGroup>
-
-              <CommandSeparator />
 
               <CommandGroup heading="Ingredient suggestions">
                 <div className="p-2">

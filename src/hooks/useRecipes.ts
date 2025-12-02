@@ -3,11 +3,24 @@ import { UserAPI } from "@/api/users";
 import { useAuth } from "@/services/authService";
 import { useQuery } from "@tanstack/react-query";
 
-export function useRecipeRecommendationsCache() {
+export function useUserRecipeRecommendationsCache() {
   const { authFetch } = useAuth();
 
   const queryFunction = () => {
-    return RecipeAPI.fetchRecommendations(authFetch);
+    return RecipeAPI.fetchUserRecommendations(authFetch);
+  };
+
+  return useQuery({
+    queryKey: ["user_recipe_recommendations"],
+    queryFn: queryFunction,
+    staleTime: 1000 * 60 * 5,
+    retry: 1,
+  });
+}
+
+export function useRecipeRecommendationsCache() {
+  const queryFunction = () => {
+    return RecipeAPI.fetchRecommendations();
   };
 
   return useQuery({
@@ -67,7 +80,7 @@ export function useCategorizedRecipesCache(category_name: string) {
   const { authFetch } = useAuth();
 
   const queryFunction = () => {
-    return RecipeAPI.filterRecipesByCategory(authFetch, category_name);
+    return RecipeAPI.filterByCategory(authFetch, category_name);
   };
 
   return useQuery({
