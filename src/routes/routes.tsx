@@ -12,6 +12,9 @@ import RecipeDetails from "@/pages/recipeDetails/detail";
 import CreateMealPaln from "@/pages/mealplan/mealplan";
 import Forbidden from "@/pages/forbidden";
 import NotFound from "@/pages/notFound";
+import AddPreferences from "@/pages/addPreferences/addPreferences";
+import DashboardMetrics from "@/pages/admin/metrics/metrics";
+import Ingredients from "@/pages/admin/ingredients/ingredients";
 
 export type AppRoute = {
   path: string;
@@ -25,6 +28,7 @@ export const AUTH_ROUTES: AppRoute[] = [
 
 export const OPEN_ROUTES: AppRoute[] = [
   { path: "", element: <Home /> },
+  { path: "preferences/add", element: <AddPreferences /> },
   { path: "recipe/:recipe_id", element: <RecipeDetails /> },
   { path: "recipes/ingredients", element: <SearchResults /> },
   { path: "mealplan", element: <CreateMealPaln /> },
@@ -38,9 +42,9 @@ export const AUTHENTICATED_ROUTES: AppRoute[] = [
 ];
 
 export const ADMIN_ROUTES: AppRoute[] = [
-  { path: "dashboard", element: <Login /> },
+  { path: "dashboard", element: <DashboardMetrics /> },
   { path: "users", element: <Users /> },
   { path: "users/new", element: <AddNewUser /> },
   { path: "users/:user_id", element: <UserDetails /> },
-  { path: "ingredients", element: <SignUp /> },
+  { path: "ingredients", element: <Ingredients /> },
 ];

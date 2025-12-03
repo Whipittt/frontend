@@ -66,9 +66,9 @@ export function DashboardSidebar() {
             <SidebarMenu>
               <SidebarSeparator orientation="horizontal" />
               {menuItems.map((item) => {
-                const active = useLocation().pathname === item.url;
+                const active = useLocation().pathname === `/admin${item.url}`;
                 return (
-                  <Link to={item.url}>
+                  <Link to={`/admin${item.url}`}>
                     <SidebarMenuItem
                       key={item.title}
                       className={`px-4 py-2 font-medium hover:bg-sidebar-accent ${

@@ -3,6 +3,9 @@ import { useAuth } from "@/services/authService";
 import { toast } from "sonner";
 import { SignupForm } from "@/pages/signup/signupForm";
 import AuthPageLayout from "@/layouts/authLayout";
+import signupHeroImage from "@/assets/images/signup-hero.webp";
+
+
 
 const API_BASE = import.meta.env.VITE_BACKEND_BASE_URL;
 const SIGNUP_ENDPOINT = import.meta.env.VITE_SIGNUP_ENDPOINT;
@@ -77,7 +80,7 @@ export default function SignUp() {
   };
 
   return (
-    <AuthPageLayout mode="signup">
+    <AuthPageLayout heroImage={signupHeroImage} pageTitle="Create your account">
       <SignupForm
         onFormSubmit={({ fullName, email, password, confirmPassword }) =>
           handleSignupSubmit(fullName, email, password, confirmPassword)
