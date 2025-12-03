@@ -16,8 +16,7 @@ export default function Forbidden() {
   };
 
   const handleLoginAgain = () => {
-    navigate("/logout");
-    navigate("/login");
+    navigate("/auth/login");
   };
 
   return (
