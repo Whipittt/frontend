@@ -1,10 +1,6 @@
 import AuthPageLayout from "@/layouts/authLayout";
 import preferenceHeroImage from "@/assets/images/preference-hero.webp";
-import {
-  Field,
-  FieldGroup,
-  FieldLabel,
-} from "../../components/ui/field";
+import { Field, FieldGroup, FieldLabel } from "../../components/ui/field";
 import {
   Select,
   SelectContent,
@@ -20,6 +16,8 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { RestrictionCombobox } from "@/components/combobox";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 export function Option({
   label,
@@ -61,21 +59,25 @@ export default function AddPreferences() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
-const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  setError(null);
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
 
-  console.log({
-    level,
-    cookTime,
-    selectedRestrictions,
-    ethnicity,
-  });
+    console.log({
+      level,
+      cookTime,
+      selectedRestrictions,
+      ethnicity,
+    });
 
-  setLoading(false);
-};
+    setLoading(false);
+
+    toast.success("All set! Your preferences have been saved.");
+    navigate("/");
+  };
 
   return (
     <AuthPageLayout
@@ -153,7 +155,12 @@ const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
           </Field>
           <Field>
             <Button
-              disabled={loading || selectedRestrictions.length<1 || !level || !cookTime}
+              disabled={
+                loading ||
+                selectedRestrictions.length < 1 ||
+                !level ||
+                !cookTime
+              }
               type="submit"
               className="py-5 mt-4 rounded-md"
             >

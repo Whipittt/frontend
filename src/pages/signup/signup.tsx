@@ -14,7 +14,7 @@ export default function SignUp() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const from = (location.state as any)?.from?.pathname || "/";
+  const from = (location.state as any)?.from?.pathname || "/preferences/add";
 
   const handleSignupSubmit = async (
     fullName: string,
