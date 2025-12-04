@@ -53,5 +53,5 @@ export function PillWithClose({
 }
 
 export function CategoryPillSkeleton() {
-  return <Skeleton className={`h-7 w-20 rounded-full`} />;
+  return <Skeleton className={`h-7 w-20 shrink-0 rounded-full`} />;
 }
