@@ -237,7 +237,7 @@ export default function UserTable() {
           <Button
             variant="outline"
             disabled={isLoading}
-            onClick={() => navigate("/users/add-new")}
+            onClick={() => navigate("admin/users/new")}
           >
             <AddIcon />
             <span>Add New user</span>
