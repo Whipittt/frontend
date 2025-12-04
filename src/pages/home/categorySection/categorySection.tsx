@@ -42,7 +42,7 @@ export default function CategorySection({
           aria-live="polite"
         >
           {Array.from({ length: 12 }).map((_, i) => (
-            <CategoryPillSkeleton key={i} widthClass="w-20" />
+            <CategoryPillSkeleton key={i} />
           ))}
         </div>
       </section>
