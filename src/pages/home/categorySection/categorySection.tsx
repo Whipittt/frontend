@@ -23,7 +23,7 @@ export default function CategorySection({
 
   return (
     <section id="categories" className="flex flex-col gap-6">
-      <h2 className="text-sm md:px-0 px-4">Categories</h2>
+      <h2 className="hidden md:block text-sm md:px-0 px-4">Categories</h2>
 
       <div
         className="md:pl-0 pl-4 w-full flex gap-2 overflow-x-scroll snap-x snap-mandatory hide-scrollbar"
