@@ -173,7 +173,7 @@ export const columns: ColumnDef<User>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem
-              onClick={() => navigate(`/users/${row.original.id}`)}
+              onClick={() => navigate(`/admin/users/${row.original.id}`)}
             >
               Update user
             </DropdownMenuItem>
