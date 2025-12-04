@@ -52,10 +52,6 @@ export function PillWithClose({
   );
 }
 
-export function CategoryPillSkeleton({
-  widthClass = "w-20",
-}: {
-  widthClass?: string;
-}) {
-  return <Skeleton className={`h-7 ${widthClass} rounded-full`} />;
+export function CategoryPillSkeleton() {
+  return <Skeleton className={`h-7 w-20 rounded-full`} />;
 }
