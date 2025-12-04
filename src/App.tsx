@@ -35,6 +35,8 @@ function App() {
           <Route key={r.path} path={r.path} element={r.element} />
         ))}
       </Route>
+
+      <Route path="*" element={<Navigate to="/404" replace />} />
     </Routes>
   );
 }
