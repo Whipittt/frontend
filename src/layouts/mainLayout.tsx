@@ -25,7 +25,7 @@ export default function MainLayout({
 
           <main
             className={cn(
-              "flex flex-col flex-1 gap-8 md:px-8 py-4 md:py-8 overflow-auto scrollbar",
+              "flex flex-col flex-1 gap-8 md:px-8 py-4 md:py-8 overflow-auto md:scrollbar hide-scrollbar",
               className
             )}
           >
