@@ -13,7 +13,7 @@ export default function HorizontalScroll({
   return (
     <div
       className={cn(
-        "w-full grid md:grid-cols-6 grid-cols-2 gap-8 hide-scrollbar md:px-0 px-4",
+        "w-full grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4 hide-scrollbar md:px-0 px-4",
         className
       )}
     >
