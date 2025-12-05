@@ -2,18 +2,18 @@ import UserAvatar from "./userAvatar";
 
 interface PageHeaderprops {
   text: string;
-  includeAvatar?: boolean;
+  hideAvatar?: boolean;
 }
 
 export default function PageHeader({
   text,
-  includeAvatar = true,
+  hideAvatar = false,
 }: PageHeaderprops) {
   return (
     <div className="flex gap-4  justify-between items-center">
       <h1 className="font-serif text-3xl md:text-5xl">{text}</h1>
 
-      {includeAvatar && (
+      {!hideAvatar && (
         <div className="hidden md:block">
           <UserAvatar />
         </div>

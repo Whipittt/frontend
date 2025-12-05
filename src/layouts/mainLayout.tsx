@@ -9,12 +9,14 @@ interface MainLayoutProps {
   children: React.ReactNode;
   className?: string;
   pageTitle?: string;
+  hideMobileNavbar?: boolean;
 }
 
 export default function MainLayout({
   className,
   children,
-  pageTitle
+  pageTitle,
+  hideMobileNavbar = false,
 }: MainLayoutProps) {
   return (
     <SidebarProvider>
@@ -26,11 +28,11 @@ export default function MainLayout({
 
           <main
             className={cn(
-              "flex flex-col flex-1 gap-6 md:px-8 py-4 md:py-8 overflow-auto md:scrollbar hide-scrollbar",
+              "flex flex-col flex-1 gap-6 md:px-8 px-3 py-4 md:py-8 overflow-auto md:scrollbar hide-scrollbar",
               className
             )}
           >
-            <MobileNavbar />
+            {!hideMobileNavbar && <MobileNavbar />}
 
             {children}
           </main>

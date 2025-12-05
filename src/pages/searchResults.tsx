@@ -5,6 +5,9 @@ import { RecipeCardSm, RecipeCardSmSkeleton } from "@/components/recipeCard";
 import { useAuth } from "@/services/authService";
 import { RecipeAPI } from "@/api/recipes";
 import type { RecipeBrief } from "@/types";
+import PageHeader from "@/components/pageHeader";
+import { RecipeCommand } from "@/components/recipeCommand";
+import HorizontalScroll from "@/components/horizontalScroll";
 
 export default function SearchResults() {
   const { authFetch } = useAuth();
@@ -77,81 +80,59 @@ export default function SearchResults() {
       ? `Recipes with ${ingredients.join(", ")}`
       : "Search Results";
 
+  const description = `Showing results for recipes that contain(s) ${
+    ingredients.length > 0 ? `${ingredients.join(", ")}` : "--"
+  }`;
+
   return (
     <>
-      <MainLayout className="px-2 md:px-8" pageTitle={titlePrefix}>
-        <section className="mb-4 md:mb-8">
-          <h1 className="font-serif text-2xl md:text-5xl">Search Results</h1>
+      <MainLayout pageTitle={titlePrefix}>
+        <PageHeader text="Search Results" />
 
-          {/* <div className="mt-3 flex flex-wrap items-center gap-2">
-            {ingredients.length > 0 ? (
-              <>
-                <span className="text-sm md:text-base text-gray-600">
-                  Ingredients:
-                </span>
-                {ingredients.map((ing) => (
-                  <span
-                    key={ing}
-                    className="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-xs md:text-sm text-gray-800 border"
-                  >
-                    {ing}
-                  </span>
-                ))}
-              </>
-            ) : (
-              <span className="text-sm md:text-base text-gray-600">
-                Add ingredients using the URL, for example:
-                /recipes/ingredients?ingredient=rice&ingredient=tomatoe
-              </span>
-            )}
-          </div> */}
-
-          {/* {ingredients.length > 0 && !loading && !fetchError && (
-            <p className="mt-2 text-sm text-gray-500">
-              {recipes.length} result{recipes.length === 1 ? "" : "s"}
-            </p>
-          )} */}
+        <section>
+          <RecipeCommand />
         </section>
 
-        <h2 className="px-4 md:px-0 font-semibold text-base capitalize">
-          {`Showing results for recipes that include${
-            ingredients.length > 1 ? "s" : ""
-          }  ${
-            ingredients.length > 0
-              ? `${ingredients.join(", ").toLowerCase()}`
-              : ""
-          }`}
-        </h2>
+        <section className="flex flex-col gap-6 mt-4">
+          <div className="flex flex-col gap-1">
+            <h2 className="font-semibold text-lg md:text-base capitalize">
+              Top results
+            </h2>
+            <span className="text-sm md:max-w-[70%]">{description}</span>
+          </div>
 
-        {loading ? (
-          <section className="grid grid-cols-2 md:grid-cols-6 gap-2 md:gap-6">
-            {Array.from({ length: 12 }).map((_, i) => (
-              <RecipeCardSmSkeleton key={i} />
-            ))}
-          </section>
-        ) : fetchError ? (
-          <section className="py-6">
-            <p className="text-red-600">{fetchError}</p>
-          </section>
-        ) : ingredients.length === 0 ? (
-          <section className="py-6">
-            <p className="text-gray-600">
-              Provide at least one ingredient to search.
-            </p>
-          </section>
-        ) : recipes.length === 0 ? (
-          <section className="py-6">
-            <p className="text-gray-600">
-              Sorry we couldnt find any recipe with the provided ingredien
-            </p>
-          </section>
-        ) : (
-          <section className="grid grid-cols-2 md:grid-cols-6 gap-2 md:gap-6">
-            {recipes.map((recipe: RecipeBrief) => (
-              <RecipeCardSm key={recipe.id} recipe={recipe} />
-            ))}
-          </section>
-        )}
+          <HorizontalScroll className="p-0">
+            {loading ? (
+              <>
+                {Array.from({ length: 12 }).map((_, i) => (
+                  <RecipeCardSmSkeleton key={i} />
+                ))}
+              </>
+            ) : fetchError ? (
+              <section className="py-6">
+                <p className="text-destructive">{fetchError}</p>
+              </section>
+            ) : ingredients.length === 0 ? (
+              <section className="py-6">
+                <p className="text-gray-600">
+                  Provide at least one ingredient to search.
+                </p>
+              </section>
+            ) : recipes.length === 0 ? (
+              <section className="py-6">
+                <p className="text-gray-600">
+                  Sorry we couldnt find any recipe with the provided ingredien
+                </p>
+              </section>
+            ) : (
+              <>
+                {recipes.map((recipe: RecipeBrief) => (
+                  <RecipeCardSm key={recipe.id} recipe={recipe} />
+                ))}
+              </>
+            )}
+          </HorizontalScroll>
+        </section>
       </MainLayout>
     </>
   );

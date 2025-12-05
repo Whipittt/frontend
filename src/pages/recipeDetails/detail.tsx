@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState, type JSX } from "react";
 import { useParams } from "react-router-dom";
 import MainLayout from "@/layouts/mainLayout";
-import { AspectRatio } from "@radix-ui/react-aspect-ratio";
 import placeholderimage from "@/assets/images/place2.jpg";
 import { StarRating, type Rating } from "@/components/ui/star-rating";
 import UserAvatar from "@/components/userAvatar";
@@ -16,6 +15,7 @@ import { useAuth } from "@/services/authService";
 import { RecipeAPI } from "@/api/recipes";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFavouriteRecipesCache } from "@/hooks/useRecipes";
+import { AspectRatio } from "@radix-ui/react-aspect-ratio";
 
 type Params = {
   recipe_id: string;
@@ -119,21 +119,12 @@ export default function RecipeDetails(): JSX.Element {
   }, [isAuthenticated, authFetch, recipe_id]);
 
   // Derived HTML
-  const descriptionHtml = useMemo<string>(
-    () =>
-      recipe?.description
-        ? recipe.description
-        : "<p>No description provided.</p>",
-    [recipe?.description]
-  );
-
-  const instructionsHtml = useMemo<string>(
-    () =>
-      recipe?.instructions
-        ? recipe.instructions
-        : "<p>No instructions provided.</p>",
-    [recipe?.instructions]
-  );
+  const descriptionHtml = recipe?.description
+    ? recipe.description
+    : "<p>No description provided.</p>";
+  const instructionsHtml = recipe?.instructions
+    ? recipe.instructions
+    : "<p>No instructions provided.</p>";
 
   // Toggle favourite (optimistic update)
   const handleToggleFavourite = useCallback(async () => {
@@ -148,11 +139,9 @@ export default function RecipeDetails(): JSX.Element {
 
     try {
       const updated = await RecipeAPI.toggleFavourite(authFetch, recipe.id);
-      // Backend returns updated recipe object
       setRecipe(updated);
       refreshFavouritesCache();
     } catch (e: unknown) {
-      // Revert optimistic update
       setRecipe((r) => (r ? { ...r, favourited: previous } : r));
       const message =
         e instanceof Error ? e.message : "Failed to toggle favourite.";
@@ -160,17 +149,25 @@ export default function RecipeDetails(): JSX.Element {
     } finally {
       setFavouriteLoading(false);
     }
-  }, [isAuthenticated, authFetch, recipe, favouriteLoading]);
+  }, [
+    isAuthenticated,
+    authFetch,
+    recipe,
+    favouriteLoading,
+    refreshFavouritesCache,
+  ]);
 
-  // Safe rating conversion
-  const rating: Rating = useMemo<Rating>(
-    () => Number(recipe?.rating ?? 0) as Rating,
-    [recipe?.rating]
-  );
+  // Safe rating conversion (clamped to expected range if Rating is constrained)
+  const rating: Rating = useMemo(() => {
+    const r = Number(recipe?.rating ?? 0);
+    return Math.max(0, Math.min(5, r)) as Rating;
+  }, [recipe?.rating]);
+
+  const timeMinutes = Number(recipe?.time_minutes ?? 0);
 
   return (
-    <MainLayout className="md:px-8 px-2">
-      <section className="flex gap-4 justify-between items-center">
+    <MainLayout className="px-3">
+      <section className="hidden md:flex gap-4 justify-between items-center">
         <BackButton />
         <UserAvatar />
       </section>
@@ -191,9 +188,11 @@ export default function RecipeDetails(): JSX.Element {
             </div>
             <Skeleton className="h-8 w-24" />
           </div>
-          <AspectRatio ratio={21 / 9} className="relative">
+
+          <div className="relative aspect-[16/9]">
             <Skeleton className="absolute inset-0 h-full w-full rounded-md" />
-          </AspectRatio>
+          </div>
+
           <IngredientsSkeleton />
           <SectionSkeleton titleWidth="w-40" lines={5} />
           <SectionSkeleton titleWidth="w-44" lines={6} />
@@ -208,36 +207,45 @@ export default function RecipeDetails(): JSX.Element {
 
       {!loading && !error && recipe && (
         <section className="flex flex-col gap-8">
-          <div className="flex justify-between items-start">
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4 items-start">
             <div className="flex flex-col gap-2">
-              <div className="flex gap-3 items-center flex-wrap">
+              <div className="flex flex-wrap items-center gap-3">
                 <h1 className="text-xl font-medium">{recipe.title}</h1>
-                <div className="relative flex items-center">
-                  {isAuthenticated && (
-                    <FavouriteButton
-                      state={recipe.favourited ? "filled" : "outline"}
-                      onClick={handleToggleFavourite}
-                      aria-label={
-                        recipe.favourited
-                          ? "Remove from favourites"
-                          : "Add to favourites"
-                      }
-                      aria-pressed={recipe.favourited}
-                    />
-                  )}
-                </div>
+                {isAuthenticated && (
+                  <FavouriteButton
+                    state={recipe.favourited ? "filled" : "outline"}
+                    onClick={handleToggleFavourite}
+                    aria-label={
+                      recipe.favourited
+                        ? "Remove from favourites"
+                        : "Add to favourites"
+                    }
+                    aria-pressed={recipe.favourited}
+                    className="order-2 md:order-none"
+                  />
+                )}
               </div>
-              <StarRating rating={rating} />
-              {favouriteError && (
-                <p className="text-xs text-destructive" role="alert">
-                  {favouriteError}
-                </p>
-              )}
+
+              <div className="flex flex-wrap items-center gap-4">
+                <StarRating rating={rating} />
+                <div className="block md:hidden">
+                  <CookTime time={timeMinutes} />
+                </div>
+                {favouriteError && (
+                  <p className="text-xs text-destructive" role="alert">
+                    {favouriteError}
+                  </p>
+                )}
+              </div>
             </div>
-            <CookTime time={Number(recipe.time_minutes ?? 0)} />
+
+            <div className="hidden md:block">
+              <CookTime time={timeMinutes} />
+            </div>
           </div>
 
-          <AspectRatio ratio={21 / 9} className="relative">
+          {/* Image: taller on mobile via aspect-[4/3], wide on desktop via md:aspect-[21/9] */}
+          <AspectRatio ratio={16 / 10} className="relative">
             <img
               src={
                 imgError

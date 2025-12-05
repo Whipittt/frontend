@@ -83,7 +83,7 @@ export default function Favourites(): JSX.Element {
 
   return (
     <>
-      <MainLayout pageTitle="My Favourites" className="px-2 md:px-8 gap-12">
+      <MainLayout pageTitle="My Favourites" className="gap-12">
         <PageHeader text="Your Favourites" />
 
         {error && (

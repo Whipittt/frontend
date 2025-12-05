@@ -33,9 +33,9 @@ export default function Profile() {
     <>
       <MainLayout
         pageTitle="My profile"
-        className="flex flex-col gap-8 px-3 md:px-8"
+        className="gap-8"
       >
-        <PageHeader text="My Profile" includeAvatar={false} />
+        <PageHeader text="My Profile" hideAvatar />
 
         <section className="flex flex-col gap-4 md:gap-8">
           <Card className="p-8 rounded-3xl flex justify-between items-center">

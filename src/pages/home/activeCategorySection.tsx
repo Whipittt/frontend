@@ -17,12 +17,12 @@ export default function ActiveCategorySection({
       scrollBehaviour="horizontal"
     >
       {error && (
-        <p className="col-span-6 my-2 text-destructive text-center">{`Failed to fetch recipes under ${category.name} category`}</p>
+        <p className="col-span-full my-4 text-destructive text-center">{`Failed to fetch recipes under ${category.name} category`}</p>
       )}
 
       {!data ||
         (data.length == 0 && (
-          <p className="col-span-6 my-2 text-center">
+          <p className="col-span-full my-4 text-center">
             {`There are no ${category.name.toLowerCase()} recipes yet.`}
           </p>
         ))}

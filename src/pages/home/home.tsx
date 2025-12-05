@@ -6,6 +6,7 @@ import type { RecipeCategory } from "@/types";
 import { useState } from "react";
 import ActiveCategorySection from "./activeCategorySection";
 import PageHeader from "@/components/pageHeader";
+import MobileNavbar from "@/components/mobileNavbar";
 
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState<RecipeCategory | "all">(
@@ -19,8 +20,9 @@ export default function Home() {
 
   return (
     <>
-      <MainLayout>
-        <section className="flex flex-col gap-6 md:px-0 px-4">
+      <MainLayout hideMobileNavbar className="px-0">
+        <MobileNavbar className="px-2" /> 
+        <section className="flex flex-col gap-6 md:px-0 px-3">
           <PageHeader text="What will you like to cook today?" />
           <RecipeCommand />
         </section>

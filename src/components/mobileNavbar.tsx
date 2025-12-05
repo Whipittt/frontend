@@ -3,12 +3,15 @@ import logo from "@/assets/images/secondary-logo.png";
 import { Menu } from "lucide-react";
 import UserAvatar from "./userAvatar";
 import { useSidebar } from "./ui/sidebar";
+import { cn } from "@/lib/utils";
 
-export default function MobileNavbar() {
+export default function MobileNavbar({ className }: { className?: string }) {
   const { toggleSidebar } = useSidebar();
 
   return (
-    <nav className="flex justify-between md:hidden px-4 items-center">
+    <nav
+      className={cn("flex justify-between md:hidden items-center", className)}
+    >
       <div className="flex justify-center md:justify-start mt-1">
         <Link to="/" className="flex items-center font-medium">
           <img src={logo} alt="naijafoodie" className="h-8" />

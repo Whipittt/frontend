@@ -2,9 +2,10 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/services/authService";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
+import { Skeleton } from "./ui/skeleton";
 
 export default function UserAvatar() {
-  const { user, isAuthenticated } = useAuth();
+  const { user, loading, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   const initials = user?.fullname
@@ -16,19 +17,26 @@ export default function UserAvatar() {
 
   return (
     <>
-      <Link to={"/profile"} className={isAuthenticated ? "" : "hidden"}>
-        <Avatar>
-          <AvatarFallback>{initials}</AvatarFallback>
-        </Avatar>
-      </Link>
+      {loading && (
+        <Skeleton className="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full" />
+      )}
+      {!loading && isAuthenticated && (
+        <Link to={"/profile"} className={isAuthenticated ? "" : "hidden"}>
+          <Avatar>
+            <AvatarFallback>{initials}</AvatarFallback>
+          </Avatar>
+        </Link>
+      )}
 
-      <Button
-        variant={"outline"}
-        className={!isAuthenticated ? "rounded-full" : "hidden"}
-        onClick={() => navigate("/auth/login")}
-      >
-        Sign in
-      </Button>
+      {!loading && !isAuthenticated && (
+        <Button
+          variant={"outline"}
+          className="rounded-full"
+          onClick={() => navigate("/auth/login")}
+        >
+          Sign in
+        </Button>
+      )}
     </>
   );
 }
