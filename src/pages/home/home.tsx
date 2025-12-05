@@ -21,11 +21,12 @@ export default function Home() {
   return (
     <>
       <MainLayout hideMobileNavbar className="px-0">
-        <MobileNavbar className="px-2" /> 
-        <section className="flex flex-col gap-6 md:px-0 px-3">
+        <MobileNavbar className="px-3" /> 
+        
+        <div className="flex flex-col gap-6 md:px-0 px-3">
           <PageHeader text="What will you like to cook today?" />
           <RecipeCommand />
-        </section>
+        </div>
 
         <CategorySection
           activeCategory={activeCategory}
