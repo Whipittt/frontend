@@ -1,17 +1,14 @@
 import MainLayout from "@/layouts/mainLayout";
-import { Helmet } from "react-helmet-async";
 import FavouriteRecipeCard, {
   FavouriteRecipeCardSkeleton,
 } from "./favouriteRecipeCard";
-import UserAvatar from "@/components/userAvatar";
 import { useFavouriteRecipesCache } from "@/hooks/useRecipes";
 import type { RecipeBrief } from "@/types";
 import { useAuth } from "@/services/authService";
 import { RecipeAPI } from "@/api/recipes";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useMemo, type JSX } from "react";
-
-const APP_NAME = import.meta.env.VITE_APP_NAME;
+import PageHeader from "@/components/pageHeader";
 
 const FAVOURITES_QUERY_KEY = ["favourites"];
 
@@ -19,12 +16,17 @@ export default function Favourites(): JSX.Element {
   const queryClient = useQueryClient();
   const { authFetch } = useAuth();
 
-  const { data: favourites, error, isLoading, isFetching } = useFavouriteRecipesCache();
+  const {
+    data: favourites,
+    error,
+    isLoading,
+    isFetching,
+  } = useFavouriteRecipesCache();
 
   const toggleFavouriteMutation = useMutation({
-    mutationFn: async (recipeId: string ) =>
+    mutationFn: async (recipeId: string) =>
       RecipeAPI.toggleFavourite(authFetch, recipeId),
-    onMutate: async (recipeId: string ) => {
+    onMutate: async (recipeId: string) => {
       await queryClient.cancelQueries({ queryKey: FAVOURITES_QUERY_KEY });
 
       const previous =
@@ -62,8 +64,8 @@ export default function Favourites(): JSX.Element {
   });
 
   const handleRemove = useCallback(
-    (recipeId: string ) => {
-      if (toggleFavouriteMutation.isPending) return;  
+    (recipeId: string) => {
+      if (toggleFavouriteMutation.isPending) return;
       toggleFavouriteMutation.mutate(recipeId);
     },
     [toggleFavouriteMutation]
@@ -79,74 +81,36 @@ export default function Favourites(): JSX.Element {
     [favourites]
   );
 
-  if (error) {
-    return (
-      <MainLayout className="px-2 md:px-8 gap-12">
-        <section>
-          <div className="flex gap-4 justify-between items-center">
-            <h1 className="font-serif text-2xl md:text-5xl">Your Favourites</h1>
-            <UserAvatar />
-          </div>
-        </section>
-        <section className="flex flex-col gap-8">
-          <p className="text-center text-destructive">
-            Failed to fetch favourites.
-          </p>
-        </section>
-      </MainLayout>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <MainLayout className="px-2 md:px-8 gap-12">
-        <section>
-          <div className="flex gap-4 justify-between items-center">
-            <h1 className="font-serif text-2xl md:text-5xl">Your Favourites</h1>
-            <UserAvatar />
-          </div>
-        </section>
-        <section
-          className="flex flex-col gap-8"
-          aria-busy="true"
-          aria-live="polite"
-        >
-          {Array.from({ length: 6 }).map((_, i) => (
-            <FavouriteRecipeCardSkeleton key={i} />
-          ))}
-        </section>
-      </MainLayout>
-    );
-  }
-
-  if (isEmpty) {
-    return (
-      <MainLayout className="px-2 md:px-8 gap-12">
-        <section>
-          <div className="flex gap-4 justify-between items-center">
-            <h1 className="font-serif text-2xl md:text-5xl">Your Favourites</h1>
-            <UserAvatar />
-          </div>
-        </section>
-        <section className="flex flex-col gap-8">
-          <p className="text-center">You have no favourite recipes yet.</p>
-        </section>
-      </MainLayout>
-    );
-  }
-
   return (
     <>
-      <Helmet>
-        <title>{`My Favourites - ${APP_NAME}`}</title>
-      </Helmet>
-      <MainLayout className="px-2 md:px-8 gap-12">
-        <section>
-          <div className="flex gap-4 justify-between items-center">
-            <h1 className="font-serif text-2xl md:text-5xl">Your Favourites</h1>
-            <UserAvatar />
-          </div>
-        </section>
+      <MainLayout pageTitle="My Favourites" className="px-2 md:px-8 gap-12">
+        <PageHeader text="Your Favourites" />
+
+        {error && (
+          <section className="flex flex-col gap-8">
+            <p className="text-center text-destructive">
+              Failed to fetch favourites.
+            </p>
+          </section>
+        )}
+
+        {isLoading && (
+          <section
+            className="flex flex-col gap-8"
+            aria-busy="true"
+            aria-live="polite"
+          >
+            {Array.from({ length: 6 }).map((_, i) => (
+              <FavouriteRecipeCardSkeleton key={i} />
+            ))}
+          </section>
+        )}
+
+        {isEmpty && (
+          <section className="flex flex-col gap-8">
+            <p className="text-center">You have no favourite recipes yet.</p>
+          </section>
+        )}
 
         {mutationError && (
           <div className="text-center text-xs text-destructive" role="alert">
@@ -154,18 +118,20 @@ export default function Favourites(): JSX.Element {
           </div>
         )}
 
-        <section
-          className="flex flex-col gap-8"
-          aria-busy={toggleFavouriteMutation.isPending || isFetching}
-        >
-          {favourites?.map((recipe: RecipeBrief) => (
-            <FavouriteRecipeCard
-              key={recipe.id}
-              data={recipe}
-              onRemove={handleRemove}
-            />
-          ))}
-        </section>
+        {!error && !isLoading && !isEmpty && !mutationError && (
+          <section
+            className="flex flex-col gap-8"
+            aria-busy={toggleFavouriteMutation.isPending || isFetching}
+          >
+            {favourites?.map((recipe: RecipeBrief) => (
+              <FavouriteRecipeCard
+                key={recipe.id}
+                data={recipe}
+                onRemove={handleRemove}
+              />
+            ))}
+          </section>
+        )}
       </MainLayout>
     </>
   );

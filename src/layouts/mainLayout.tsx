@@ -3,6 +3,7 @@ import RootLayout from "./rootLayout";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/appSidebar";
 import { cn } from "@/lib/utils";
+import MobileNavbar from "@/components/mobileNavbar";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -25,10 +26,12 @@ export default function MainLayout({
 
           <main
             className={cn(
-              "flex flex-col flex-1 gap-8 md:px-8 py-4 md:py-8 overflow-auto md:scrollbar hide-scrollbar",
+              "flex flex-col flex-1 gap-6 md:px-8 py-4 md:py-8 overflow-auto md:scrollbar hide-scrollbar",
               className
             )}
           >
+            <MobileNavbar />
+
             {children}
           </main>
         </div>
