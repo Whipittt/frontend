@@ -225,7 +225,9 @@ export default function UserTable() {
   });
 
   return (
-    <Card className="w-full p-6 rounded-3xl">
+    <Card className="w-full md:p-6 rounded-none md:rounded-3xl border-none sm:bg-transparent
+      
+      md:border">
       <div className="flex py-4 flex-col md:flex-row md:items-center gap-4">
         <Input
           placeholder="Filter emails..."
