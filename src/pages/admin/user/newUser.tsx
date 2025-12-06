@@ -12,7 +12,7 @@ import { toast } from "sonner";
 import type { User } from "@/types";
 import { useAllUsersCache } from "@/hooks/useAllUsers";
 
-export default function AddNewUser() {
+export default function NewUser() {
   const [fullname, setFullname] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [isActive, setIsActive] = useState(false);

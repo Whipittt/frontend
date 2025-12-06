@@ -2,7 +2,7 @@ import { useAuth } from "@/services/authService";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { toast } from "sonner";
 
-export default function AdminRoutes() {
+export function RequireAdminAuth() {
   const { isAuthenticated, isSuperuser, loading } = useAuth();
   const location = useLocation();
 
@@ -18,7 +18,7 @@ export default function AdminRoutes() {
   return <Outlet />;
 }
 
-export function AuthenticatedRoutes() {
+export function RequireAuth() {
   const { isAuthenticated, loading } = useAuth();
   const location = useLocation();
 

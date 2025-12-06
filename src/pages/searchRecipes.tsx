@@ -9,7 +9,7 @@ import PageHeader from "@/components/pageHeader";
 import { RecipeCommand } from "@/components/recipeCommand";
 import HorizontalScroll from "@/components/horizontalScroll";
 
-export default function SearchResults() {
+export default function SearchRecipes() {
   const { authFetch } = useAuth();
   const [searchParams] = useSearchParams();
 

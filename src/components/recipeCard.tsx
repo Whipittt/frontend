@@ -29,7 +29,7 @@ export const RecipeCardSm: React.FC<RecipeCardProps> = ({ recipe }) => {
   const time = formatTime(recipe?.time_minutes);
 
   return (
-    <Link to={`/recipe/${recipe.id}`}>
+    <Link to={`/recipes/${recipe.id}`}>
       <Card className="w-[10rem] h-auto flex flex-col shrink-0 gap-5 border-none rounded-sm bg-transparent shadow-none text-sm text-[#FFFFFFBF]">
         <AspectRatio ratio={1 / 1}>
           <img
@@ -89,7 +89,7 @@ export const RecipeCardLg: React.FC<RecipeCardProps> = ({ recipe }) => {
   // const favState = recipe?.favourited ? "filled" : "outline";
 
   return (
-    <Link to={`/recipe/${recipe.id}`}>
+    <Link to={`/recipes/${recipe.id}`}>
       <Card className="w-[15rem] flex flex-col shrink-0 gap-6 border-none rounded-sm bg-transparent shadow-none text-sm text-[#FFFFFFBF]">
         <AspectRatio ratio={16 / 9}>
           <img

@@ -10,7 +10,11 @@ import {
   useReactTable,
   type VisibilityState,
 } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
+import {
+  ArrowUpDown,
+  ChevronDown,
+  MoreHorizontal,
+} from "lucide-react";
 import AddIcon from "@mui/icons-material/Add";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -35,6 +39,7 @@ import { useNavigate } from "react-router-dom";
 import type { Ingredient } from "@/types";
 import useIngredientsCache from "@/hooks/useIngredients";
 import { useMemo, useState } from "react";
+import RefreshButton from "@/components/refreshButton";
 
 export const columns: ColumnDef<Ingredient>[] = [
   {
@@ -98,7 +103,7 @@ export const columns: ColumnDef<Ingredient>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem
-              onClick={() => navigate(`/ingredients/${row.original.id}`)}
+              onClick={() => navigate(`/admin/dashboard/ingredients/${row.original.id}`)}
             >
               Update ingredient
             </DropdownMenuItem>
@@ -159,7 +164,7 @@ export default function Ingredientstable() {
           <Button
             variant="outline"
             disabled={isLoading}
-            onClick={() => navigate("/ingredients/add-new")}
+            onClick={() => navigate("/admin/dashboard/ingredients/new")}
           >
             <AddIcon />
             <span>Add New Ingredient</span>
@@ -192,14 +197,7 @@ export default function Ingredientstable() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <Button
-            variant="outline"
-            onClick={() => refetch()}
-            disabled={isFetching}
-            title="Refresh"
-          >
-            {isFetching ? "Refreshing..." : "Refresh"}
-          </Button>
+          <RefreshButton isFetching={isFetching} onClick={() => refetch()} />
         </div>
       </div>
 

@@ -3,15 +3,15 @@ import { RecipeCommand } from "@/components/recipeCommand";
 import CategorySection from "./categorySection/categorySection";
 import AllCategory from "./allCategory";
 import type { RecipeCategory } from "@/types";
-import { useState } from "react";
 import ActiveCategorySection from "./activeCategorySection";
 import PageHeader from "@/components/pageHeader";
 import MobileNavbar from "@/components/mobileNavbar";
+import { useSessionStorage } from "@/hooks/useSessionStorage";
 
 export default function Home() {
-  const [activeCategory, setActiveCategory] = useState<RecipeCategory | "all">(
-    "all"
-  );
+  const [activeCategory, setActiveCategory] = useSessionStorage<
+    RecipeCategory | "all"
+  >("activeCategory", "all");
 
   const handleCategoryChange = () => {
     if (activeCategory !== "all") {
@@ -21,8 +21,8 @@ export default function Home() {
   return (
     <>
       <MainLayout hideMobileNavbar className="px-0">
-        <MobileNavbar className="px-3" /> 
-        
+        <MobileNavbar className="px-3" />
+
         <div className="flex flex-col gap-6 md:px-0 px-3">
           <PageHeader text="What will you like to cook today?" />
           <RecipeCommand />

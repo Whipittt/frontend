@@ -3,6 +3,7 @@ import RootLayout from "./rootLayout";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { DashboardSidebar } from "@/components/dashboardSidebar";
+import { DashboardBreadcrumb } from "@/components/dashboardBreadcrumb";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -29,6 +30,8 @@ export default function DashboardLayout({
               className
             )}
           >
+            <DashboardBreadcrumb />
+            
             {children}
           </main>
         </div>

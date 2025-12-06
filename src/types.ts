@@ -1,4 +1,5 @@
 import { type Rating } from "@/components/ui/star-rating";
+import type { ReactNode } from "react";
 
 export interface FastAPIError {
   details: {
@@ -7,6 +8,13 @@ export interface FastAPIError {
     interface?: string;
   }[];
 }
+
+export type AppRoute = {
+  path?: string;
+  element?: ReactNode;
+  index?: boolean;
+  children?: AppRoute[];
+};
 
 export interface RecipeCategory {
   id: string;

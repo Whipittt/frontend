@@ -14,7 +14,7 @@ export default function FavouriteRecipeCard({
 }: FavouriteRecipeCardProps) {
   return (
     <div className="flex justify-between items-start gap-4">
-      <Link to={`/recipe/${recipe.id}`}>
+      <Link to={`/recipes/${recipe.id}`}>
         <div className="flex flex-col gap-1 w-full line-clamp-2">
           <span>{recipe.title}</span>
           <div className="flex gap-2 text-xs">

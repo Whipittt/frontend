@@ -1,8 +1,5 @@
 import logo from "@/assets/images/secondary-logo.png";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
-import PeopleAltRoundedIcon from "@mui/icons-material/PeopleAltRounded";
-import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
-import CalendarTodayRoundedIcon from "@mui/icons-material/CalendarTodayRounded";
 import LogoutIcon from "@mui/icons-material/Logout";
 import {
   Sidebar,
@@ -18,37 +15,35 @@ import {
 } from "@/components/ui/sidebar";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import { ChefHat, Package, Users } from "lucide-react";
+import LogoutConfirmation from "./logoutConfirmation";
+
+const BASE_URL = "/dashboard";
 
 const menuItems = [
   {
     title: "Metrics",
-    url: "/dashboard",
+    url: `${BASE_URL}`,
     icon: TrendingUpIcon,
   },
   {
     title: "Users",
-    url: "/users",
-    icon: PeopleAltRoundedIcon,
+    url: `${BASE_URL}/users`,
+    icon: Users,
   },
   {
     title: "Ingredients",
-    url: "/ingredients",
-    icon: CalendarTodayRoundedIcon,
+    url: `${BASE_URL}/ingredients`,
+    icon: Package,
   },
   {
     title: "Recipes",
-    url: "/recipes",
-    icon: DashboardRoundedIcon,
+    url: `${BASE_URL}/recipes`,
+    icon: ChefHat,
   },
 ];
 
-const menuFooterItems = [
-  {
-    title: "Logout",
-    url: "/logout",
-    icon: LogoutIcon,
-  },
-];
+const menuFooterItems: any[] = [];
 
 export function DashboardSidebar() {
   return (
@@ -66,9 +61,9 @@ export function DashboardSidebar() {
             <SidebarMenu>
               <SidebarSeparator orientation="horizontal" />
               {menuItems.map((item) => {
-                const active = useLocation().pathname === `/admin${item.url}`;
+                const active = useLocation().pathname === item.url;
                 return (
-                  <Link to={`/admin${item.url}`}>
+                  <Link to={`${item.url}`}>
                     <SidebarMenuItem
                       key={item.title}
                       className={`px-4 py-2 font-medium hover:bg-sidebar-accent ${
@@ -99,33 +94,43 @@ export function DashboardSidebar() {
 
       <SidebarFooter className="px-0">
         <SidebarMenu>
-          {menuFooterItems.map((item) => {
-            const active = useLocation().pathname === item.url;
-            return (
-              <>
-                <SidebarSeparator orientation="horizontal" />
-                <SidebarMenuItem
-                  key={item.title}
-                  className={`px-4 py-2 font-medium hover:bg-sidebar-accent ${
-                    active ? "bg-sidebar-accent" : ""
-                  }`}
-                >
-                  <SidebarMenuButton
-                    asChild
-                    isActive={active}
-                    className="gap-4"
+          {menuFooterItems.length > 0 &&
+            menuFooterItems.map((item) => {
+              const active = useLocation().pathname === item.url;
+              return (
+                <>
+                  <SidebarSeparator orientation="horizontal" />
+                  <SidebarMenuItem
+                    key={item.title}
+                    className={`px-4 py-2 font-medium hover:bg-sidebar-accent ${
+                      active ? "bg-sidebar-accent" : ""
+                    }`}
                   >
-                    <Link to={item.url}>
-                      <item.icon className="!w-5 !h-5" />
-                      <span className="text-sidebar-foreground">
-                        {item.title}
-                      </span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </>
-            );
-          })}
+                    <SidebarMenuButton
+                      asChild
+                      isActive={active}
+                      className="gap-4"
+                    >
+                      <Link to={item.url}>
+                        <item.icon className="!w-5 !h-5" />
+                        <span className="text-sidebar-foreground">
+                          {item.title}
+                        </span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </>
+              );
+            })}
+          <SidebarSeparator orientation="horizontal" />
+          <SidebarMenuItem className="px-4 py-2 font-medium hover:bg-sidebar-accent">
+            <LogoutConfirmation>
+              <SidebarMenuButton className="gap-4">
+                <LogoutIcon className="!w-5 !h-5" />
+                <span className="text-sidebar-foreground">Logout</span>
+              </SidebarMenuButton>
+            </LogoutConfirmation>
+          </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
     </Sidebar>

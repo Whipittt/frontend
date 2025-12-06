@@ -7,9 +7,10 @@ import UserAvatar from "@/components/userAvatar";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import PageHeader from "@/components/pageHeader";
+import LogoutConfirmation from "@/components/logoutConfirmation";
 
 export default function Profile() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
 
   const nameParts = (user?.fullname ?? "").trim().split(/\s+/).filter(Boolean);
 
@@ -31,10 +32,7 @@ export default function Profile() {
 
   return (
     <>
-      <MainLayout
-        pageTitle="My profile"
-        className="gap-8"
-      >
+      <MainLayout pageTitle="My profile" className="gap-8">
         <PageHeader text="My Profile" hideAvatar />
 
         <section className="flex flex-col gap-4 md:gap-8">
@@ -56,14 +54,12 @@ export default function Profile() {
           <ProfileCard header="Meal Preferences" details={preferenceDetails} />
 
           <Card className="p-8 px-4 rounded-3xl flex justify-between items-start">
-            <Button
-              variant="outline"
-              className="rounded-full bg-transparent"
-              onClick={logout}
-            >
-              <LogOut />
-              <span>Logout</span>
-            </Button>
+            <LogoutConfirmation>
+              <Button variant="outline" className="rounded-full bg-transparent">
+                <LogOut />
+                <span>Logout</span>
+              </Button>
+            </LogoutConfirmation>
           </Card>
         </section>
       </MainLayout>

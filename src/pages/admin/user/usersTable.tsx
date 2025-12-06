@@ -36,6 +36,7 @@ import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import type { User } from "@/types";
 import { useAllUsersCache } from "@/hooks/useAllUsers";
+import RefreshButton from "@/components/refreshButton";
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -173,7 +174,9 @@ export const columns: ColumnDef<User>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem
-              onClick={() => navigate(`/admin/users/${row.original.id}`)}
+              onClick={() =>
+                navigate(`/dashboard/users/${row.original.id}`)
+              }
             >
               Update user
             </DropdownMenuItem>
@@ -223,61 +226,56 @@ export default function UserTable() {
 
   return (
     <Card className="w-full p-6 rounded-3xl">
-      <div className="flex items-center py-4">
+      <div className="flex py-4 flex-col md:flex-row md:items-center gap-4">
         <Input
           placeholder="Filter emails..."
           value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("email")?.setFilterValue(event.target.value)
           }
-          className="max-w-sm bg-muted/60 "
+          className="max-w-sm bg-muted/60 md:order-first order-last"
           disabled={isLoading || isError}
         />
-        <div className="ml-auto flex gap-2">
+        <div className="md:ml-auto flex gap-4 flex-wrap ">
           <Button
             variant="outline"
             disabled={isLoading}
-            onClick={() => navigate("admin/users/new")}
+            onClick={() => navigate("/dashboard/users/new")}
           >
             <AddIcon />
             <span>Add New user</span>
           </Button>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" disabled={isLoading || isError}>
-                Columns <ChevronDown />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {table
-                .getAllColumns()
-                .filter((column) => column.getCanHide())
-                .map((column) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                      }
-                    >
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
-                  );
-                })}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="md:ml-auto flex gap-4 flex-wrap ">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" disabled={isLoading || isError}>
+                  Columns <ChevronDown />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {table
+                  .getAllColumns()
+                  .filter((column) => column.getCanHide())
+                  .map((column) => {
+                    return (
+                      <DropdownMenuCheckboxItem
+                        key={column.id}
+                        className="capitalize"
+                        checked={column.getIsVisible()}
+                        onCheckedChange={(value) =>
+                          column.toggleVisibility(!!value)
+                        }
+                      >
+                        {column.id}
+                      </DropdownMenuCheckboxItem>
+                    );
+                  })}
+              </DropdownMenuContent>
+            </DropdownMenu>
 
-          <Button
-            variant="outline"
-            onClick={() => refetch()}
-            disabled={isFetching}
-            title="Refresh"
-          >
-            {isFetching ? "Refreshing..." : "Refresh"}
-          </Button>
+            <RefreshButton isFetching={isFetching} onClick={() => refetch()} />
+          </div>
         </div>
       </div>
 
@@ -304,7 +302,6 @@ export default function UserTable() {
 
           <TableBody>
             {isLoading ? (
-              // Simple loading rows; replace with skeletons if you prefer
               Array.from({ length: 5 }).map((_, idx) => (
                 <TableRow key={`skeleton-${idx}`}>
                   {table.getAllLeafColumns().map((col) => (

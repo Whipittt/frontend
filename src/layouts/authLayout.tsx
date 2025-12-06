@@ -2,6 +2,7 @@ import React from "react";
 import RootLayout from "./rootLayout";
 import logo from "@/assets/images/primary-logo.png";
 import { Link } from "react-router-dom";
+import MobileNavbar from "@/components/mobileNavbar";
 
 interface AuthPageLayoutProps {
   children: React.ReactNode;
@@ -29,8 +30,9 @@ export default function AuthPageLayout({
             </Link>
           </div>
         </div>
-        <div className="bg-background text-foreground flex flex-col gap-4 p-6 md:p-20">
-          <div className="flex flex-1 w-full">
+        <div className="bg-background text-foreground flex flex-col gap-4 p-6 px-3 md:p-20">
+          <div className="flex flex-col gap-4 flex-1 w-full">
+            <MobileNavbar noMenuButton/>
             <div className="w-full">{children}</div>
           </div>
         </div>
