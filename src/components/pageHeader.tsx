@@ -5,7 +5,7 @@ interface PageHeaderprops {
   hideAvatar?: boolean;
 }
 
-export default function PageHeader({
+export default function PageHeaderWithAvatar({
   text,
   hideAvatar = false,
 }: PageHeaderprops) {

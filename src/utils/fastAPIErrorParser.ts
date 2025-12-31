@@ -13,17 +13,18 @@ export function isFastAPIError(obj: any): obj is FastAPIError {
 
 export const FastAPIErrorParser = {
   first(error: any): string {
-    return error?.detail?.[0]?.msg || "Something went wrong";
+    return error?.detail?.[0]?.msg || "An error occured making the request";
   },
 
   all(error: any): string[] {
     return Array.isArray(error?.details)
       ? error.details.map((e: any) => e.msg)
-      : ["Something went wrong"];
+      : ["An error occured making the request"];
   },
 
   withFields(error: any): string[] {
-    if (!Array.isArray(error?.detail)) return ["Something went wrong"];
+    if (!Array.isArray(error?.detail))
+      return ["An error occured making the request"];
 
     return error.detail.map((e: any) => {
       const field = e.loc?.slice(1).join(".") || "field";
@@ -34,13 +35,11 @@ export const FastAPIErrorParser = {
 
 export async function handleFetchError(
   response: Response,
-  defaultMessage: string = "something went wrong"
+  defaultMessage: string = "An error occured making the request"
 ) {
-  if (!response.ok) {
-    const data = await response.json();
+  const data = await response.json();
 
-    if (isFastAPIError(data)) throw new Error(FastAPIErrorParser.first(data));
-
-    throw new Error(defaultMessage);
-  }
+  if (isFastAPIError(data)) return new Error(FastAPIErrorParser.first(data));
+  else if (data.detail) return new Error(data.detail);
+  else return new Error(defaultMessage);
 }

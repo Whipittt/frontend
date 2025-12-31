@@ -16,6 +16,8 @@ import { RecipeAPI } from "@/api/recipes";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFavouriteRecipesCache } from "@/hooks/useRecipes";
 import { AspectRatio } from "@radix-ui/react-aspect-ratio";
+import { cn } from "@/lib/utils";
+import { ShoppingListPopup } from "@/components/shoppingListPopup";
 
 type Params = {
   recipe_id: string;
@@ -67,6 +69,7 @@ export default function RecipeDetails(): JSX.Element {
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [imgIsLoading, setImgIsLoading] = useState<boolean>(true);
   const [imgError, setImgError] = useState<boolean>(false);
 
   // Favourite toggle specific state
@@ -165,6 +168,8 @@ export default function RecipeDetails(): JSX.Element {
 
   const timeMinutes = Number(recipe?.time_minutes ?? 0);
 
+  const [open, setOpen] = useState(false);
+
   return (
     <MainLayout className="px-3">
       <section className="hidden md:flex gap-4 justify-between items-center">
@@ -244,7 +249,6 @@ export default function RecipeDetails(): JSX.Element {
             </div>
           </div>
 
-          {/* Image: taller on mobile via aspect-[4/3], wide on desktop via md:aspect-[21/9] */}
           <AspectRatio ratio={16 / 10} className="relative">
             <img
               src={
@@ -252,15 +256,19 @@ export default function RecipeDetails(): JSX.Element {
                   ? placeholderimage
                   : recipe.display_image || placeholderimage
               }
+              onLoad={() => setImgIsLoading(false)}
               alt={recipe.title || "Recipe image"}
-              className="h-full w-full object-cover brightness-[0.85]"
+              className={cn(
+                "h-full w-full object-cover brightness-[0.85]",
+                !imgIsLoading ? "opacity-100 blur-0" : "opacity-0 blur-md"
+              )}
               onError={() => setImgError(true)}
               loading="lazy"
             />
             <div className="absolute bottom-0 left-0 w-full h-28 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
             <Button
-              variant="ghost"
-              className="absolute bottom-2 left-2 text-white hover:bg-white/20"
+              variant="zombie"
+              className="absolute bottom-2 left-4 text-white"
               aria-label="Add to meal plan"
             >
               <AddRoundedIcon />
@@ -272,10 +280,11 @@ export default function RecipeDetails(): JSX.Element {
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-medium">Ingredients</h2>
               <Button
-                variant="ghost"
-                className="text-primary text-sm"
+                variant="zombie"
+                className="text-primary hover:text-primary/80 "
                 disabled={!recipe.ingredients?.length}
                 aria-disabled={!recipe.ingredients?.length}
+                onClick={() => setOpen((prev) => !prev)}
               >
                 Get Shopping List
               </Button>
@@ -306,6 +315,17 @@ export default function RecipeDetails(): JSX.Element {
           No recipe data.
         </div>
       )}
+
+      <ShoppingListPopup
+        open={open}
+        onOpenChange={setOpen}
+        recipeTitle={recipe?.title ?? ""}
+        ingredients={
+          recipe && recipe.ingredients
+            ? recipe.ingredients.map((ing: Ingredient) => ing.name)
+            : []
+        }
+      />
     </MainLayout>
   );
 }

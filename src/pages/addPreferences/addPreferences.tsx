@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import { RestrictionCombobox } from "@/components/combobox";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { useAddPreferenceData } from "@/hooks/useUsersData";
 
 export function Option({
   label,
@@ -50,33 +51,51 @@ export function Option({
 }
 
 export default function AddPreferences() {
-  const [level, setLevel] = useState("");
-  const [cookTime, setCookTime] = useState("");
-  const [selectedRestrictions, setSelectedRestrictions] = useState<string[]>(
-    []
-  );
+  const [skill_level, setSkillLevel] = useState("");
+  const [cooking_time, setCookingTime] = useState("");
+  const [dietary_restriction_ids, setDietaryRestrictionIds] = useState<
+    string[]
+  >([]);
   const [ethnicity, setEthnicity] = useState("Igbo");
 
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const {
+    mutateAsync: addPreference,
+    isPending,
+    isError,
+    error: mutError,
+  } = useAddPreferenceData();
+
   const navigate = useNavigate();
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError(null);
 
-    console.log({
-      level,
-      cookTime,
-      selectedRestrictions,
-      ethnicity,
-    });
+    try {
+      const res = await addPreference({
+        skill_level,
+        cooking_time,
+        ethnicity,
+        dietary_restriction_ids,
+      });
 
-    setLoading(false);
+      if (isError) {
+        setError(mutError.message);
+      }
 
-    toast.success("All set! Your preferences have been saved.");
-    navigate("/");
+      if (res && !isError && !isPending) {
+        toast.success("All set! Your preferences have been saved.");
+        navigate("/");
+      }
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Failed to set preferences, please try again."
+      );
+    }
   };
 
   return (
@@ -101,29 +120,30 @@ export default function AddPreferences() {
           <Field className="grid grid-cols-2 gap-4">
             <Field>
               <FieldLabel htmlFor="password">Skill Level</FieldLabel>
-              <Select value={level} onValueChange={setLevel}>
+              <Select value={skill_level} onValueChange={setSkillLevel}>
                 <SelectTrigger className="w-[180px] border-none outline-none bg-[#202020]">
                   <SelectValue placeholder="Beginner" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectItem value="beginner">Beginner</SelectItem>
-                    <SelectItem value="intermediate">Intermediate</SelectItem>
-                    <SelectItem value="advanced">Advanced</SelectItem>
+                    <SelectItem value="Beginner">Beginner</SelectItem>
+                    <SelectItem value="Intermediate">Intermediate</SelectItem>
+                    <SelectItem value="Advanced">Advanced</SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>
             </Field>
+            
             <Field>
               <FieldLabel htmlFor="confirm-password">Cooking Time</FieldLabel>
-              <Select value={cookTime} onValueChange={setCookTime}>
+              <Select value={cooking_time} onValueChange={setCookingTime}>
                 <SelectTrigger className="w-[180px] border-none outline-none bg-[#202020]">
                   <SelectValue placeholder="Quick Meals" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectItem value="quick_meals">Quick Meals</SelectItem>
-                    <SelectItem value="long_prep_meals">
+                    <SelectItem value="Quick meals">Quick Meals</SelectItem>
+                    <SelectItem value="Long prep meals">
                       Long-Prep Meals
                     </SelectItem>
                   </SelectGroup>
@@ -135,8 +155,8 @@ export default function AddPreferences() {
           <Field>
             <FieldLabel htmlFor="email">Dietary Restrictions</FieldLabel>
             <RestrictionCombobox
-              selected={selectedRestrictions}
-              setSelected={setSelectedRestrictions}
+              selected={dietary_restriction_ids}
+              setSelected={setDietaryRestrictionIds}
             />
           </Field>
 
@@ -156,15 +176,15 @@ export default function AddPreferences() {
           <Field>
             <Button
               disabled={
-                loading ||
-                selectedRestrictions.length < 1 ||
-                !level ||
-                !cookTime
+                isPending ||
+                dietary_restriction_ids.length < 1 ||
+                !skill_level ||
+                !cooking_time
               }
               type="submit"
               className="py-5 mt-4 rounded-md"
             >
-              {loading ? "Submiting..." : "Submit"}
+              {isPending ? "Submiting..." : "Submit"}
             </Button>
           </Field>
         </FieldGroup>

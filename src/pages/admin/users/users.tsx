@@ -1,6 +1,6 @@
 import DashboardLayout from "@/layouts/dashboardLayout";
 import UserTable from "./usersTable";
-import { OverviewSection } from "../metrics/sectionCards";
+import { OverviewSection } from "./sectionCards";
 
 export default function Users() {
   return (

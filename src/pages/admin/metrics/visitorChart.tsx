@@ -23,6 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { useSessionStorage } from "@/hooks/useSessionStorage";
 
 export const description = "An interactive area chart";
 
@@ -136,7 +137,10 @@ const chartConfig = {
 
 export function VisitorChart() {
   const isMobile = useIsMobile();
-  const [timeRange, setTimeRange] = React.useState("90d");
+  const [timeRange, setTimeRange] = useSessionStorage(
+    "visitorsChatTimeRange",
+    "90d"
+  );
 
   React.useEffect(() => {
     if (isMobile) {
@@ -194,7 +198,7 @@ export function VisitorChart() {
 
           <Select value={timeRange} onValueChange={setTimeRange}>
             <SelectTrigger
-              className="text-secondary-foreground flex md:hidden w-40 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate @[767px]/card:hidden"
+              className="flex md:hidden w-40 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate @[767px]/card:hidden"
               aria-label="Select a value"
             >
               <SelectValue placeholder="Last 3 months" />

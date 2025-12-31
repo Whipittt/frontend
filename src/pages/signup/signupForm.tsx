@@ -55,7 +55,7 @@ export function SignupForm({ onFormSubmit }: SignupFormProps) {
     <form noValidate onSubmit={handleSubmit} className={"flex flex-col gap-6"}>
       <FieldGroup>
         <div className="flex flex-col gap-1">
-          <h1 className="font-serif text-primary text-5xl font-normal">
+          <h1 className="font-serif text-secondary text-5xl font-normal">
             Create an account
           </h1>
         </div>
@@ -72,6 +72,7 @@ export function SignupForm({ onFormSubmit }: SignupFormProps) {
             placeholder="Nebo Ikechukwu"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
+            className="focus-visible:ring-secondary"
           />
         </Field>
         <Field>
@@ -82,6 +83,7 @@ export function SignupForm({ onFormSubmit }: SignupFormProps) {
             placeholder="unclenebo@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            className="focus-visible:ring-secondary"
           />
           <FieldDescription>
             We&apos;ll use this to contact you. We will not share your email
@@ -97,6 +99,7 @@ export function SignupForm({ onFormSubmit }: SignupFormProps) {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                className="focus-visible:ring-secondary"
               />
             </Field>
             <Field>
@@ -108,6 +111,7 @@ export function SignupForm({ onFormSubmit }: SignupFormProps) {
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
+                className="focus-visible:ring-secondary"
               />
             </Field>
           </Field>
@@ -123,6 +127,7 @@ export function SignupForm({ onFormSubmit }: SignupFormProps) {
         </Field>
         <Field>
           <Button
+            variant="secondary"
             disabled={
               loading || !fullName || !email || !password || !confirmPassword
             }
@@ -133,7 +138,13 @@ export function SignupForm({ onFormSubmit }: SignupFormProps) {
         </Field>
         <Field>
           <FieldDescription className="px-6 text-center">
-            Already have an account? <Link to="/auth/login">Sign in</Link>
+            Already have an account?{" "}
+            <Link
+              to="/auth/login"
+              className="underline hover:!text-secondary/80"
+            >
+              Sign in
+            </Link>
           </FieldDescription>
         </Field>
       </FieldGroup>

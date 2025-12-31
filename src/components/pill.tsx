@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 
 type BadgeVariant = React.ComponentProps<typeof Badge>["variant"];
 
-export function CategoryPill({
+export function Pill({
   label,
   variant = "muted",
   onActive
@@ -52,6 +52,6 @@ export function PillWithClose({
   );
 }
 
-export function CategoryPillSkeleton() {
+export function PillSkeleton() {
   return <Skeleton className={`h-7 w-20 shrink-0 rounded-full`} />;
 }

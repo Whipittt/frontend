@@ -1,16 +1,34 @@
 import { RecipeCategoryApi } from "@/api/recipeCategory";
+import { DEFAULT_CACHE_STALE_TIME } from "@/constants";
+import { queryClient } from "@/lib/utils";
 import { useAuth } from "@/services/authService";
-import { useQuery } from "@tanstack/react-query";
+import type { RecipeCategory } from "@/types";
+import { useQuery, useMutation } from "@tanstack/react-query";
 
-export function useRecipeCategoryCache() {
+const QUERY_KEY = "recipe_categories";
+
+export function useRecipeCategoryData() {
+  return useQuery({
+    queryKey: [QUERY_KEY],
+    queryFn: () => {
+      return RecipeCategoryApi.fetchAll();
+    },
+    staleTime: DEFAULT_CACHE_STALE_TIME,
+    retry: 1,
+  });
+}
+
+export function addRecipeCategoryData() {
   const { authFetch } = useAuth();
 
-  return useQuery({
-    queryKey: ["recipe_categories"],
-    queryFn: () => {
-      return RecipeCategoryApi.fetchAllCategories(authFetch);
+  return useMutation({
+    mutationFn: (newCategoryData: RecipeCategory) => {
+      return RecipeCategoryApi.admin.addOne(authFetch, newCategoryData);
     },
-    staleTime: 1000 * 60 * 5,
-    retry: 1,
+
+    onSuccess: () =>
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEY],
+      }),
   });
 }

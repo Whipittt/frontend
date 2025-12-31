@@ -13,10 +13,10 @@
     --card-line: 0 0% 40%;
     --popover: 0 0% 13%;
     --popover-foreground: 0 0% 100%;
-    --primary: 47 98% 50%;
+    --primary: 149 71% 39%;
     --primary-foreground: 158 100 10;
-    --secondary: 149 71% 39%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 47 98% 50%;
+    --secondary-foreground: 158 100 10;
     --muted: 0 0% 20%;
     --muted-foreground: 280 7% 70%;
     --accent: 0 0% 41%;
@@ -25,7 +25,7 @@
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 30%;
     --input: 240 5.9% 90%;
-    --ring: 47 98% 50%;
+    --ring: 149 71% 35%;
     --chart-1: 142 83% 46%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
@@ -87,7 +87,7 @@
   /* Track */
   .scrollbar::-webkit-scrollbar-track {
     background: transparent;
-    margin: 5px 0px;
+    margin: 5px 2px;
   }
 
   /* Handle */
@@ -110,6 +110,19 @@
   }
 }
 
+/* Chrome, Edge, Safari */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+
 @layer base {
   * {
     @apply border-border;
@@ -117,4 +130,27 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.ProseMirror {
+  outline: none;
+}
+
+.ProseMirror p {
+  margin: 0.3rem 0;
+}
+
+.ProseMirror .is-empty::before {
+  color: hsl(280 7% 70%);
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+.receipt-top {
+  background:
+    radial-gradient(circle at 12px 12px, transparent 10px, white 11px)
+      repeat-x;
+  background-size: 24px 24px;
 }

@@ -1,12 +1,12 @@
-import DashboardLayout from '@/layouts/dashboardLayout'
-import { OverviewSection } from '../metrics/sectionCards'
-import Ingredientstable from './ingredientsTable'
+import DashboardLayout from "@/layouts/dashboardLayout";
+import IngredientsTable from "./ingredientsTable";
+import { OverviewSection } from "./overviewSect";
 
 export default function Ingredients() {
   return (
     <DashboardLayout pageTitle="Ingredients">
-      <OverviewSection/>
-      <Ingredientstable/>
+      <OverviewSection />
+      <IngredientsTable />
     </DashboardLayout>
-  )
+  );
 }

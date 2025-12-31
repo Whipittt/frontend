@@ -5,7 +5,7 @@ import { RecipeCardSm, RecipeCardSmSkeleton } from "@/components/recipeCard";
 import { useAuth } from "@/services/authService";
 import { RecipeAPI } from "@/api/recipes";
 import type { RecipeBrief } from "@/types";
-import PageHeader from "@/components/pageHeader";
+import PageHeaderWithAvatar from "@/components/pageHeader";
 import { RecipeCommand } from "@/components/recipeCommand";
 import HorizontalScroll from "@/components/horizontalScroll";
 
@@ -87,7 +87,7 @@ export default function SearchRecipes() {
   return (
     <>
       <MainLayout pageTitle={titlePrefix}>
-        <PageHeader text="Search Results" />
+        <PageHeaderWithAvatar text="Search Results" />
 
         <section>
           <RecipeCommand />

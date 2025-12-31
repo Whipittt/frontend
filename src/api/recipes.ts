@@ -1,15 +1,19 @@
-const API_URL = import.meta.env.VITE_BACKEND_BASE_URL;
-const RECIPE_ENDPOINTS_BASE = `${API_URL}/recipes`;
+import type { NewRecipe } from "@/types";
+import { handleFetchError } from "@/utils/fastAPIErrorParser";
+import { DEFAULT_LIMIT, URLWithPagination } from "@/utils/urlWithPagination";
 
-const RECIPE_ENDPOINTS = {
-  base: RECIPE_ENDPOINTS_BASE,
-  getUserRecommendations: `${RECIPE_ENDPOINTS_BASE}/user-recommendations`,
-  getRecommendations: `${RECIPE_ENDPOINTS_BASE}/recommendations`,
-  getLocalFavourites: `${RECIPE_ENDPOINTS_BASE}/local-favourites`,
-  getRecipesOfTheWeek: `${RECIPE_ENDPOINTS_BASE}/weekly`,
-  fetchByWithUserFavouriteStatus: (recipeID: string | undefined): string => {
-    return `${RECIPE_ENDPOINTS_BASE}/${recipeID}/favourite-status`;
-  },
+const API_URL = import.meta.env.VITE_BACKEND_BASE_URL;
+const ENDPOINTS_BASE = `${API_URL}/recipes/`;
+
+const ENDPOINTS = {
+  base: ENDPOINTS_BASE,
+  baseWithId: (recipeID: string) => `${ENDPOINTS_BASE}${recipeID}`,
+  getUserRecommendations: `${ENDPOINTS_BASE}user-recommendations`,
+  getRecommendations: `${ENDPOINTS_BASE}recommendations`,
+  getLocalFavourites: `${ENDPOINTS_BASE}local-favourites`,
+  getRecipesOfTheWeek: `${ENDPOINTS_BASE}weekly`,
+  fetchByWithUserFavouriteStatus: (recipeID: string | undefined): string =>
+    `${ENDPOINTS_BASE}${recipeID}/favourite-status`,
   filerRecipesByIngredient: (ingredients: string[]) => {
     const params = new URLSearchParams();
 
@@ -17,59 +21,61 @@ const RECIPE_ENDPOINTS = {
       if (item.trim()) params.append("ingredients", item.trim());
     });
 
-    return `${RECIPE_ENDPOINTS_BASE}/s/?${params.toString()}`;
+    return `${ENDPOINTS_BASE}s/?${params.toString()}`;
   },
   filterRecipesByCategory: (category: string) => {
     const params = new URLSearchParams();
 
     params.append("category", category.trim());
 
-    return `${RECIPE_ENDPOINTS_BASE}/s/categories?${params.toString()}`;
+    return `${ENDPOINTS_BASE}s/categories?${params.toString()}`;
   },
-  toggleFavourite: (recipeId: string) => {
-    return `${RECIPE_ENDPOINTS_BASE}/${recipeId}/favourite/toggle`;
-  },
+  toggleFavourite: (recipeId: string) =>
+    `${ENDPOINTS_BASE}${recipeId}/favourite/toggle`,
 };
 
 export const RecipeAPI = {
   fetchUserRecommendations: async (authFetch: typeof fetch) => {
-    const recommendations = await authFetch(
-      RECIPE_ENDPOINTS.getUserRecommendations,
-      {
-        method: "GET",
-        credentials: "include",
-      }
-    );
+    const res = await authFetch(ENDPOINTS.getUserRecommendations, {
+      method: "GET",
+      credentials: "include",
+    });
 
-    if (!recommendations.ok)
-      throw new Error("An error occured while fetching user recommendations");
-    return await recommendations.json();
+    if (!res.ok)
+      throw handleFetchError(
+        res,
+        "An error occured while fetching user recommendations"
+      );
+    else return res.json();
   },
 
   fetchRecommendations: async () => {
-    const recommendations = await fetch(RECIPE_ENDPOINTS.getRecommendations);
+    const res = await fetch(ENDPOINTS.getRecommendations);
 
-    if (!recommendations.ok)
-      throw new Error("An error occured while fetching recommended recipes");
-    return await recommendations.json();
+    if (!res.ok)
+      throw await handleFetchError(
+        res,
+        "An error occured while fetching recommended recipes"
+      );
+    else return res.json();
   },
 
   fetchLocalFavourites: async (authFetch: typeof fetch) => {
-    const localFavourites = await authFetch(
-      RECIPE_ENDPOINTS.getLocalFavourites,
-      {
-        method: "GET",
-        credentials: "include",
-      }
-    );
+    const res = await authFetch(ENDPOINTS.getLocalFavourites, {
+      method: "GET",
+      credentials: "include",
+    });
 
-    if (!localFavourites.ok)
-      throw new Error("An error occured while fetching local favourites");
-    return await localFavourites.json();
+    if (!res.ok)
+      throw await handleFetchError(
+        res,
+        "An error occured while fetching local favourites"
+      );
+    else return res.json();
   },
 
   fetchRecipesOfTheWeek: async (authFetch: typeof fetch) => {
-    const weeklies = await authFetch(RECIPE_ENDPOINTS.getRecipesOfTheWeek, {
+    const weeklies = await authFetch(ENDPOINTS.getRecipesOfTheWeek, {
       method: "GET",
       credentials: "include",
     });
@@ -80,11 +86,14 @@ export const RecipeAPI = {
   },
 
   fetchByID: async (recipeId: string | undefined) => {
-    const recipe = await fetch(`${RECIPE_ENDPOINTS.base}/${recipeId}/`);
+    const res = await fetch(`${ENDPOINTS.base}${recipeId}/`);
 
-    if (!recipe.ok)
-      throw new Error(`Unable to load recipe with id ${recipeId}`);
-    return recipe.json();
+    if (!res.ok)
+      throw await handleFetchError(
+        res,
+        `Unable to load recipe with id ${recipeId}`
+      );
+    else return res.json();
   },
 
   fetchWithFavouriteStatus: async (
@@ -92,7 +101,7 @@ export const RecipeAPI = {
     recipeId: string | undefined
   ) => {
     const recipe = await authFetch(
-      RECIPE_ENDPOINTS.fetchByWithUserFavouriteStatus(recipeId),
+      ENDPOINTS.fetchByWithUserFavouriteStatus(recipeId),
       {
         method: "GET",
         credentials: "include",
@@ -108,42 +117,124 @@ export const RecipeAPI = {
     authFetch: typeof fetch,
     ingredients: string[]
   ) => {
-    const recipes = await authFetch(
-      RECIPE_ENDPOINTS.filerRecipesByIngredient(ingredients),
+    const res = await authFetch(
+      ENDPOINTS.filerRecipesByIngredient(ingredients),
       {
         method: "GET",
         credentials: "include",
       }
     );
 
-    if (!recipes.ok)
-      throw new Error("An error occured while searching recipes");
-    return await recipes.json();
+    if (!res.ok)
+      throw await handleFetchError(
+        res,
+        "An error occured while searching recipes"
+      );
+    else return res.json();
   },
 
   filterByCategory: async (authFetch: typeof fetch, category: string) => {
-    const recipes = await authFetch(
-      RECIPE_ENDPOINTS.filterRecipesByCategory(category),
-      {
-        method: "GET",
-        credentials: "include",
-      }
-    );
+    const res = await authFetch(ENDPOINTS.filterRecipesByCategory(category), {
+      method: "GET",
+      credentials: "include",
+    });
 
-    if (!recipes.ok)
-      throw new Error(
+    if (!res.ok)
+      throw handleFetchError(
+        res,
         `An error occured while filtering recipes with category ${category}`
       );
-    return await recipes.json();
+    else return res.json();
   },
 
   toggleFavourite: async (authFetch: typeof fetch, recipeId: string) => {
-    const recipe = await authFetch(RECIPE_ENDPOINTS.toggleFavourite(recipeId), {
+    const res = await authFetch(ENDPOINTS.toggleFavourite(recipeId), {
       method: "POST",
       credentials: "include",
     });
 
-    if (!recipe.ok) throw new Error("An error occured while searching recipes");
-    return await recipe.json();
+    if (!res.ok)
+      throw handleFetchError(res, "An error occured while searching recipes");
+    else return res.json();
+  },
+
+  admin: {
+    addRecipe: async (authFetch: typeof fetch, payload: NewRecipe) => {
+      const res = await authFetch(ENDPOINTS.base, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok)
+        throw await handleFetchError(
+          res,
+          "An error occured while adding recipe"
+        );
+      else return res.json();
+    },
+
+    fetchAll: async (
+      authFetch: typeof fetch,
+      skip = 0,
+      limit = DEFAULT_LIMIT
+    ) => {
+      const res = await authFetch(
+        URLWithPagination(ENDPOINTS.base, skip, limit),
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+
+      if (!res.ok)
+        throw await handleFetchError(
+          res,
+          "An error occured while fetching recipes"
+        );
+      else return res.json();
+    },
+
+    update: async (
+      authFetch: typeof fetch,
+      recipeId: string,
+      payload: NewRecipe
+    ) => {
+      const res = await authFetch(ENDPOINTS.baseWithId(recipeId), {
+        method: "PATCH",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok)
+        throw await handleFetchError(
+          res,
+          `An error occured while updating recipe with id ${recipeId}`
+        );
+      else return res.json();
+    },
+
+    delete: async (authFetch: typeof fetch, recipeId: string) => {
+      const res = await authFetch(ENDPOINTS.baseWithId(recipeId), {
+        method: "DELETE",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!res.ok)
+        throw await handleFetchError(
+          res,
+          `An error occured while deleting recipe with id ${recipeId}`
+        );
+      else return res.json();
+    },
   },
 };

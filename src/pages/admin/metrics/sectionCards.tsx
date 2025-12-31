@@ -1,9 +1,9 @@
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import MetricCard from "@/components/metricCard";
+import MetricsCard from "@/components/metricCard";
 import useMetricsCache from "@/hooks/useMetrics";
 
-export function OverviewSection() {
-  const { data, isLoading, isError, error } = useMetricsCache();
+export function SectionCards() {
+  const { data, isLoading, isError, error } = useMetricsCache("overview");
 
   const totalRecipes = data?.total_recipes ?? 0;
   const activeUsers = data?.active_users ?? 0;
@@ -21,7 +21,7 @@ export function OverviewSection() {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <MetricCard
+        <MetricsCard
           label="Total Recipe"
           value={Intl.NumberFormat("en-US").format(totalRecipes)}
           footer="Strong engagement and retention"
@@ -29,7 +29,7 @@ export function OverviewSection() {
           error={isError}
         />
 
-        <MetricCard
+        <MetricsCard
           label="Active Users"
           value={Intl.NumberFormat("en-US").format(activeUsers)}
           footer="Strong engagement and retention"
@@ -37,7 +37,7 @@ export function OverviewSection() {
           error={isError}
         />
 
-        <MetricCard
+        <MetricsCard
           label="User Growth Rate"
           value={Intl.NumberFormat("en-US", {
             style: "percent",
@@ -48,7 +48,7 @@ export function OverviewSection() {
           error={isError}
         />
 
-        <MetricCard
+        <MetricsCard
           label="Average Rating"
           value={Intl.NumberFormat("en-US", {
             minimumFractionDigits: 1,

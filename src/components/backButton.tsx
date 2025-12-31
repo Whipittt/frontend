@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
+import WestIcon from "@mui/icons-material/West";
 
 export default function BackButton() {
   const navigate = useNavigate();
@@ -9,7 +9,7 @@ export default function BackButton() {
     if (location.key !== "default") {
       navigate(-1);
     } else {
-      navigate("/");  
+      navigate("/");
     }
   };
 
@@ -18,7 +18,7 @@ export default function BackButton() {
       onClick={handleBack}
       className="p-2 rounded-full hover:bg-muted transition"
     >
-      <ArrowBackRoundedIcon fontSize="large" />
+      <WestIcon fontSize="large" />
     </button>
   );
 }

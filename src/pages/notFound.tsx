@@ -28,11 +28,7 @@ export default function NotFound() {
           </span>
         </div>
         <div className="flex gap-4">
-          <Button
-            variant="secondary"
-            className="text-black"
-            onClick={handleBack}
-          >
+          <Button className="text-black" onClick={handleBack}>
             <ArrowLeft />
             <span>Go back</span>
           </Button>

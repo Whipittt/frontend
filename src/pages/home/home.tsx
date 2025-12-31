@@ -4,7 +4,7 @@ import CategorySection from "./categorySection/categorySection";
 import AllCategory from "./allCategory";
 import type { RecipeCategory } from "@/types";
 import ActiveCategorySection from "./activeCategorySection";
-import PageHeader from "@/components/pageHeader";
+import PageHeaderWithAvatar from "@/components/pageHeader";
 import MobileNavbar from "@/components/mobileNavbar";
 import { useSessionStorage } from "@/hooks/useSessionStorage";
 
@@ -24,7 +24,7 @@ export default function Home() {
         <MobileNavbar className="px-3" />
 
         <div className="flex flex-col gap-6 md:px-0 px-3">
-          <PageHeader text="What will you like to cook today?" />
+          <PageHeaderWithAvatar text="What will you like to cook today?" />
           <RecipeCommand />
         </div>
 

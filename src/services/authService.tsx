@@ -1,4 +1,8 @@
 import {
+  ACCESS_TOKEN_PROACTIVE_REFRESH_INTERVAL_MS,
+  API_URL,
+} from "@/constants";
+import {
   createContext,
   useContext,
   useEffect,
@@ -27,11 +31,18 @@ type Credentials = {
   password: string;
 };
 
+type SignupPayload = {
+  fullname: string;
+  email: string;
+  password: string;
+};
+
 type AuthServiceType = {
   user: User | null;
   isAuthenticated: boolean;
   isSuperuser: boolean;
   loading: boolean;
+  signup: (payload: SignupPayload) => Promise<void>;
   login: (creds: Credentials) => Promise<void>;
   logout: () => Promise<void>;
   /**
@@ -52,23 +63,15 @@ type AuthServiceType = {
   ) => Promise<Response>;
 };
 
-const API_BASE = import.meta.env.VITE_BACKEND_BASE_URL;
-const api = (path: string) => `${API_BASE}${path}`;
+const BASE_URL = `${API_URL}/auth`;
 
 const ENDPOINTS = {
-  me: api(import.meta.env.VITE_GET_USER_ENDPOINT),
-  login: api(import.meta.env.VITE_LOGIN_ENDPOINT),
-  logout: api(import.meta.env.VITE_LOGOUT_ENDPOINT),
-  refresh: api(import.meta.env.VITE_REFRESH_ENDPOINT),
+  me: `${BASE_URL}/me`,
+  signup: BASE_URL,
+  login: `${BASE_URL}/token`,
+  logout: `${BASE_URL}/logout`,
+  refresh: `${BASE_URL}/refresh`,
 };
-
-const ACCESS_TOKEN_MINUTES = Number(
-  import.meta.env.VITE_ACCESS_TOKEN_EXPITES_MINUTES ?? 5
-);
-const SKEW_MINUTES = Number(import.meta.env.VITE_SKEW_MINUTES ?? 3);
-
-const PROACTIVE_REFRESH_INTERVAL_MS =
-  Math.max(1, ACCESS_TOKEN_MINUTES - SKEW_MINUTES) * 60 * 1000;
 
 export const AuthService = createContext<AuthServiceType | undefined>(
   undefined
@@ -170,11 +173,12 @@ export function AuthProvider({ children }: PropsWithChildren) {
   // Fetch with auto-refresh-once and retry.
   const authFetch: AuthServiceType["authFetch"] = async (input, init) => {
     const first = await baseFetch(input, init);
-    if (first.status === 401) { // Experimental
+    if (first.status === 401) {
+      // Experimental
       // toast.warning("login required");
       // navigate("/auth/login");
     }
-    
+
     if (first.status !== 401 && first.status !== 419) return first;
 
     const refreshed = await ensureFreshAccess();
@@ -183,6 +187,41 @@ export function AuthProvider({ children }: PropsWithChildren) {
       return first;
     }
     return baseFetch(input, init);
+  };
+
+  // Signup and load user.
+  const signup: AuthServiceType["signup"] = async (payload) => {
+    const res = await fetch(ENDPOINTS.signup, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      let defMsg = "Sign up failed. Please try again.";
+      try {
+        const data = await res.json();
+        if (data?.detail) {
+          defMsg = Array.isArray(data.detail)
+            ? data.detail
+                .map((d: any) => d.msg || d.detail || "")
+                .filter(Boolean)
+                .join(", ") || defMsg
+            : data.detail || data.message || defMsg;
+        } else if (data?.message) {
+          defMsg = data.message;
+        }
+      } catch {
+        // ignore parse errors
+      }
+      throw new Error(defMsg);
+    } else {
+      await login({ email: payload.email, password: payload.password });
+    }
   };
 
   // Login and load user.
@@ -234,7 +273,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   useEffect(() => {
     const id = window.setInterval(() => {
       refresh().catch(() => void 0);
-    }, PROACTIVE_REFRESH_INTERVAL_MS);
+    }, ACCESS_TOKEN_PROACTIVE_REFRESH_INTERVAL_MS);
     return () => window.clearInterval(id);
   }, []);
 
@@ -253,6 +292,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       isAuthenticated: !!user,
       isSuperuser: !!user?.is_superuser,
       loading,
+      signup,
       login,
       logout,
       refresh,

@@ -19,11 +19,11 @@ export default function RefreshButton({
       {isFetching ? (
         <>
           <RefreshSpinner />
-          Refreshing...
+          <span className="md:inline hidden">Refreshing...</span>
         </>
       ) : (
         <>
-          <RotateCw /> Refresh
+          <RotateCw /> <span className="md:inline hidden">Refresh</span>
         </>
       )}
     </Button>

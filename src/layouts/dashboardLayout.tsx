@@ -8,7 +8,7 @@ import { DashboardBreadcrumb } from "@/components/dashboardBreadcrumb";
 interface MainLayoutProps {
   children: React.ReactNode;
   className?: string;
-  pageTitle: string;
+  pageTitle?: string;
 }
 
 export default function DashboardLayout({
@@ -19,19 +19,19 @@ export default function DashboardLayout({
   return (
     <SidebarProvider>
       <RootLayout pageTitle={pageTitle}>
-        <div className="flex h-screen">
+        <div className="flex">
           <aside className="flex-shrink-0">
             <DashboardSidebar />
           </aside>
 
           <main
             className={cn(
-              "flex flex-col flex-1 gap-8 px-2 md:px-8 py-4 md:py-8 overflow-auto scrollbar",
+              "flex flex-col flex-1 gap-8 px-2 md:px-8 py-4 md:py-8 overflow-auto md:scrollbar hide-scrollbar",
               className
             )}
           >
             <DashboardBreadcrumb />
-            
+
             {children}
           </main>
         </div>

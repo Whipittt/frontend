@@ -37,9 +37,10 @@ const CommandInput = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Input>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input> & {
     onSearchClick?: () => void;
+    noSearchIcon?: boolean;
   }
->(({ className, onSearchClick, ...props }, ref) => (
-  <div className="flex items-center px-5" cmdk-input-wrapper="">
+>(({ className, onSearchClick, noSearchIcon = false, ...props }, ref) => (
+  <div className="flex items-center px-3" cmdk-input-wrapper="">
     <CommandPrimitive.Input
       ref={ref}
       className={cn(
@@ -49,9 +50,11 @@ const CommandInput = React.forwardRef<
       {...props}
     />
 
-    <button onClick={onSearchClick}>
-      <SearchRoundedIcon className="h-4 w-4 shrink-0 opacity-50 text-[#14D85C]" />
-    </button>
+    {!noSearchIcon && (
+      <button onClick={onSearchClick}>
+        <SearchRoundedIcon className="h-4 w-4 shrink-0 opacity-50 text-[#14D85C]" />
+      </button>
+    )}
   </div>
 ));
 

@@ -1,4 +1,5 @@
 import { type Rating } from "@/components/ui/star-rating";
+import type { JSONContent } from "@tiptap/react";
 import type { ReactNode } from "react";
 
 export interface FastAPIError {
@@ -16,8 +17,13 @@ export type AppRoute = {
   children?: AppRoute[];
 };
 
+export type PaginationProps = {
+  skip?: number;
+  limit?: number;
+};
+
 export interface RecipeCategory {
-  id: string;
+  id?: string;
   name: string;
   description: string;
 }
@@ -25,29 +31,30 @@ export interface RecipeCategory {
 export interface Recipe {
   id: string;
   title: string;
-  description?: string | null;
-  instructions?: string | null;
-  category?: { id: string; name: string } | null;
-  categories?: { id: string; name: string }[] | null;
-  ingredients?: { id: string; name: string }[] | null;
-  interfaces?: string[] | null;
-  cuisines?: string[] | null;
-  time_minutes?: number | null;
-  display_image?: string | null;
-  instruction_json?: any | null;
-  rating?: Rating | null;
-  favourited?: boolean | null;
-  favourites_count?: number | null;
+  description?: string;
+  instructions?: string;
+  category?: { id: string; name: string };
+  categories?: { id: string; name: string }[];
+  ingredients?: { id: string; name: string }[];
+  interfaces?: string[];
+  cuisines?: string[];
+  types?: string[];
+  time_minutes?: number;
+  display_image?: string;
+  instruction_json?: any;
+  rating?: Rating;
+  favourited?: boolean;
+  favourites_count?: number;
 }
 
 export interface RecipeBrief {
   id: string;
   title: string;
-  display_image?: string | null;
-  time_minutes?: number | null;
-  rating?: number | null;
-  favourited?: boolean | null;
-  favourites_count?: number | null;
+  display_image?: string;
+  time_minutes?: number;
+  rating?: number;
+  favourited?: boolean;
+  favourites_count?: number;
 }
 
 export interface User {
@@ -58,6 +65,27 @@ export interface User {
   is_superuser: boolean;
   created_at?: string;
   password?: string;
+}
+
+export interface Preference {
+  cooking_time?: string;
+  ethnicity?: string;
+  skill_level?: string;
+  dietary_restriction_ids?: string[];
+  dietary_restrictions?: {
+    id: string;
+    name: string;
+  }[];
+}
+
+export interface UserProfile {
+  id?: string;
+  fullname: string;
+  email: string;
+  is_active: boolean;
+  is_superuser: boolean;
+  created_at?: string;
+  preference: Preference | null;
 }
 
 export interface UserFromtoken {
@@ -86,6 +114,21 @@ export interface MetricsResponse {
 }
 
 export interface Ingredient {
-  id: string;
+  id?: string;
   name: string;
+  recipes?: RecipeBrief[];
+}
+
+export interface NewRecipe {
+  title: string;
+  description: string;
+  instructions: string;
+  category_ids: string[];
+  ingredient_ids: string[];
+  cuisines: string[];
+  types: string[];
+  time_minutes: number;
+  rating: number;
+  display_image: string;
+  instruction_json: JSONContent;
 }

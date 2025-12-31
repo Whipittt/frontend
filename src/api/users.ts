@@ -1,39 +1,76 @@
+import { API_URL } from "@/constants";
 import type { PasswordResetPayload, User, UserUpdatePayload } from "@/types";
-import { FastAPIErrorParser, isFastAPIError } from "@/utils/fastAPIErrorParser";
+import { handleFetchError } from "@/utils/fastAPIErrorParser";
+import { DEFAULT_LIMIT, URLWithPagination } from "@/utils/urlWithPagination";
 
-const API_URL = import.meta.env.VITE_BACKEND_BASE_URL;
-const ENDPOINT_BASE_URL = `${API_URL}/users`;
+const BASE_URL = `${API_URL}/users`;
 
-const USER_ENDPOINTS = {
-  base: `${ENDPOINT_BASE_URL}/`,
-  getUserByID(userId: string): string {
-    return `${ENDPOINT_BASE_URL}/${userId}`;
+const ENDPOINTS = {
+  base: `${BASE_URL}/`,
+  fetchByID(userId: string): string {
+    return `${BASE_URL}/${userId}`;
   },
-  getUserFavourites: `${ENDPOINT_BASE_URL}/favourites/`,
-  getAllUsers: `${ENDPOINT_BASE_URL}/`,
-  resetUserPassword(userID: string): string {
-    return `${ENDPOINT_BASE_URL}/${userID}/reset-password`;
+  fetchFavourites: `${BASE_URL}/favourites/`,
+  fetchUsers: `${BASE_URL}/`,
+  resetPassword(userID: string): string {
+    return `${BASE_URL}/${userID}/reset-password`;
   },
-  updateUserDetails(userID: string): string {
-    return `${ENDPOINT_BASE_URL}/${userID}/`;
+  updateByID(userID: string): string {
+    return `${BASE_URL}/${userID}/`;
   },
+  fetchProfile: `${BASE_URL}/profile`,
 };
 
 export const UserAPI = {
-  async fetchFavourites(authFetch: typeof fetch) {
-    const favourites = await authFetch(USER_ENDPOINTS.getUserFavourites, {
+  async fetchProfile(authFetch: typeof fetch) {
+    const res = await authFetch(ENDPOINTS.fetchProfile, {
       method: "GET",
       credentials: "include",
     });
 
-    if (!favourites.ok)
-      throw new Error("An error occured while fetching user's favourites");
-    return await favourites.json();
+    if (!res.ok)
+      throw await handleFetchError(
+        res,
+        "An error occured while fetching user's profile"
+      );
+    else return await res.json();
+  },
+
+  async fetchFavourites(authFetch: typeof fetch) {
+    const res = await authFetch(ENDPOINTS.fetchFavourites, {
+      method: "GET",
+      credentials: "include",
+    });
+
+    if (!res.ok)
+      throw await handleFetchError(
+        res,
+        "An error occured while fetching user's favourites"
+      );
+    else return await res.json();
+  },
+
+  async update(authFetch: typeof fetch, payload: UserUpdatePayload) {
+    const res = await authFetch(ENDPOINTS.base, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok)
+      throw await handleFetchError(
+        res,
+        "An error occured while updating user's data."
+      );
+    else return await res.json();
   },
 
   admin: {
-    async addNewUser(authFetch: typeof fetch, payload: User) {
-      const response = await authFetch(USER_ENDPOINTS.base, {
+    async addOne(authFetch: typeof fetch, payload: User) {
+      const res = await authFetch(ENDPOINTS.base, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -42,96 +79,84 @@ export const UserAPI = {
         body: JSON.stringify(payload),
       });
 
-      if (!response.ok) {
-        const data = await response.json();
-
-        if (isFastAPIError(data))
-          throw new Error(FastAPIErrorParser.first(data));
-
-        throw new Error("An error occured while adding user.");
-      }
-
-      return await response.json();
+      if (!res.ok)
+        throw await handleFetchError(res, "An error occured while adding user");
+      else return (await res.json()) as User;
     },
 
-    async fetchAllUsers(authFetch: typeof fetch) {
-      const users = await authFetch(USER_ENDPOINTS.getAllUsers, {
+    async fetchAll(authFetch: typeof fetch, skip = 0, limit = DEFAULT_LIMIT) {
+      const res = await authFetch(
+        URLWithPagination(ENDPOINTS.fetchUsers, skip, limit),
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+
+      if (!res.ok)
+        throw await handleFetchError(
+          res,
+          "An error occured while updating users."
+        );
+      else return await res.json();
+    },
+
+    async fetchByID(authFetch: typeof fetch, userId: string) {
+      const res = await authFetch(ENDPOINTS.fetchByID(userId), {
         method: "GET",
         credentials: "include",
       });
 
-      if (!users.ok) throw new Error("An error occured while fetching users");
-      return await users.json();
+      if (!res.ok)
+        throw await handleFetchError(
+          res,
+          `An error occured while fetching user with id ${userId}`
+        );
+      else return res.json();
     },
 
-    async fetchUserByID(authFetch: typeof fetch, userId: string) {
-      const user = await authFetch(USER_ENDPOINTS.getUserByID(userId), {
-        method: "GET",
-        credentials: "include",
-      });
-
-      if (user.status == 403)
-        throw new Error("You are not allowed to access this user");
-      if (!user.ok) throw new Error(`Unable to load user with id ${userId}`);
-      return user.json();
-    },
-
-    async updateUserDetails(
+    async updateByID(
       authFetch: typeof fetch,
       userId: string,
       payload: UserUpdatePayload
     ) {
-      const response = await authFetch(
-        USER_ENDPOINTS.updateUserDetails(userId),
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(payload),
-        }
-      );
+      const res = await authFetch(ENDPOINTS.updateByID(userId), {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(payload),
+      });
 
-      if (!response.ok) {
-        const data = await response.json();
-
-        if (isFastAPIError(data))
-          throw new Error(FastAPIErrorParser.first(data));
-
-        throw new Error("An error occured while updating user's data.");
-      }
-
-      return await response.json();
+      if (!res.ok)
+        throw await handleFetchError(
+          res,
+          "An error occured while updating user's data."
+        );
+      else return await res.json();
     },
 
-    async resetUserPassword(
+    async resetPassword(
       authFetch: typeof fetch,
       userId: string,
       payload: PasswordResetPayload
     ) {
-      const response = await authFetch(
-        USER_ENDPOINTS.resetUserPassword(userId),
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(payload),
-        }
-      );
+      const res = await authFetch(ENDPOINTS.resetPassword(userId), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(payload),
+      });
 
-      if (!response.ok) {
-        const data = await response.json();
-
-        if (isFastAPIError(data))
-          throw new Error(FastAPIErrorParser.first(data));
-
-        throw new Error("An error occured while resetting user's password.");
-      }
-
-      return await response.json();
+      if (!res.ok)
+        throw await handleFetchError(
+          res,
+          "An error occured while resetting user's password."
+        );
+      else return await res.json();
     },
   },
 };

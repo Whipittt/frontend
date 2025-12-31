@@ -35,7 +35,6 @@ export default function LogoutConfirmation({
             onClick={() => {
               logout();
             }}
-            className="bg-secondary hover:bg-secondary/80 font-medium"
           >
             Logout
           </AlertDialogAction>

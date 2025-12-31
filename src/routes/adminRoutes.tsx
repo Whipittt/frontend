@@ -1,8 +1,10 @@
 import Ingredients from "@/pages/admin/ingredients/ingredients";
 import DashboardMetrics from "@/pages/admin/metrics/metrics";
-import NewUser from "@/pages/admin/user/newUser";
-import UserDetails from "@/pages/admin/user/userDetails";
-import Users from "@/pages/admin/user/users";
+import NewRecipe from "@/pages/admin/recipes/newRecipe";
+import Recipes from "@/pages/admin/recipes/recipes";
+import UpdateRecipe from "@/pages/admin/recipes/updateRecipe";
+import UpdateUser from "@/pages/admin/users/updateUser";
+import Users from "@/pages/admin/users/users";
 import type { AppRoute } from "@/types";
 
 export const REQUIRE_ADMIN_AUTH_ROUTES: AppRoute[] = [
@@ -15,17 +17,21 @@ export const REQUIRE_ADMIN_AUTH_ROUTES: AppRoute[] = [
         path: "users",
         children: [
           { index: true, element: <Users /> },
-          { path: "new", element: <NewUser /> },
-          { path: ":user_id", element: <UserDetails /> },
+          { path: ":user_id", element: <UpdateUser /> },
         ],
       },
 
       {
         path: "ingredients",
+        children: [{ index: true, element: <Ingredients /> }],
+      },
+
+      {
+        path: "recipes",
         children: [
-          { index: true, element: <Ingredients /> },
-          { path: "new", element: <NewUser /> },
-          { path: ":ingredient_id", element: <UserDetails /> },
+          { index: true, element: <Recipes /> },
+          { path: "new", element: <NewRecipe /> },
+          { path: ":recipe_id/update", element: <UpdateRecipe /> },
         ],
       },
     ],

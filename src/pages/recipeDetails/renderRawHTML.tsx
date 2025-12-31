@@ -9,7 +9,7 @@ export default function RenderRawHTML({ header, content }: RenderRawHTMLProps) {
       <h2 className="text-xl font-medium">{header}</h2>
 
       <div
-        className="max-w-none font-sans prose prose-headings:text-secondary-foreground prose-headings:font-medium prose-headings:text-base list-disc list-inside space-y-4 !text-secondary-foreground"
+        className="max-w-none font-sans prose prose-invert list-disc list-inside space-y-4 text-foreground"
         dangerouslySetInnerHTML={{ __html: content }}
       />
     </section>

@@ -1,18 +1,42 @@
-const API_URL = import.meta.env.VITE_BACKEND_BASE_URL;
+import { API_URL } from "@/constants";
+import type { RecipeCategory } from "@/types";
+import { handleFetchError } from "@/utils/fastAPIErrorParser";
+
+const ENDPOINT_BASE = `${API_URL}/recipes/recipe-categories/`;
 
 const ENDPOINTS = {
-  allCategories: `${API_URL}/recipes/recipe-categories/?limit=25`,
+  base: ENDPOINT_BASE,
 };
 
 export const RecipeCategoryApi = {
-  fetchAllCategories: async (authFetch: typeof fetch) => {
-    const categories = await authFetch(ENDPOINTS.allCategories, {
-      method: "GET",
-      credentials: "include",
-    });
+  fetchAll: async () => {
+    const res = await fetch(ENDPOINTS.base);
 
-    if (!categories.ok)
-      throw new Error("An error occured while fetching recipe categories");
-    return await categories.json();
+    if (!res.ok)
+      throw await handleFetchError(
+        res,
+        "An error occured while fetching recipe categories"
+      );
+    return await res.json();
+  },
+
+  admin: {
+    addOne: async (authFetch: typeof fetch, categoryData: RecipeCategory) => {
+      const res = await authFetch(ENDPOINTS.base, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(categoryData),
+      });
+
+      if (!res.ok)
+        throw await handleFetchError(
+          res,
+          "An error occured while adding recipe category"
+        );
+      else return (await res.json()) as RecipeCategory;
+    },
   },
 };

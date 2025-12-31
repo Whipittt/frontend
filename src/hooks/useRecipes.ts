@@ -1,7 +1,13 @@
 import { RecipeAPI } from "@/api/recipes";
 import { UserAPI } from "@/api/users";
+import { DEFAULT_CACHE_STALE_TIME } from "@/constants";
+import { queryClient } from "@/lib/utils";
 import { useAuth } from "@/services/authService";
-import { useQuery } from "@tanstack/react-query";
+import type { NewRecipe } from "@/types";
+import { DEFAULT_LIMIT } from "@/utils/urlWithPagination";
+import { useMutation, useQuery } from "@tanstack/react-query";
+
+const QUERY_KEY = "recipes";
 
 export function useUserRecipeRecommendationsCache() {
   const { authFetch } = useAuth();
@@ -11,9 +17,9 @@ export function useUserRecipeRecommendationsCache() {
   };
 
   return useQuery({
-    queryKey: ["user_recipe_recommendations"],
+    queryKey: [QUERY_KEY, "user_recommendations"],
     queryFn: queryFunction,
-    staleTime: 1000 * 60 * 5,
+    staleTime: DEFAULT_CACHE_STALE_TIME,
     retry: 1,
   });
 }
@@ -24,9 +30,9 @@ export function useRecipeRecommendationsCache() {
   };
 
   return useQuery({
-    queryKey: ["recipe_recommendations"],
+    queryKey: [QUERY_KEY, "recommendations"],
     queryFn: queryFunction,
-    staleTime: 1000 * 60 * 5,
+    staleTime: DEFAULT_CACHE_STALE_TIME,
     retry: 1,
   });
 }
@@ -39,9 +45,9 @@ export function useLocalFavouriteRecipeCache() {
   };
 
   return useQuery({
-    queryKey: ["local_favourites"],
+    queryKey: [QUERY_KEY, "local_favourites"],
     queryFn: queryFunction,
-    staleTime: 1000 * 60 * 5,
+    staleTime: DEFAULT_CACHE_STALE_TIME,
     retry: 1,
   });
 }
@@ -54,9 +60,9 @@ export function useRecipesOfTheWeekCache() {
   };
 
   return useQuery({
-    queryKey: ["recipes_of_the_week"],
+    queryKey: [QUERY_KEY, "weekly"],
     queryFn: queryFunction,
-    staleTime: 1000 * 60 * 5,
+    staleTime: DEFAULT_CACHE_STALE_TIME,
     retry: 1,
   });
 }
@@ -69,9 +75,9 @@ export function useFavouriteRecipesCache() {
   };
 
   return useQuery({
-    queryKey: ["favourites"],
+    queryKey: [QUERY_KEY, "my_favourites"],
     queryFn: queryFunction,
-    staleTime: 1000 * 60 * 5,
+    staleTime: DEFAULT_CACHE_STALE_TIME,
     retry: 1,
   });
 }
@@ -84,9 +90,35 @@ export function useCategorizedRecipesCache(category_name: string) {
   };
 
   return useQuery({
-    queryKey: [`${category_name}_recipes`],
+    queryKey: [QUERY_KEY, category_name],
     queryFn: queryFunction,
-    staleTime: 1000 * 60 * 5,
+    staleTime: DEFAULT_CACHE_STALE_TIME,
     retry: 1,
+  });
+}
+
+export function useRecipesData(skip = 0, limit = DEFAULT_LIMIT) {
+  const { authFetch } = useAuth();
+
+  return useQuery({
+    queryKey: [QUERY_KEY, skip, limit],
+    queryFn: async () => await RecipeAPI.admin.fetchAll(authFetch, skip, limit),
+    staleTime: DEFAULT_CACHE_STALE_TIME,
+    retry: 1,
+  });
+}
+
+export function useAddRecipeData() {
+  const { authFetch } = useAuth();
+
+  return useMutation({
+    mutationFn: async (newRecipeData: NewRecipe) =>
+      await RecipeAPI.admin.addRecipe(authFetch, newRecipeData),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEY, 0, DEFAULT_LIMIT],
+      });
+    },
   });
 }

@@ -6,14 +6,14 @@ import { useFavouriteRecipesCache } from "@/hooks/useRecipes";
 import type { RecipeBrief } from "@/types";
 import { useAuth } from "@/services/authService";
 import { RecipeAPI } from "@/api/recipes";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useCallback, useMemo, type JSX } from "react";
-import PageHeader from "@/components/pageHeader";
+import PageHeaderWithAvatar from "@/components/pageHeader";
+import { queryClient } from "@/lib/utils";
 
-const FAVOURITES_QUERY_KEY = ["favourites"];
+const FAVOURITES_QUERY_KEY = ["recipes", "my_favourites"];
 
 export default function Favourites(): JSX.Element {
-  const queryClient = useQueryClient();
   const { authFetch } = useAuth();
 
   const {
@@ -84,7 +84,7 @@ export default function Favourites(): JSX.Element {
   return (
     <>
       <MainLayout pageTitle="My Favourites" className="gap-12">
-        <PageHeader text="Your Favourites" />
+        <PageHeaderWithAvatar text="Your Favourites" />
 
         {error && (
           <section className="flex flex-col gap-8">

@@ -1,17 +1,19 @@
 import { MetricsAPI } from "@/api/metrics";
+import { DEFAULT_CACHE_STALE_TIME } from "@/constants";
 import { useAuth } from "@/services/authService";
-import type { MetricsResponse } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 
-export default function useMetricsCache() {
+export type MetricsKey = "ingredients" | "overview" | "recipes" | "users";
+
+export default function useMetricsCache(key: MetricsKey) {
   const { authFetch } = useAuth();
 
-  return useQuery<MetricsResponse>({
-    queryKey: ["metrics", "dashboard"],
+  return useQuery({
+    queryKey: ["metrics", key],
     queryFn: () => {
-      return MetricsAPI.fetchMetrics(authFetch);
+      return MetricsAPI.fetchMetrics(authFetch, key);
     },
-    staleTime: 1000 * 60 * 5,
+    staleTime: DEFAULT_CACHE_STALE_TIME,
     retry: 1,
   });
 }

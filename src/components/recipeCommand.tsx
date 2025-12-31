@@ -8,7 +8,7 @@ import {
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command";
-import { PillWithClose } from "@/pages/home/categorySection/categoryPill";
+import { PillWithClose } from "@/components/pill";
 import { useNavigate } from "react-router-dom";
 import { ingredientsAPI } from "@/api/ingredients";
 
@@ -196,9 +196,7 @@ export function RecipeCommand() {
                       value={text}
                       onSelect={() => addIngredient(text)}
                     >
-                      <div className="flex gap-4 items-center">
                         <span>{text}</span>
-                      </div>
                     </CommandItem>
                   ))}
                 </div>

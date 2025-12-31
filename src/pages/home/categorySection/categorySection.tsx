@@ -1,6 +1,6 @@
-import { useRecipeCategoryCache } from "@/hooks/useRecipeCategories";
+import { useRecipeCategoryData } from "@/hooks/useRecipeCategories";
 import type { RecipeCategory } from "@/types";
-import { CategoryPill, CategoryPillSkeleton } from "./categoryPill";
+import { Pill, PillSkeleton } from "../../../components/pill";
 
 type CategorySectionProps = {
   activeCategory: RecipeCategory | "all";
@@ -9,7 +9,7 @@ type CategorySectionProps = {
 };
 
 export default function CategorySection({ activeCategory, setActiveCategory, onCategoryChange }: CategorySectionProps) {
-  const { data, isError, isLoading } = useRecipeCategoryCache();
+  const { data, isError, isLoading } = useRecipeCategoryData();
   const categories = data ?? [];
 
   const setActive = (next: RecipeCategory | "all") => {
@@ -27,17 +27,17 @@ export default function CategorySection({ activeCategory, setActiveCategory, onC
       >
         {isError && <p className="text-sm text-muted-foreground">Failed to load recipe categories</p>}
 
-        {isLoading && Array.from({ length: 12 }).map((_, i) => <CategoryPillSkeleton key={i} />)}
+        {isLoading && Array.from({ length: 12 }).map((_, i) => <PillSkeleton key={i} />)}
 
         {!isError && !isLoading && (
           <>
-            <CategoryPill
+            <Pill
               label="All"
               onActive={() => setActive("all")}
               variant={activeCategory === "all" ? "active" : "muted"}
             />
             {categories.map((category: RecipeCategory) => (
-              <CategoryPill
+              <Pill
                 key={category.id}
                 label={category.name}
                 onActive={() => setActive(category)}

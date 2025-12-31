@@ -39,7 +39,7 @@ export function LoginForm({ onFormSubmit }: LoginFormProps) {
     <form noValidate onSubmit={handleSubmit} className={"flex flex-col gap-6"}>
       <FieldGroup>
         <div className="flex flex-col gap-1">
-          <h1 className="font-serif text-primary text-5xl font-normal">
+          <h1 className="font-serif text-secondary text-5xl font-normal">
             Welcome Back!
           </h1>
         </div>
@@ -58,6 +58,7 @@ export function LoginForm({ onFormSubmit }: LoginFormProps) {
             placeholder="unclenebo@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            className="focus-visible:ring-secondary"
           />
         </Field>
         <Field>
@@ -67,17 +68,18 @@ export function LoginForm({ onFormSubmit }: LoginFormProps) {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            className="focus-visible:ring-secondary"
           />
         </Field>
         <Field>
-          <Button disabled={loading || !email || !password} type="submit">
+          <Button variant="secondary" disabled={loading || !email || !password} type="submit">
             {loading ? "Loging in..." : "Login"}
           </Button>
         </Field>
         <Field>
           <FieldDescription className="text-center">
             Don&apos;t have an account?{" "}
-            <Link to="/auth/signup" className="underline underline-offset-4">
+            <Link to="/auth/signup" className="underline hover:!text-secondary/80">
               Sign up
             </Link>
           </FieldDescription>
