@@ -1,6 +1,6 @@
 import { RecipeCardSm, RecipeCardSmSkeleton } from "@/components/recipeCard";
 import HomeSectionLayout from "./homeSectionLayout";
-import { useUserRecipeRecommendationsCache } from "@/hooks/useRecipes";
+import { useUserRecipeRecommendationsCache } from "@/hooks/useRecipeData";
 import type { RecipeBrief } from "@/types";
 
 export default function RecommendationSection() {

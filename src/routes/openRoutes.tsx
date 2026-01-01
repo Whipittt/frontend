@@ -1,7 +1,6 @@
 import SearchRecipes from "@/pages/searchRecipes";
 import Home from "@/pages/home/home";
 import RecipeDetails from "@/pages/recipeDetails/recipedetails";
-import MealPlan from "@/pages/mealplan/mealplan";
 import Forbidden from "@/pages/forbidden";
 import NotFound from "@/pages/notFound";
 import AddPreferences from "@/pages/addPreferences/addPreferences";
@@ -23,8 +22,6 @@ export const OPEN_ROUTES: AppRoute[] = [
     children: [{ path: "add", element: <AddPreferences /> }],
   },
 
-  { path: "mealplan", element: <MealPlan /> },
-  
   { path: "404", element: <NotFound /> },
   { path: "403", element: <Forbidden /> },
 ];

@@ -4,7 +4,7 @@ import DashboardLayout from "@/layouts/dashboardLayout";
 import { useState } from "react";
 import type { JSONContent } from "@tiptap/react";
 import type { Ingredient, NewRecipe } from "@/types";
-import { useAddRecipeData } from "@/hooks/useRecipes";
+import { useAddRecipeData } from "@/hooks/useRecipeData";
 import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 

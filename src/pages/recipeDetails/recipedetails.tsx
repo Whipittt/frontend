@@ -14,7 +14,7 @@ import type { Recipe } from "@/types";
 import { useAuth } from "@/services/authService";
 import { RecipeAPI } from "@/api/recipes";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useFavouriteRecipesCache } from "@/hooks/useRecipes";
+import { useFavouriteRecipesCache } from "@/hooks/useRecipeData";
 import { AspectRatio } from "@radix-ui/react-aspect-ratio";
 import { cn } from "@/lib/utils";
 import { ShoppingListPopup } from "@/components/shoppingListPopup";

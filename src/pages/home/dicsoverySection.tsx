@@ -1,6 +1,6 @@
 import { RecipeCardLg, RecipeCardLgSkeleton } from "@/components/recipeCard";
 import HomeSectionLayout from "./homeSectionLayout";
-import { useLocalFavouriteRecipeCache } from "@/hooks/useRecipes";
+import { useLocalFavouriteRecipeCache } from "@/hooks/useRecipeData";
 import type { RecipeBrief } from "@/types";
 
 export default function DiscoverySection() {

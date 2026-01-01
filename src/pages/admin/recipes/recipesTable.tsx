@@ -24,7 +24,7 @@ import {
 import { NewIngredientDialog } from "../ingredients/newIngredient";
 import { UpdateIngredientDialog } from "../ingredients/UpdateIngredient";
 import { DEFAULT_LIMIT } from "@/utils/urlWithPagination";
-import { useRecipesData } from "@/hooks/useRecipes";
+import { useRecipesData } from "@/hooks/useRecipeData";
 import { useNavigate } from "react-router-dom";
 import DeleteRecipe from "./deleteRecipe";
 import { useSessionStorage } from "@/hooks/useSessionStorage";

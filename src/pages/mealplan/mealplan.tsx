@@ -4,7 +4,7 @@ import EditButton from "../profile/editButton";
 import { MealplanTable } from "./malplanTable";
 import PageHeaderWithAvatar from "@/components/pageHeader";
 
-export default function MealPlan() {
+export default function Mealplan() {
   return (
     <MainLayout className="px-2 md:px-8 md:gap-12">
       <PageHeaderWithAvatar text="Your Weekly Meal Schedule" />

@@ -1,6 +1,6 @@
 import HomeSectionLayout from "./homeSectionLayout";
 import { RecipeCardSm, RecipeCardSmSkeleton } from "@/components/recipeCard";
-import { useCategorizedRecipesCache as useCategorizedRecipesCache } from "@/hooks/useRecipes";
+import { useCategorizedRecipesCache as useCategorizedRecipesCache } from "@/hooks/useRecipeData";
 import type { RecipeBrief, RecipeCategory } from "@/types";
 
 export default function ActiveCategorySection({

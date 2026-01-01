@@ -3,7 +3,7 @@ import { UserAPI } from "@/api/users";
 import { DEFAULT_CACHE_STALE_TIME } from "@/constants";
 import { queryClient } from "@/lib/utils";
 import { useAuth } from "@/services/authService";
-import type { NewRecipe } from "@/types";
+import type { NewRecipe, Recipe } from "@/types";
 import { DEFAULT_LIMIT } from "@/utils/urlWithPagination";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
@@ -16,7 +16,7 @@ export function useUserRecipeRecommendationsCache() {
     return RecipeAPI.fetchUserRecommendations(authFetch);
   };
 
-  return useQuery({
+  return useQuery<Recipe[]>({
     queryKey: [QUERY_KEY, "user_recommendations"],
     queryFn: queryFunction,
     staleTime: DEFAULT_CACHE_STALE_TIME,

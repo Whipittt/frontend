@@ -2,7 +2,7 @@ import MainLayout from "@/layouts/mainLayout";
 import FavouriteRecipeCard, {
   FavouriteRecipeCardSkeleton,
 } from "./favouriteRecipeCard";
-import { useFavouriteRecipesCache } from "@/hooks/useRecipes";
+import { useFavouriteRecipesCache } from "@/hooks/useRecipeData";
 import type { RecipeBrief } from "@/types";
 import { useAuth } from "@/services/authService";
 import { RecipeAPI } from "@/api/recipes";

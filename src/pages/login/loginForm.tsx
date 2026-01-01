@@ -72,14 +72,21 @@ export function LoginForm({ onFormSubmit }: LoginFormProps) {
           />
         </Field>
         <Field>
-          <Button variant="secondary" disabled={loading || !email || !password} type="submit">
+          <Button
+            variant="secondary"
+            disabled={loading || !email || !password}
+            type="submit"
+          >
             {loading ? "Loging in..." : "Login"}
           </Button>
         </Field>
         <Field>
           <FieldDescription className="text-center">
             Don&apos;t have an account?{" "}
-            <Link to="/auth/signup" className="underline hover:!text-secondary/80">
+            <Link
+              to="/auth/signup"
+              className="underline hover:!text-secondary/80"
+            >
               Sign up
             </Link>
           </FieldDescription>

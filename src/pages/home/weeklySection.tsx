@@ -1,6 +1,6 @@
 import { RecipeCardSm, RecipeCardSmSkeleton } from "@/components/recipeCard";
 import HomeSectionLayout from "./homeSectionLayout";
-import { useRecipesOfTheWeekCache } from "@/hooks/useRecipes";
+import { useRecipesOfTheWeekCache } from "@/hooks/useRecipeData";
 import type { RecipeBrief } from "@/types";
 
 export default function WeeklySection() {

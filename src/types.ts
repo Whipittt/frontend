@@ -57,6 +57,11 @@ export interface RecipeBrief {
   favourites_count?: number;
 }
 
+export interface RecipeSupBrief {
+  id: string;
+  title: string;
+}
+
 export interface User {
   id?: string;
   fullname: string;

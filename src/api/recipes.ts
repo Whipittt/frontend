@@ -30,6 +30,7 @@ const ENDPOINTS = {
 
     return `${ENDPOINTS_BASE}s/categories?${params.toString()}`;
   },
+  filerRecipesByTitle: (title: string) => `${ENDPOINTS_BASE}s/?title=${title}`,
   toggleFavourite: (recipeId: string) =>
     `${ENDPOINTS_BASE}${recipeId}/favourite/toggle`,
 };
@@ -129,6 +130,19 @@ export const RecipeAPI = {
       throw await handleFetchError(
         res,
         "An error occured while searching recipes"
+      );
+    else return res.json();
+  },
+
+  filterRecipesByTitle: async (title: string, limit = DEFAULT_LIMIT) => {
+    const res = await fetch(
+      `${ENDPOINTS.filerRecipesByTitle(title)}&limit=${limit}`
+    );
+
+    if (!res.ok)
+      throw await handleFetchError(
+        res,
+        "An error occured while fetching recipes"
       );
     else return res.json();
   },

@@ -18,24 +18,21 @@ export default function MealSchedule() {
         <MealplanTable
           meals={[
             {
-              day: "Sunday",
-              meals: [
-                {
-                  type: "breakfast",
-                  id: "d6ae8991-1da1-4ddd-85da-8297f2c9576",
+              day_of_week: 7,
+              meals: {
+                breakfast: {
+                  id: "d6ae8991-1da1-4ddd-85da-10297f2c9576",
                   title: "Akara",
                 },
-                {
-                  type: "dinner",
-                  id: "6f3470d5-35b7-4729-bb93-287148cfba38",
-                  title: "Egusi Soup",
-                },
-                {
-                  type: "lunch",
+                lunch: {
                   id: "ca34bde5-1276-46db-868e-1f2e07534cf0",
                   title: "Jollof Rice",
                 },
-              ],
+                dinner: {
+                  id: "6f3470d5-35b7-4729-bb93-287148cfba38",
+                  title: "Egusi Soup",
+                },
+              },
             },
           ]}
         />
