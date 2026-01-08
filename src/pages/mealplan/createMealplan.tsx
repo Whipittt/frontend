@@ -1,9 +1,12 @@
 import PageHeaderWithAvatar from "@/components/pageHeader";
 import MainLayout from "@/layouts/mainLayout";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { RecipeSupBrief } from "@/types";
 import MealplanForm from "./mealplanForm";
 import { Button } from "@/components/ui/button";
+import { useCreateMealplanData } from "@/hooks/useMealplanData";
+import { toast } from "sonner";
+import { normalizeWeeklyMeals } from "@/utils/mealplan";
 
 type MealType = "breakfast" | "lunch" | "dinner";
 
@@ -23,26 +26,50 @@ const initialMealplanPayload: MealPlanDay[] = [
 ];
 
 export default function CreateMealplan() {
-  const [mealplanPayload, setMealplanPayload] = useState<MealPlanDay[]>(
+  const [mealplanDays, setMealplanDays] = useState<MealPlanDay[]>(
     initialMealplanPayload
   );
 
-  useEffect(() => console.log(mealplanPayload), [mealplanPayload]);
+  const [error, setError] = useState<string | null>(null);
+
+  const {
+    mutate,
+    isPending,
+    isError,
+    error: mutateError,
+  } = useCreateMealplanData();
+
+  const createMealplan = async () => {
+    const week_start_date = new Date().toISOString().slice(0, 10);
+
+    mutate(normalizeWeeklyMeals({ week_start_date, days: mealplanDays }));
+    if (isError) {
+      setError(
+        mutateError instanceof Error
+          ? mutateError.message
+          : "Something went wrong."
+      );
+    }
+
+    if (!isError && !isPending) {
+      toast.success("Mealplan created successfully.");
+    }
+  };
 
   return (
     <MainLayout className="px-2 md:px-8 md:gap-12">
       <PageHeaderWithAvatar text="Create a Meal Plan?" />
 
       <MealplanForm
-        mealplanPayload={mealplanPayload}
-        setMealplanPayload={setMealplanPayload}
+        mealplanPayload={mealplanDays}
+        setMealplanPayload={setMealplanDays}
       />
 
       <div className="flex justify-between">
         <Button size="sm" variant="outline" className="rounded-full">
           Preview
         </Button>
-        <Button size="sm" className="rounded-full">
+        <Button size="sm" className="rounded-full" onClick={createMealplan}>
           Create Meal Plan
         </Button>
       </div>

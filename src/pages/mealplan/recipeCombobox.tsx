@@ -96,10 +96,12 @@ export function RecipeCombobox({
           role="combobox"
           aria-expanded={open}
           disabled={loading}
-          className="w-full justify-start px-2 shadow-none border-none text-muted-foreground hover:text-foreground/80"
+          className="bg-transparent hover:bg-transparent w-full justify-start px-2 shadow-none border-none text-muted-foreground hover:text-foreground/80"
         >
           {value ? (
-            <span className="w-[95%] truncate text-left text-foreground">{value.title}</span>
+            <span className="w-[95%] truncate text-left text-foreground">
+              {value.title}
+            </span>
           ) : (
             <>
               <Plus /> Add the recipe

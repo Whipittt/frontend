@@ -1,8 +1,8 @@
+import { API_URL } from "@/constants";
 import type { Ingredient } from "@/types";
 import { handleFetchError } from "@/utils/fastAPIErrorParser";
 import { DEFAULT_LIMIT, URLWithPagination } from "@/utils/urlWithPagination";
 
-const API_URL = import.meta.env.VITE_BACKEND_BASE_URL;
 const ENDPOINTS_BASE = `${API_URL}/ingredients`;
 
 const INGREDIENT_ENDPOINTS = {
@@ -35,7 +35,10 @@ export const ingredientsAPI = {
         body: JSON.stringify(newIngredientData),
       });
       if (!res.ok)
-        throw await handleFetchError(res, "An error occured while adding Ingredient");
+        throw await handleFetchError(
+          res,
+          "An error occured while adding Ingredient"
+        );
       else return res.json();
     },
 

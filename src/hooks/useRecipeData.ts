@@ -37,6 +37,21 @@ export function useRecipeRecommendationsCache() {
   });
 }
 
+export function useOneRecipeCache(recipe_id: string) {
+  const { authFetch, loading, isAuthenticated } = useAuth();
+  return useQuery({
+    queryKey: [QUERY_KEY, !!isAuthenticated, recipe_id],
+    queryFn: () => {
+      return isAuthenticated
+        ? RecipeAPI.fetchWithFavouriteStatus(authFetch, recipe_id)
+        : RecipeAPI.fetchByID(recipe_id);
+    },
+    enabled: !loading,
+    staleTime: DEFAULT_CACHE_STALE_TIME,
+    retry: 1,
+  });
+}
+
 export function useLocalFavouriteRecipeCache() {
   const { authFetch } = useAuth();
 

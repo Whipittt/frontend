@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/table";
 import { RecipeCombobox } from "./recipeCombobox";
 import type { RecipeSupBrief } from "@/types";
-import type { SetStateAction } from "react";
+import { Fragment, type SetStateAction } from "react";
 
 export const NUMBER_TO_DAY: Record<number, string> = {
   1: "Monday",
@@ -80,7 +80,7 @@ export default function MealplanForm({
         <TableBody>
           {mealplanPayload.flatMap((day) => {
             return (
-              <>
+              <Fragment key={day.day_of_week}>
                 <TableRow className="border-b-0 hover:bg-muted/0">
                   <TableCell rowSpan={3} className="align-top py-8">
                     {NUMBER_TO_DAY[day.day_of_week]}
@@ -129,7 +129,7 @@ export default function MealplanForm({
                     Dinner
                   </TableCell>
                 </TableRow>
-              </>
+              </Fragment>
             );
           })}
         </TableBody>

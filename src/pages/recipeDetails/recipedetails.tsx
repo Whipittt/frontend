@@ -14,10 +14,14 @@ import type { Recipe } from "@/types";
 import { useAuth } from "@/services/authService";
 import { RecipeAPI } from "@/api/recipes";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useFavouriteRecipesCache } from "@/hooks/useRecipeData";
+import {
+  useFavouriteRecipesCache,
+  useOneRecipeCache as useOneRecipeData,
+} from "@/hooks/useRecipeData";
 import { AspectRatio } from "@radix-ui/react-aspect-ratio";
 import { cn } from "@/lib/utils";
 import { ShoppingListPopup } from "@/components/shoppingListPopup";
+import { AddToMealplan } from "./addToMealplan";
 
 type Params = {
   recipe_id: string;
@@ -66,9 +70,10 @@ export default function RecipeDetails(): JSX.Element {
   const { isAuthenticated, authFetch } = useAuth();
   const { recipe_id } = useParams<Params>();
 
+  // Local display state (seeded from query data)
   const [recipe, setRecipe] = useState<Recipe | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+
+  // Image state
   const [imgIsLoading, setImgIsLoading] = useState<boolean>(true);
   const [imgError, setImgError] = useState<boolean>(false);
 
@@ -77,49 +82,30 @@ export default function RecipeDetails(): JSX.Element {
   const [favouriteError, setFavouriteError] = useState<string | null>(null);
   const { refetch: refreshFavouritesCache } = useFavouriteRecipesCache();
 
-  // Fetch recipe
+  // Use cache hook instead of manual fetching
+  const recipeId = recipe_id?.trim() ?? "";
+  const {
+    data: fetchedRecipe,
+    isLoading: queryLoading,
+    error: queryError,
+  } = useOneRecipeData(recipeId);
+
+  // Handle "no recipe id" professionally
+  const noRecipeId = !recipe_id;
+  const loading = noRecipeId ? false : !!queryLoading;
+  const error = useMemo(() => {
+    if (noRecipeId) return "No Recipe ID provided in URL.";
+    if (queryError)
+      return queryError instanceof Error
+        ? queryError.message
+        : "Failed to load recipe.";
+    return null;
+  }, [noRecipeId, queryError]);
+
+  // Keep local recipe in sync with fetched data
   useEffect(() => {
-    let isActive = true;
-
-    const fetchRecipe = async () => {
-      try {
-        if (!recipe_id) {
-          setRecipe(null);
-          setError("No Recipe ID provided in URL.");
-          setLoading(false);
-          return;
-        }
-
-        setLoading(true);
-        setError(null);
-
-        const data = isAuthenticated
-          ? await RecipeAPI.fetchWithFavouriteStatus(authFetch, recipe_id)
-          : await RecipeAPI.fetchByID(recipe_id);
-        if (!isActive) return;
-
-        if (!data) {
-          setRecipe(null);
-          setError("Recipe not found.");
-        } else {
-          setRecipe(data);
-        }
-      } catch (e: unknown) {
-        if (!isActive) return;
-        const message =
-          e instanceof Error ? e.message : "Failed to load recipe.";
-        setRecipe(null);
-        setError(message);
-      } finally {
-        if (isActive) setLoading(false);
-      }
-    };
-
-    fetchRecipe();
-    return () => {
-      isActive = false;
-    };
-  }, [isAuthenticated, authFetch, recipe_id]);
+    setRecipe(fetchedRecipe ?? null);
+  }, [fetchedRecipe]);
 
   // Derived HTML
   const descriptionHtml = recipe?.description
@@ -160,7 +146,7 @@ export default function RecipeDetails(): JSX.Element {
     refreshFavouritesCache,
   ]);
 
-  // Safe rating conversion (clamped to expected range if Rating is constrained)
+  // Safe rating conversion
   const rating: Rating = useMemo(() => {
     const r = Number(recipe?.rating ?? 0);
     return Math.max(0, Math.min(5, r)) as Rating;
@@ -168,7 +154,8 @@ export default function RecipeDetails(): JSX.Element {
 
   const timeMinutes = Number(recipe?.time_minutes ?? 0);
 
-  const [open, setOpen] = useState(false);
+  const [isIngredientsPanelOpen, setIngredientsPanelOpen] = useState(false);
+  const [isAddToMealplanOpen, setIsAddToMealplanOpen] = useState(false);
 
   return (
     <MainLayout className="px-3">
@@ -267,9 +254,10 @@ export default function RecipeDetails(): JSX.Element {
             />
             <div className="absolute bottom-0 left-0 w-full h-28 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
             <Button
-              variant="zombie"
-              className="absolute bottom-2 left-4 text-white"
+              variant="ghost"
+              className="absolute bottom-2 left-4 text-white hover:bg-accent/20"
               aria-label="Add to meal plan"
+              onClick={() => setIsAddToMealplanOpen((prev) => !prev)}
             >
               <AddRoundedIcon />
               Add to meal plan
@@ -284,7 +272,7 @@ export default function RecipeDetails(): JSX.Element {
                 className="text-primary hover:text-primary/80 "
                 disabled={!recipe.ingredients?.length}
                 aria-disabled={!recipe.ingredients?.length}
-                onClick={() => setOpen((prev) => !prev)}
+                onClick={() => setIngredientsPanelOpen((prev) => !prev)}
               >
                 Get Shopping List
               </Button>
@@ -306,6 +294,7 @@ export default function RecipeDetails(): JSX.Element {
           </div>
 
           <RenderRawHTML header="Description" content={descriptionHtml} />
+
           <RenderRawHTML header="Instructions" content={instructionsHtml} />
         </section>
       )}
@@ -317,14 +306,20 @@ export default function RecipeDetails(): JSX.Element {
       )}
 
       <ShoppingListPopup
-        open={open}
-        onOpenChange={setOpen}
+        open={isIngredientsPanelOpen}
+        onOpenChange={setIngredientsPanelOpen}
         recipeTitle={recipe?.title ?? ""}
         ingredients={
           recipe && recipe.ingredients
             ? recipe.ingredients.map((ing: Ingredient) => ing.name)
             : []
         }
+      />
+
+      <AddToMealplan
+        open={isAddToMealplanOpen}
+        onOpenChange={setIsAddToMealplanOpen}
+        recipeID={recipe?.id ?? ""}
       />
     </MainLayout>
   );

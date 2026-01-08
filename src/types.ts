@@ -137,3 +137,33 @@ export interface NewRecipe {
   display_image: string;
   instruction_json: JSONContent;
 }
+
+export type MealPlanRecipeBrief = {
+  id: string;
+  title: string;
+};
+
+export type MealPlanDayMealsOut = {
+  breakfast: MealPlanRecipeBrief | null;
+  lunch: MealPlanRecipeBrief | null;
+  dinner: MealPlanRecipeBrief | null;
+};
+
+export type MealPlanDayOut = {
+  day_of_week: number;
+  meals: MealPlanDayMealsOut;
+};
+
+export type MealPlanOut = {
+  id?: string;
+  week_start_date: string;
+  days: MealPlanDayOut[];
+};
+
+export type MealplanPayload = {
+  week_start_date: string;
+  days: {
+    day_of_week: number;
+    meals: Partial<Record<keyof MealPlanDayMealsOut, string>>;
+  }[];
+};

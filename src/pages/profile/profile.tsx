@@ -77,9 +77,11 @@ export default function Profile() {
                     <span className="font-semibold text-lg capitalize">
                       {fullName}
                     </span>
-                    <span className="text-muted-foreground text-sm capitalize">
-                      {preference?.skill_level || "—"}
-                    </span>
+                    {preference && preference?.skill_level && (
+                      <span className="text-muted-foreground text-sm capitalize">
+                        {preference?.skill_level}
+                      </span>
+                    )}
                   </>
                 )}
               </div>

@@ -1,6 +1,6 @@
 import SearchRecipes from "@/pages/searchRecipes";
 import Home from "@/pages/home/home";
-import RecipeDetails from "@/pages/recipeDetails/recipedetails";
+import RecipeDetails from "@/pages/recipeDetails/recipeDetails";
 import Forbidden from "@/pages/forbidden";
 import NotFound from "@/pages/notFound";
 import AddPreferences from "@/pages/addPreferences/addPreferences";

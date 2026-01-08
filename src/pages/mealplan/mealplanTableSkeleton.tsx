@@ -1,4 +1,4 @@
-import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -8,19 +8,14 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import { NUMBER_TO_DAY } from "./mealplanForm";
-import { Link } from "react-router-dom";
-import type { MealPlanDayOut } from "@/types";
+
+type Props = {
+  days?: number;
+};
 
 const MEAL_ORDER = ["breakfast", "lunch", "dinner"] as const;
 
-type MealplanTableProps = {
-  meals?: MealPlanDayOut[];
-};
-
-export function MealplanTable({ meals }: MealplanTableProps) {
-  const safeMeals = Array.isArray(meals) ? meals : [];
-
+export function MealplanTableSkeleton({ days = 3 }: Props) {
   return (
     <Table>
       <TableHeader>
@@ -32,29 +27,14 @@ export function MealplanTable({ meals }: MealplanTableProps) {
       </TableHeader>
 
       <TableBody>
-        {safeMeals.flatMap((day, dayIndex) => {
-          const dayName = NUMBER_TO_DAY[day?.day_of_week] ?? "—";
-          const dayMealsObj = day?.meals ?? {};
-
-          // Turn the meals object into an array in a predictable order:
-          // breakfast -> lunch -> dinner (only if they exist)
-          const dayMeals = MEAL_ORDER.flatMap((type) => {
-            const meal = dayMealsObj[type];
-            if (!meal) return [];
-            return [{ ...meal, type }];
-          });
-
-          if (dayMeals.length === 0) return [];
-
-          return dayMeals.map((meal, mealIndex) => {
+        {Array.from({ length: days }).flatMap((_, dayIndex) => {
+          return MEAL_ORDER.map((mealType, mealIndex) => {
             const isFirst = mealIndex === 0;
-            const isLast = mealIndex === dayMeals.length - 1;
+            const isLast = mealIndex === MEAL_ORDER.length - 1;
 
             return (
               <TableRow
-                key={`${day?.day_of_week ?? `day-${dayIndex}`}-${
-                  meal?.id ?? mealIndex
-                }`}
+                key={`sk-day-${dayIndex}-meal-${mealType}`}
                 className={cn(
                   "hover:bg-muted/0 transition-colors",
                   !isLast && "border-b-0"
@@ -62,10 +42,10 @@ export function MealplanTable({ meals }: MealplanTableProps) {
               >
                 {isFirst && (
                   <TableCell
-                    rowSpan={dayMeals.length}
+                    rowSpan={MEAL_ORDER.length}
                     className="align-top md:pl-8 pl-4 py-8 font-medium"
                   >
-                    {dayName}
+                    <Skeleton className="h-4 w-20" />
                   </TableCell>
                 )}
 
@@ -76,7 +56,7 @@ export function MealplanTable({ meals }: MealplanTableProps) {
                     isLast && "pb-8"
                   )}
                 >
-                  <Link to={`/recipes/${meal.id}`}>{meal.title}</Link>
+                  <Skeleton className="h-4 w-[220px] max-w-full" />
                 </TableCell>
 
                 <TableCell
@@ -87,12 +67,7 @@ export function MealplanTable({ meals }: MealplanTableProps) {
                   )}
                 >
                   <div className="flex justify-end">
-                    <Badge
-                      variant="secondary"
-                      className="text-xs py-2 font-normal capitalize md:min-w-[74px] flex items-center justify-center w-fit"
-                    >
-                      {meal?.type ?? "meal"}
-                    </Badge>
+                    <Skeleton className="h-7 w-[84px] rounded-full" />
                   </div>
                 </TableCell>
               </TableRow>

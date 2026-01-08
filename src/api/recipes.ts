@@ -150,7 +150,7 @@ export const RecipeAPI = {
   filterByCategory: async (authFetch: typeof fetch, category: string) => {
     const res = await authFetch(ENDPOINTS.filterRecipesByCategory(category), {
       method: "GET",
-      credentials: "include",
+      credentials: "include", 
     });
 
     if (!res.ok)
