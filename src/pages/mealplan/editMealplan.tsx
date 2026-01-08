@@ -1,12 +1,7 @@
 import PageHeaderWithAvatar from "@/components/pageHeader";
 import MainLayout from "@/layouts/mainLayout";
 import { useEffect, useState } from "react";
-import type {
-  MealPlanOut,
-  MealPlanDayMealsOut,
-  RecipeSupBrief,
-  MealplanPayload,
-} from "@/types";
+import type { MealPlanOut, RecipeSupBrief } from "@/types";
 import MealplanForm from "./mealplanForm";
 import { Button } from "@/components/ui/button";
 import { useParams } from "react-router-dom";
@@ -115,12 +110,7 @@ export default function EditMealplan() {
     fetchMealplan();
   }, [mealplan_id, authFetch]);
 
-  const {
-    mutateAsync,
-    isPending,
-    isError,
-    error: mutateError,
-  } = useUpdateMealplanData();
+  const { mutateAsync } = useUpdateMealplanData();
 
   async function updateMealplan() {
     if (!mealplan_id || !mealplan) return;
@@ -131,11 +121,7 @@ export default function EditMealplan() {
         days: mealplanDays,
       });
 
-      console.log({
-        payload,
-      });
-
-      const res = await mutateAsync({
+      mutateAsync({
         mealplanID: mealplan_id,
         payload,
       });

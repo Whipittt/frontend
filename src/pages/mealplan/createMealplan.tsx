@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useCreateMealplanData } from "@/hooks/useMealplanData";
 import { toast } from "sonner";
 import { normalizeWeeklyMeals } from "@/utils/mealplan";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 type MealType = "breakfast" | "lunch" | "dinner";
 
@@ -58,6 +59,12 @@ export default function CreateMealplan() {
 
   return (
     <MainLayout className="px-2 md:px-8 md:gap-12">
+      {error && (
+        <Alert variant="destructive" role="alert" aria-live="assertive">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+
       <PageHeaderWithAvatar text="Create a Meal Plan?" />
 
       <MealplanForm
