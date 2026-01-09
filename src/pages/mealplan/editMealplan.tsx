@@ -1,25 +1,20 @@
-import PageHeaderWithAvatar from "@/components/pageHeader";
-import MainLayout from "@/layouts/mainLayout";
-import { useEffect, useState } from "react";
-import type { MealPlanOut, RecipeSupBrief } from "@/types";
-import MealplanForm from "./mealplanForm";
-import { Button } from "@/components/ui/button";
-import { useParams } from "react-router-dom";
 import { mealplanAPI } from "@/api/mealplans";
-import { useAuth } from "@/services/authService";
-import { Card, CardHeader } from "@/components/ui/card";
-import {
-  Field,
-  FieldGroup,
-  FieldLabel,
-  FieldTitle,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+import PageHeaderWithAvatar from "@/components/pageHeader";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { DatePicker } from "@/components/date-picker";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader } from "@/components/ui/card";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import { useUpdateMealplanData } from "@/hooks/useMealplanData";
-import { toast } from "sonner";
+import MainLayout from "@/layouts/mainLayout";
+import { useAuth } from "@/services/authService";
+import type { MealPlanOut, RecipeSupBrief } from "@/types";
 import { normalizeWeeklyMeals } from "@/utils/mealplan";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
+import MealplanForm from "./mealplanForm";
+import { formatDate } from "@/utils/formatDate";
 
 type MealType = "breakfast" | "lunch" | "dinner";
 
@@ -69,6 +64,8 @@ export default function EditMealplan() {
   const [error, setError] = useState<string | null>(null);
 
   const [mealplan, setMealplan] = useState<MealPlanOut | null>(null);
+
+  const navigate = useNavigate();
 
   const [mealplanDays, setMealplanDays] = useState<MealPlanDay[]>(
     initialMealplanPayload
@@ -121,12 +118,18 @@ export default function EditMealplan() {
         days: mealplanDays,
       });
 
-      mutateAsync({
-        mealplanID: mealplan_id,
-        payload,
-      });
-
-      toast.success("Meal plan updated successfully");
+      mutateAsync(
+        {
+          mealplanID: mealplan_id,
+          payload,
+        },
+        {
+          onSuccess: () => {
+            toast.success("Meal plan updated successfully");
+            navigate("/mealplan");
+          },
+        }
+      );
     } catch (e) {
       setError(e instanceof Error ? e.message : "Unable to update mealplan.");
     }
@@ -139,25 +142,32 @@ export default function EditMealplan() {
       <Card className="w-full md:p-4 p-2 px-1">
         <CardHeader>
           <FieldGroup>
-            <FieldTitle className="text-md">Mealplan Details</FieldTitle>
-
             {error && (
               <Alert variant="destructive" role="alert" aria-live="assertive">
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
 
-            <Input
-              id="uid"
-              type="text"
-              placeholder="Loading..."
-              value={mealplan?.id ?? ""}
-              disabled
-            />
+            <Field>
+              <FieldLabel htmlFor="uid">Plan ID</FieldLabel>{" "}
+              <Input
+                id="uid"
+                type="text"
+                placeholder="Loading..."
+                value={mealplan?.id ?? ""}
+                disabled
+              />
+            </Field>
 
             <Field>
-              <FieldLabel htmlFor="uid">Week Start Date</FieldLabel>
-              <DatePicker passValue={mealplan?.week_start_date ?? ""} />
+              <FieldLabel htmlFor="date">Week Start Date</FieldLabel>{" "}
+              <Input
+                id="date"
+                type="text"
+                placeholder="Loading..."
+                value={formatDate(new Date(mealplan?.week_start_date ?? ""))}
+                disabled
+              />
             </Field>
 
             <Field>
@@ -167,20 +177,20 @@ export default function EditMealplan() {
                 setMealplanPayload={setMealplanDays}
               />
             </Field>
+
+            <Field>
+              <Button
+                size="sm"
+                className="rounded-full"
+                disabled={fetching}
+                onClick={updateMealplan}
+              >
+                Save Changes
+              </Button>
+            </Field>
           </FieldGroup>
         </CardHeader>
       </Card>
-
-      <div className="flex justify-end">
-        <Button
-          size="sm"
-          className="rounded-full"
-          disabled={fetching}
-          onClick={updateMealplan}
-        >
-          Save Changes
-        </Button>
-      </div>
     </MainLayout>
   );
 }

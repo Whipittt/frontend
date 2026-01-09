@@ -10,7 +10,7 @@ import {
   type VisibilityState,
 } from "@tanstack/react-table";
 import type { Recipe } from "@/types";
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import DashboardTable from "@/components/dashboardTable";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -28,13 +28,14 @@ import { useRecipesData } from "@/hooks/useRecipeData";
 import { useNavigate } from "react-router-dom";
 import DeleteRecipe from "./deleteRecipe";
 import { useSessionStorage } from "@/hooks/useSessionStorage";
+import { RecipeAPI } from "@/api/recipes";
 
 export default function RecipesTable() {
   const [skip, setSkip] = useSessionStorage("RecipeTableCurrentPage", 0);
   const { data, isLoading, isError, error, refetch, isFetching } =
     useRecipesData(skip, DEFAULT_LIMIT);
 
-  const recipes = useMemo<Recipe[]>(() => (!data ? [] : data), [data]);
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -48,7 +49,25 @@ export default function RecipesTable() {
 
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
 
+  const [recipeNameQ, setRecipeNameQ] = useState("");
+
   const navigate = useNavigate();
+
+  useEffect(() => setRecipes(!data ? [] : data), [data]);
+
+  useEffect(() => {
+    async function fetchIngredients() {
+      if (recipeNameQ.trim()) {
+        try {
+          const res = await RecipeAPI.filterRecipesByTitle(recipeNameQ);
+          if (res) {
+            setRecipes(res);
+          }
+        } catch (error) {}
+      }
+    }
+    fetchIngredients();
+  }, [recipeNameQ]);
 
   const columns: ColumnDef<Recipe>[] = [
     {
@@ -229,7 +248,13 @@ export default function RecipesTable() {
           addFn: () => navigate("/dashboard/recipes/new"),
         }}
         refetch={refetch}
-        filter={{ columnName: "title" }}
+        filter={{
+          columnName: "title",
+          input: {
+            value: recipeNameQ,
+            onChange: (e) => setRecipeNameQ(e.target.value),
+          },
+        }}
         pagination={{
           prevFn: () => setSkip((prev) => prev - DEFAULT_LIMIT),
           nextFn: () => setSkip((prev) => prev + DEFAULT_LIMIT),

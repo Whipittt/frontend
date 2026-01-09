@@ -1,10 +1,10 @@
 import SearchRecipes from "@/pages/searchRecipes";
 import Home from "@/pages/home/home";
-import RecipeDetails from "@/pages/recipeDetails/recipeDetails";
 import Forbidden from "@/pages/forbidden";
 import NotFound from "@/pages/notFound";
 import AddPreferences from "@/pages/addPreferences/addPreferences";
 import type { AppRoute } from "@/types";
+import RecipeDetails from "@/pages/recipeDetails/recipeDetails";
 
 export const OPEN_ROUTES: AppRoute[] = [
   { path: "", element: <Home /> },

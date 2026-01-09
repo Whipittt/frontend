@@ -13,6 +13,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Spinner } from "@/components/ui/spinner";
 import { toast } from "sonner";
 import {
+  useCreateMealplanData,
   useLatestMealplanData,
   useUpdateOneMealplanMealData,
 } from "@/hooks/useMealplanData";
@@ -37,51 +38,63 @@ export function AddToMealplan({
   onOpenChange,
   recipeID,
 }: AddToMealplanProps) {
-  const [daysOptions, setDaysoptions] = useState<string[]>();
-  const [id, setId] = useState<string>();
-  const [day, setDay] = useState<string>();
-  const [mealType, setMealType] = useState<string>();
+  const [day, setDay] = useState<string>("");
+  const [mealType, setMealType] = useState<string>("");
+
   const [error, setError] = useState<string | null>(null);
 
   const { data: latestMealplan } = useLatestMealplanData();
 
-  const {
-    mutateAsync,
-    isPending,
-    isError,
-    error: mutateError,
-  } = useUpdateOneMealplanMealData();
+  const { mutateAsync: updateLatestPlan, isPending: isUpdatePending } =
+    useUpdateOneMealplanMealData();
+
+  const { mutateAsync: createPlan, isPending: isCreatePending } =
+    useCreateMealplanData();
+
+  const isPending = isUpdatePending || isCreatePending;
 
   useEffect(() => {
-    if (latestMealplan?.id) {
-      setId(latestMealplan.id);
-      setDaysoptions(
-        latestMealplan.days.map((day) => day.day_of_week.toString())
-      );
+    setError(null);
+
+    if (!open) {
+      setDay("");
+      setMealType("");
     }
-  }, [latestMealplan]);
+  }, [open]);
+
+  useEffect(() => {
+    if (error) setError(null);
+  }, [day, mealType]);
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
+    setError(null);
 
-    if (!id || !mealType || !day || !recipeID) return;
+    if (!mealType || !day || !recipeID || isPending) return;
 
     try {
-      const res = await mutateAsync({
-        mealplanID: id,
-        day,
-        mealType,
-        payload: { recipe_id: recipeID },
-      });
-
-      if (isError) {
-        setError(mutateError.message);
+      if (latestMealplan?.id) {
+        await updateLatestPlan({
+          mealplanID: latestMealplan!.id,
+          day,
+          mealType,
+          payload: { recipe_id: recipeID },
+        });
+        toast.success("Meal plan updated successfully.");
+      } else {
+        await createPlan({
+          week_start_date: new Date().toISOString().slice(0, 10),
+          days: [
+            {
+              day_of_week: Number(day),
+              meals: { [mealType]: recipeID },
+            },
+          ],
+        });
+        toast.success("Meal plan created successfully.");
       }
 
-      if (res && !isPending && !isError) {
-        toast.success("Meal plan updated sucessfully.");
-        onOpenChange(false);
-      }
+      onOpenChange(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     }
@@ -102,34 +115,51 @@ export function AddToMealplan({
 
         <form onSubmit={handleSubmit} noValidate className="space-y-6">
           <Field>
-            <FieldLabel htmlFor="confirm-password">Day</FieldLabel>
-            <Select value={day} onValueChange={setDay}>
+            <FieldLabel>Day</FieldLabel>
+            <Select value={day} onValueChange={setDay} disabled={isPending}>
               <SelectTrigger className="w-[180px] border-none outline-none bg-[#202020]">
                 <SelectValue placeholder="Select day" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  {daysOptions?.map((dayValue) => (
-                    <SelectItem value={dayValue}>
-                      {NUMBER_TO_DAY[Number(dayValue)]}
-                    </SelectItem>
-                  ))}
+                  {Array.from({ length: 7 }).map((_, index) => {
+                    const dayNumber = index + 1;
+                    return (
+                      <SelectItem
+                        key={dayNumber}
+                        value={String(dayNumber)}
+                        disabled={isPending}
+                      >
+                        {NUMBER_TO_DAY[dayNumber]}
+                      </SelectItem>
+                    );
+                  })}
                 </SelectGroup>
               </SelectContent>
             </Select>
           </Field>
 
           <Field>
-            <FieldLabel htmlFor="confirm-password">Meal type</FieldLabel>
-            <Select value={mealType} onValueChange={setMealType}>
+            <FieldLabel>Meal type</FieldLabel>
+            <Select
+              value={mealType}
+              onValueChange={setMealType}
+              disabled={isPending}
+            >
               <SelectTrigger className="w-[180px] border-none outline-none bg-[#202020]">
                 <SelectValue placeholder="Select meal type" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectItem value="Breakfast">Breakfast</SelectItem>
-                  <SelectItem value="Lunch">Lunch</SelectItem>
-                  <SelectItem value="Dinner">Dinner</SelectItem>
+                  <SelectItem value="Breakfast" disabled={isPending}>
+                    Breakfast
+                  </SelectItem>
+                  <SelectItem value="Lunch" disabled={isPending}>
+                    Lunch
+                  </SelectItem>
+                  <SelectItem value="Dinner" disabled={isPending}>
+                    Dinner
+                  </SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -137,7 +167,7 @@ export function AddToMealplan({
 
           <DialogFooter>
             <DialogClose asChild>
-              <Button type="button" variant="outline">
+              <Button type="button" variant="outline" disabled={isPending}>
                 Cancel
               </Button>
             </DialogClose>

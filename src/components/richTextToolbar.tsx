@@ -13,7 +13,17 @@ import {
   Underline,
   Strikethrough,
   Link as LinkIcon,
+  Image as ImageIcon,
 } from "lucide-react";
+
+function isValidUrl(url: string) {
+  try {
+    const u = new URL(url);
+    return u.protocol === "http:" || u.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
 
 export default function RichTextToolbar({ editor }: { editor: Editor }) {
   if (!editor) return null;
@@ -31,8 +41,6 @@ export default function RichTextToolbar({ editor }: { editor: Editor }) {
             : "paragraph"
         }
         onValueChange={(value) => {
-          editor.chain().focus();
-
           if (value === "paragraph") {
             editor.chain().focus().setParagraph().run();
           } else {
@@ -102,13 +110,28 @@ export default function RichTextToolbar({ editor }: { editor: Editor }) {
               return;
             }
 
-            const url = prompt("Enter URL");
+            const url = prompt("Enter URL (https://...)");
             if (!url) return;
+            if (!isValidUrl(url)) return;
 
             editor.chain().focus().setLink({ href: url }).run();
           }}
         >
           <LinkIcon className="h-4 w-4" />
+        </ToggleGroupItem>
+
+        <ToggleGroupItem
+          value="image"
+          aria-label="Image"
+          onClick={() => {
+            const url = prompt("Enter image URL (https://...)");
+            if (!url) return;
+            if (!isValidUrl(url)) return;
+
+            editor.chain().focus().setImage({ src: url }).run();
+          }}
+        >
+          <ImageIcon className="h-4 w-4" />
         </ToggleGroupItem>
       </ToggleGroup>
     </div>

@@ -70,7 +70,7 @@ export default function MealplanForm({
     <div>
       <Table>
         <TableHeader>
-          <TableRow>
+          <TableRow className="hover:bg-muted/0">
             <TableHead className="py-4">Day</TableHead>
             <TableHead className="px-4">Recipe</TableHead>
             <TableHead className="text-right">Meal</TableHead>
@@ -89,11 +89,12 @@ export default function MealplanForm({
                     <RecipeCombobox
                       value={day.meals.breakfast}
                       onSelect={(selectedRecipe) => {
-                        updateMeal(
-                          day.day_of_week,
-                          "breakfast",
-                          selectedRecipe
-                        );
+                        selectedRecipe &&
+                          updateMeal(
+                            day.day_of_week,
+                            "breakfast",
+                            selectedRecipe
+                          );
                       }}
                     />
                   </TableCell>
@@ -107,7 +108,8 @@ export default function MealplanForm({
                     <RecipeCombobox
                       value={day.meals.lunch}
                       onSelect={(selectedRecipe) => {
-                        updateMeal(day.day_of_week, "lunch", selectedRecipe);
+                        selectedRecipe &&
+                          updateMeal(day.day_of_week, "lunch", selectedRecipe);
                       }}
                     />
                   </TableCell>
@@ -121,7 +123,8 @@ export default function MealplanForm({
                     <RecipeCombobox
                       value={day.meals.dinner}
                       onSelect={(selectedRecipe) => {
-                        updateMeal(day.day_of_week, "dinner", selectedRecipe);
+                        selectedRecipe &&
+                          updateMeal(day.day_of_week, "dinner", selectedRecipe);
                       }}
                     />
                   </TableCell>

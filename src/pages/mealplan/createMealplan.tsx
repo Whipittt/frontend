@@ -8,6 +8,7 @@ import { useCreateMealplanData } from "@/hooks/useMealplanData";
 import { toast } from "sonner";
 import { normalizeWeeklyMeals } from "@/utils/mealplan";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useNavigate } from "react-router-dom";
 
 type MealType = "breakfast" | "lunch" | "dinner";
 
@@ -33,28 +34,23 @@ export default function CreateMealplan() {
 
   const [error, setError] = useState<string | null>(null);
 
-  const {
-    mutate,
-    isPending,
-    isError,
-    error: mutateError,
-  } = useCreateMealplanData();
+  const navigate = useNavigate();
 
-  const createMealplan = async () => {
+  const { mutate } = useCreateMealplanData();
+
+  const createMealplan = () => {
     const week_start_date = new Date().toISOString().slice(0, 10);
 
-    mutate(normalizeWeeklyMeals({ week_start_date, days: mealplanDays }));
-    if (isError) {
-      setError(
-        mutateError instanceof Error
-          ? mutateError.message
-          : "Something went wrong."
-      );
-    }
-
-    if (!isError && !isPending) {
-      toast.success("Mealplan created successfully.");
-    }
+    mutate(normalizeWeeklyMeals({ week_start_date, days: mealplanDays }), {
+      onSuccess: () => {
+        toast.success("Mealplan created successfully.");
+        navigate("/mealplan");
+        setError(null);
+      },
+      onError: (err) => {
+        setError(err instanceof Error ? err.message : "Something went wrong.");
+      },
+    });
   };
 
   return (

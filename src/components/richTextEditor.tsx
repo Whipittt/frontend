@@ -1,6 +1,9 @@
 import { useEditor, EditorContent, type JSONContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
+import Underline from "@tiptap/extension-underline";
+import Link from "@tiptap/extension-link";
+import Image from "@tiptap/extension-image";
 import RichTextToolbar from "./richTextToolbar";
 import { cn } from "@/lib/utils";
 import { useEffect } from "react";
@@ -22,11 +25,21 @@ export default function RichTextEditor({
 }: RichTextEditorProps) {
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({
-        // Configure built-in extensions as needed
-      }),
+      StarterKit.configure({}),
       Placeholder.configure({
         placeholder,
+      }),
+
+      Underline,
+      Link.configure({
+        openOnClick: false,
+        autolink: true,
+        linkOnPaste: true,
+      }),
+
+      Image.configure({
+        inline: false,
+        allowBase64: true,
       }),
     ],
     content: value,
@@ -37,28 +50,29 @@ export default function RichTextEditor({
       },
     },
     onUpdate({ editor }) {
-      if (setHTML) {
-        setHTML(editor.getHTML());
-      }
-      if (setJSON) {
-        setJSON(editor.getJSON());
-      }
+      setHTML?.(editor.getHTML());
+      setJSON?.(editor.getJSON());
     },
   });
 
   useEffect(() => {
-    if (!editor || !value) return;
+    if (!editor || value == null) return;
 
-    const editorJSON = editor.getJSON();
+    if (typeof value === "string") {
+      const currentHTML = editor.getHTML();
+      if (currentHTML !== value) {
+        editor.commands.setContent(value, {});
+      }
+      return;
+    }
 
-    if (JSON.stringify(editorJSON) !== JSON.stringify(value)) {
-      editor.commands.setContent(value);
+    const currentJSON = editor.getJSON();
+    if (JSON.stringify(currentJSON) !== JSON.stringify(value)) {
+      editor.commands.setContent(value, {});
     }
   }, [value, editor]);
 
-  if (!editor) {
-    return null;
-  }
+  if (!editor) return null;
 
   return (
     <div className={cn("rounded-md bg-[#202020]", className)}>

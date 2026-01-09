@@ -33,7 +33,7 @@ export default function IngredientsTable() {
   const [skip, setSkip] = useSessionStorage("IngredientsTableCurrentPage", 0);
 
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
-  const [ingredientNameQ, setingredientNameQ] = useState("");
+  const [ingredientNameQ, setIngredientNameQ] = useState("");
 
   const { data, isLoading, isError, error, refetch, isFetching } =
     listIngredientsData(skip, DEFAULT_LIMIT);
@@ -187,7 +187,7 @@ export default function IngredientsTable() {
         filter={{
           columnName: "name",
           input: {
-            onChange: (e) => setingredientNameQ(e.target.value),
+            onChange: (e) => setIngredientNameQ(e.target.value),
             value: ingredientNameQ,
           },
         }}

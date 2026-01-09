@@ -5,9 +5,9 @@ import { useAuth } from "@/services/authService";
 import RecommendationSectionUnauthenticated from "./recomendationSectionUnauthenticated";
 
 export default function AllCategory() {
-  const { isAuthenticated } = useAuth();
+  const { loading, isAuthenticated } = useAuth();
 
-  return isAuthenticated ? (
+  return !loading && isAuthenticated ? (
     <>
       <RecommendationSection />
       <DicsoverySection />

@@ -1,4 +1,3 @@
-import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,6 +17,7 @@ import { Check, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { RecipeAPI } from "@/api/recipes";
 import { useUserRecipeRecommendationsCache } from "@/hooks/useRecipeData";
+import { useEffect, useState } from "react";
 
 type RestrictionComboboxProps = {
   value: RecipeSupBrief | null;
@@ -30,63 +30,71 @@ export function RecipeCombobox({
   loading,
   onSelect,
 }: RestrictionComboboxProps) {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [isError, setIsError] = React.useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
 
-  const [recipes, setRecipes] = React.useState<RecipeSupBrief[]>([]);
-  const [recipeSearchQuery, setRecipeSearchQuery] = React.useState("");
+  const [recipes, setRecipes] = useState<RecipeSupBrief[]>([]);
+  const [recipeSearchQuery, setRecipeSearchQuery] = useState("");
 
-  const [selected, setSelected] = React.useState<RecipeSupBrief>();
+  const [selected, setSelected] = useState<RecipeSupBrief>();
 
   const { data } = useUserRecipeRecommendationsCache();
 
-  React.useEffect(() => data && setRecipes(data.slice(0, 5)), [open]);
+  useEffect(() => {
+    if (!open) return;
 
-  React.useEffect(() => {
+    const q = recipeSearchQuery.trim();
+    if (q) return;
+
+    if (data?.length) {
+      setRecipes(data.slice(0, 5));
+    } else {
+      setRecipes([]);
+    }
+  }, [open, data, recipeSearchQuery]);
+
+  useEffect(() => {
     let ignore = false;
 
-    async function fetchRecipes() {
-      const q = recipeSearchQuery.trim();
+    const q = recipeSearchQuery.trim();
 
-      if (!q) {
-        setRecipes([]);
-        setIsLoading(false);
-        setIsError(false);
-        return;
-      }
-
-      setIsLoading(true);
+    if (!q) {
+      setIsLoading(false);
       setIsError(false);
+      return;
+    }
 
+    setIsLoading(true);
+    setIsError(false);
+
+    const handle = window.setTimeout(async () => {
       try {
         const res = (await RecipeAPI.filterRecipesByTitle(
           q,
           5
         )) as RecipeSupBrief[];
 
-        if (!ignore) {
-          setRecipes(res ?? []);
-        }
-      } catch (error) {
+        if (!ignore) setRecipes(res ?? []);
+      } catch {
         if (!ignore) {
           setIsError(true);
           setRecipes([]);
         }
       } finally {
-        if (!ignore) {
-          setIsLoading(false);
-        }
+        if (!ignore) setIsLoading(false);
       }
-    }
-
-    fetchRecipes();
+    }, 250);
 
     return () => {
       ignore = true;
+      window.clearTimeout(handle);
     };
   }, [recipeSearchQuery]);
+
+  const selectedId = selected?.id ?? value?.id;
+  const isDisabled = !!loading;
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -95,7 +103,7 @@ export function RecipeCombobox({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          disabled={loading}
+          disabled={isDisabled}
           className="bg-transparent hover:bg-transparent w-full justify-start px-2 shadow-none border-none text-muted-foreground hover:text-foreground/80"
         >
           {value ? (
@@ -109,13 +117,16 @@ export function RecipeCombobox({
           )}
         </Button>
       </PopoverTrigger>
+
       <PopoverContent className="md:w-[300px] p-0" align="start">
         <Command>
           <Input
             placeholder="Search recipe..."
             className="h-9 focus-visible:ring-0"
+            value={recipeSearchQuery}
             onChange={(e) => setRecipeSearchQuery(e.target.value)}
           />
+
           {isLoading ? (
             <CommandList>
               <CommandEmpty>Loading...</CommandEmpty>
@@ -128,12 +139,16 @@ export function RecipeCombobox({
             </CommandList>
           ) : (
             <CommandList className="scrollbar">
-              <CommandEmpty>No recipe found.</CommandEmpty>
+              <CommandEmpty>
+                {recipeSearchQuery.trim()
+                  ? "No recipe found."
+                  : "Start typing to search."}
+              </CommandEmpty>
               <CommandGroup>
                 {recipes.map((recipe) => (
                   <CommandItem
                     key={recipe.id}
-                    value={recipe.id}
+                    value={String(recipe.id)}
                     onSelect={(currentValue) => {
                       setSelected(
                         currentValue === selected?.id ? undefined : recipe
@@ -148,7 +163,7 @@ export function RecipeCombobox({
                     <Check
                       className={cn(
                         "ml-auto",
-                        selected?.id === recipe.id ? "opacity-100" : "opacity-0"
+                        selectedId === recipe.id ? "opacity-100" : "opacity-0"
                       )}
                     />
                   </CommandItem>
