@@ -7,6 +7,10 @@ import RecommendationSectionUnauthenticated from "./recomendationSectionUnauthen
 export default function AllCategory() {
   const { loading, isAuthenticated } = useAuth();
 
+  if (loading) {
+    return <></>;
+  }
+
   return !loading && isAuthenticated ? (
     <>
       <RecommendationSection />
