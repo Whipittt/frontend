@@ -25,7 +25,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { NUMBER_TO_DAY } from "../mealplan/mealplanForm";
+import { NUMBER_TO_DAY } from "@/utils/mealplan";
+import { getStartOfWeek } from "@/utils/date";
 
 type AddToMealplanProps = {
   open: boolean;
@@ -83,7 +84,7 @@ export function AddToMealplan({
         toast.success("Meal plan updated successfully.");
       } else {
         await createPlan({
-          week_start_date: new Date().toISOString().slice(0, 10),
+          week_start_date: getStartOfWeek(),
           days: [
             {
               day_of_week: Number(day),

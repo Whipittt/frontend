@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { normalizeWeeklyMeals } from "@/utils/mealplan";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useNavigate } from "react-router-dom";
+import { getStartOfWeek } from "@/utils/date";
 
 type MealType = "breakfast" | "lunch" | "dinner";
 
@@ -39,7 +40,7 @@ export default function CreateMealplan() {
   const { mutate } = useCreateMealplanData();
 
   const createMealplan = () => {
-    const week_start_date = new Date().toISOString().slice(0, 10);
+    const week_start_date = getStartOfWeek(new Date("2026-1-10"));
 
     mutate(normalizeWeeklyMeals({ week_start_date, days: mealplanDays }), {
       onSuccess: () => {

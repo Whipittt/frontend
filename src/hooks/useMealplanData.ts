@@ -90,3 +90,20 @@ export function useUpdateOneMealplanMealData() {
     },
   });
 }
+
+export function useMealplanByIdNoCache(mealplan_id: string) {
+  const { authFetch } = useAuth();
+
+  return useQuery({
+    queryKey: ["mealplan", mealplan_id],
+    queryFn: () => mealplanAPI.fetchByID(authFetch, mealplan_id),
+
+    staleTime: 0,
+    gcTime: 0,
+
+    retry: false,
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+}

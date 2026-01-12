@@ -157,7 +157,7 @@ export type MealPlanDayOut = {
 export type MealPlanOut = {
   id?: string;
   week_start_date: string;
-  days: MealPlanDayOut[];
+  days: MealPlanDay[];
 };
 
 export type MealplanPayload = {
@@ -166,4 +166,11 @@ export type MealplanPayload = {
     day_of_week: number;
     meals: Partial<Record<keyof MealPlanDayMealsOut, string>>;
   }[];
+};
+
+export type MealType = "breakfast" | "lunch" | "dinner";
+
+export type MealPlanDay = {
+  day_of_week: number;
+  meals: Record<MealType, RecipeSupBrief | null>;
 };

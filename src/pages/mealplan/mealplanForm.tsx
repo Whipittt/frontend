@@ -7,25 +7,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { RecipeCombobox } from "./recipeCombobox";
-import type { RecipeSupBrief } from "@/types";
+import type { MealPlanDay, MealType, RecipeSupBrief } from "@/types";
 import { Fragment, type SetStateAction } from "react";
-
-export const NUMBER_TO_DAY: Record<number, string> = {
-  1: "Monday",
-  2: "Tuesday",
-  3: "Wednesday",
-  4: "Thursday",
-  5: "Friday",
-  6: "Saturday",
-  7: "Sunday",
-};
-
-export type MealType = "breakfast" | "lunch" | "dinner";
-
-export type MealPlanDay = {
-  day_of_week: number;
-  meals: Record<MealType, RecipeSupBrief | null>;
-};
+import { NUMBER_TO_DAY } from "@/utils/mealplan";
 
 export default function MealplanForm({
   mealplanPayload,

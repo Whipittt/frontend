@@ -9,7 +9,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { formatDate } from "@/utils/formatDate";
+import { formatDate } from "@/utils/date";
 
 function isValidDate(date: Date | undefined) {
   if (!date) {

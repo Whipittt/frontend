@@ -8,9 +8,9 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import { NUMBER_TO_DAY } from "./mealplanForm";
 import { Link } from "react-router-dom";
 import type { MealPlanDayOut } from "@/types";
+import { NUMBER_TO_DAY } from "@/utils/mealplan";
 
 const MEAL_ORDER = ["breakfast", "lunch", "dinner"] as const;
 
@@ -36,25 +36,31 @@ export function MealplanTable({ meals }: MealplanTableProps) {
           const dayName = NUMBER_TO_DAY[day?.day_of_week] ?? "—";
           const dayMealsObj = day?.meals ?? {};
 
-          // Turn the meals object into an array in a predictable order:
-          // breakfast -> lunch -> dinner (only if they exist)
           const dayMeals = MEAL_ORDER.flatMap((type) => {
             const meal = dayMealsObj[type];
             if (!meal) return [];
+            // keep type for display and uniqueness
             return [{ ...meal, type }];
           });
 
           if (dayMeals.length === 0) return [];
 
+          // Prefer a stable unique day identifier if your API provides one.
+          // Fallbacks are still here, but avoid dayIndex as much as possible.
+          const dayKey = String(
+            // @ts-expect-error: depends on your API shape
+            day?.id ?? day?.date ?? day?.day_of_week ?? `day-${dayIndex}`
+          );
+
           return dayMeals.map((meal, mealIndex) => {
             const isFirst = mealIndex === 0;
             const isLast = mealIndex === dayMeals.length - 1;
 
+            const rowKey = `${dayKey}-${meal.id}-${meal.type}`;
+
             return (
               <TableRow
-                key={`${day?.day_of_week ?? `day-${dayIndex}`}-${
-                  meal?.id ?? mealIndex
-                }`}
+                key={rowKey}
                 className={cn(
                   "hover:bg-muted/0 transition-colors",
                   !isLast && "border-b-0"
@@ -76,7 +82,7 @@ export function MealplanTable({ meals }: MealplanTableProps) {
                     isLast && "pb-8"
                   )}
                 >
-                  <Link to={`/recipes/${meal.id}`}>{meal.title}</Link>
+                  <Link to={meal?.id}>{meal.title ?? "Untitled recipe"}</Link>
                 </TableCell>
 
                 <TableCell
