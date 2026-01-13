@@ -62,6 +62,12 @@ export interface RecipeSupBrief {
   title: string;
 }
 
+export interface RecipeSupBriefWithMealType {
+  id: string;
+  title: string;
+  type: string;
+}
+
 export interface User {
   id?: string;
   fullname: string;

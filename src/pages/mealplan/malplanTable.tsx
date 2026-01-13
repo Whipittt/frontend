@@ -82,7 +82,9 @@ export function MealplanTable({ meals }: MealplanTableProps) {
                     isLast && "pb-8"
                   )}
                 >
-                  <Link to={meal?.id}>{meal.title ?? "Untitled recipe"}</Link>
+                  <Link to={`/recipes/${meal?.id}`}>
+                    {meal.title ?? "Untitled recipe"}
+                  </Link>
                 </TableCell>
 
                 <TableCell

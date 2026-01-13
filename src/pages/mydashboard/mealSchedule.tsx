@@ -2,43 +2,40 @@ import { Card, CardDescription, CardHeader } from "@/components/ui/card";
 import { MealplanTable } from "../mealplan/malplanTable";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import { dayScheduleFromMeaplan, isPlanExpired } from "@/utils/mealplan";
-import { useLatestMealplanData } from "@/hooks/useMealplanData";
 import { useNavigate } from "react-router-dom";
-import { useMemo } from "react";
 import { MealplanTableSkeleton } from "../mealplan/mealplanTableSkeleton";
+import { useMemo } from "react";
+import { dayScheduleFromMeaplan } from "@/utils/mealplan";
+import type { MealPlanOut } from "@/types";
 
-export default function MealSchedule() {
+type MealScheduleProps = {
+  mealplan: MealPlanOut | null;
+  isPending: boolean;
+  isError: boolean;
+};
+
+export default function MealSchedule({
+  mealplan,
+  isPending,
+  isError,
+}: MealScheduleProps) {
   const navigate = useNavigate();
 
-  const { data: mealplan, isPending, isError } = useLatestMealplanData();
-
-  const days = mealplan?.days ?? [];
-
-  const isPlanEmpty = !isPending && !isError && days.length === 0;
-
-  const isExpired = useMemo<boolean>(() => {
-    if (!mealplan?.week_start_date) {
-      return false;
-    }
-    return isPlanExpired(new Date(mealplan.week_start_date));
+  const todaySchedule = useMemo(() => {
+    if (mealplan) return dayScheduleFromMeaplan(mealplan);
+    return undefined;
   }, [mealplan]);
 
-  const todaySchedule = useMemo(() => {
-    if (mealplan && !isPlanEmpty) {
-      return dayScheduleFromMeaplan(mealplan);
-    }
-    return null;
-  }, [mealplan, isPlanEmpty]);
-
-  const isScheduleEmpty = !isPending && !isError && todaySchedule === null;
+  const hasActiveMealplan = todaySchedule !== undefined;
+  const isScheduleEmpty =
+    !isPending && !isError && hasActiveMealplan && todaySchedule === null;
 
   return (
     <Card className="rounded-3xl py-6">
       <CardHeader className="flex flex-row justify-between items-start px-8">
         <span className="font-medium">Meal Schedule</span>
 
-        {!isPending && !isError && !isPlanEmpty && !isExpired && (
+        {!isPending && !isError && (
           <Button
             className="rounded-full font-medium"
             onClick={() => navigate("/mealplan")}
@@ -49,42 +46,17 @@ export default function MealSchedule() {
       </CardHeader>
 
       <CardDescription className="mt-4">
-        {isPending && <MealplanTableSkeleton days={1} />}
-
-        {!isPending && isExpired && (
-          <div className="px-4 md:px-8 py-6 text-sm flex flex-col gap-4 items-center text-muted-foreground">
-            <span>
-              No meal plan for this week yet. Create one to see your weekly
-              schedule.
+        {!isPending && isError && (
+          <div className="px-4 md:px-8 py-6 flex flex-col gap-2">
+            <span className="text-sm text-destructive">
+              Failed to load meal schedule
             </span>
-            <Button
-              variant="outline"
-              size="sm"
-              className="bg-transparent"
-              onClick={() => navigate("/mealplan/new")}
-            >
-              Create meal plan
-            </Button>
           </div>
         )}
 
-        {!isPending && !isPlanEmpty && isScheduleEmpty && (
-          <div className="px-4 md:px-8 py-6 text-sm flex flex-col gap-4 items-center text-muted-foreground">
-            <span>
-              No schedule for today. Add one to see your daily schedule.
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              className="bg-transparent"
-              onClick={() => navigate(`/mealplan/${mealplan.id}`)}
-            >
-              Update meal plan
-            </Button>
-          </div>
-        )}
+        {!isError && isPending && <MealplanTableSkeleton days={1} />}
 
-        {!isPending && isPlanEmpty && (
+        {!isError && !isPending && !hasActiveMealplan && (
           <div className="px-4 md:px-8 py-6 text-sm flex flex-col gap-4 items-center text-muted-foreground">
             <span>
               No meal plan yet. Create one to see your weekly schedule.
@@ -100,11 +72,25 @@ export default function MealSchedule() {
           </div>
         )}
 
-        {!isPending &&
-          !isError &&
-          !isPlanEmpty &&
-          !isExpired &&
-          todaySchedule && <MealplanTable meals={[todaySchedule]} />}
+        {!isError && isScheduleEmpty && (
+          <div className="px-4 md:px-8 py-6 text-sm flex flex-col gap-4 items-center text-muted-foreground">
+            <span>
+              No schedule for today. Add one to see your daily schedule.
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              className="bg-transparent"
+              onClick={() => navigate(`/mealplan/${mealplan?.id}`)}
+            >
+              Update meal plan
+            </Button>
+          </div>
+        )}
+
+        {!isError && !isPending && todaySchedule && (
+          <MealplanTable meals={[todaySchedule]} />
+        )}
       </CardDescription>
     </Card>
   );

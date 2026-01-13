@@ -3,6 +3,7 @@ import type {
   MealPlanDayMealsOut,
   MealPlanOut,
   MealplanPayload,
+  RecipeSupBriefWithMealType,
 } from "@/types";
 
 export const NUMBER_TO_DAY: Record<number, string> = {
@@ -93,4 +94,64 @@ export function dayScheduleFromMeaplan(
   const dayQ = day === 0 ? 7 : day;
   const daySchedule = mealplan.days.find((sch) => sch.day_of_week === dayQ);
   return daySchedule ? daySchedule : null;
+}
+
+export function upcomingMealTypeFromTime(date = new Date()) {
+  const hours = date.getHours();
+
+  if (hours < 6) {
+    return "breakfast";
+  }
+
+  if (hours < 12) {
+    return "lunch";
+  }
+
+  if (hours < 18) {
+    return "dinner";
+  }
+
+  return "nextBreakfast";
+}
+
+const UPCOMING_MEAL_LABEL: Record<string, string> = {
+  breakfast: "Breakfast",
+  lunch: "Lunch",
+  dinner: "Dinner",
+  nextBreakfast: "Breakfast",
+};
+
+export function upcomingMealFromTime(
+  mealplan: MealPlanOut
+): RecipeSupBriefWithMealType | null {
+  const daySchedule = dayScheduleFromMeaplan(mealplan);
+  if (daySchedule == null) {
+    return null;
+  }
+
+  const upcomingMealType = upcomingMealTypeFromTime();
+  if (upcomingMealType === "nextBreakfast") {
+    const nextDay = new Date().getDay() + 1;
+    const nextDaySchedule = dayScheduleFromMeaplan(mealplan, nextDay);
+    if (nextDaySchedule == null) {
+      return null;
+    }
+    const meal = nextDaySchedule.meals["breakfast"];
+    if (meal == null) {
+      return null;
+    }
+    return {
+      ...meal,
+      type: UPCOMING_MEAL_LABEL[upcomingMealType],
+    };
+  } else {
+    const meal = daySchedule.meals[upcomingMealType];
+    if (meal == null) {
+      return null;
+    }
+    return {
+      ...meal,
+      type: UPCOMING_MEAL_LABEL[upcomingMealType],
+    };
+  }
 }

@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
-import { useEffect, useState, type FormEventHandler } from "react";
+import { useEffect, useMemo, useState, type FormEventHandler } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Spinner } from "@/components/ui/spinner";
 import { toast } from "sonner";
@@ -25,7 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { NUMBER_TO_DAY } from "@/utils/mealplan";
+import { isPlanExpired, NUMBER_TO_DAY } from "@/utils/mealplan";
 import { getStartOfWeek } from "@/utils/date";
 
 type AddToMealplanProps = {
@@ -45,6 +45,13 @@ export function AddToMealplan({
   const [error, setError] = useState<string | null>(null);
 
   const { data: latestMealplan } = useLatestMealplanData();
+
+  const isExpired = useMemo<boolean>(() => {
+    if (!latestMealplan?.week_start_date) {
+      return false;
+    }
+    return isPlanExpired(new Date(latestMealplan.week_start_date));
+  }, [latestMealplan]);
 
   const { mutateAsync: updateLatestPlan, isPending: isUpdatePending } =
     useUpdateOneMealplanMealData();
@@ -74,7 +81,7 @@ export function AddToMealplan({
     if (!mealType || !day || !recipeID || isPending) return;
 
     try {
-      if (latestMealplan?.id) {
+      if (latestMealplan?.id && !isExpired) {
         await updateLatestPlan({
           mealplanID: latestMealplan!.id,
           day,

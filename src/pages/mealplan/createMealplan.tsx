@@ -1,46 +1,54 @@
 import PageHeaderWithAvatar from "@/components/pageHeader";
 import MainLayout from "@/layouts/mainLayout";
-import { useState } from "react";
-import type { RecipeSupBrief } from "@/types";
+import { useEffect, useMemo, useState } from "react";
+import type { MealPlanDay } from "@/types";
 import MealplanForm from "./mealplanForm";
 import { Button } from "@/components/ui/button";
-import { useCreateMealplanData } from "@/hooks/useMealplanData";
+import {
+  useCreateMealplanData,
+  useLatestMealplanData,
+} from "@/hooks/useMealplanData";
 import { toast } from "sonner";
-import { normalizeWeeklyMeals } from "@/utils/mealplan";
+import {
+  initialMealplanPayload,
+  isPlanExpired,
+  normalizeWeeklyMeals,
+} from "@/utils/mealplan";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useNavigate } from "react-router-dom";
 import { getStartOfWeek } from "@/utils/date";
 
-type MealType = "breakfast" | "lunch" | "dinner";
-
-type MealPlanDay = {
-  day_of_week: number;
-  meals: Record<MealType, RecipeSupBrief | null>;
-};
-
-const initialMealplanPayload: MealPlanDay[] = [
-  { day_of_week: 7, meals: { breakfast: null, lunch: null, dinner: null } },
-  { day_of_week: 1, meals: { breakfast: null, lunch: null, dinner: null } },
-  { day_of_week: 2, meals: { breakfast: null, lunch: null, dinner: null } },
-  { day_of_week: 3, meals: { breakfast: null, lunch: null, dinner: null } },
-  { day_of_week: 4, meals: { breakfast: null, lunch: null, dinner: null } },
-  { day_of_week: 5, meals: { breakfast: null, lunch: null, dinner: null } },
-  { day_of_week: 6, meals: { breakfast: null, lunch: null, dinner: null } },
-];
-
 export default function CreateMealplan() {
+  const { data, isPending, isError } = useLatestMealplanData();
+  const navigate = useNavigate();
+
+  const isExpired = useMemo(() => {
+    if (!data?.week_start_date) return false;
+    return isPlanExpired(new Date(data.week_start_date));
+  }, [data?.week_start_date]);
+
+  useEffect(() => {
+    if (!isPending && !isError && data && !isExpired) {
+      toast.error("You already have an active meal plan.");
+
+      const t = setTimeout(() => {
+        navigate(-1);
+      }, 500);
+
+      return () => clearTimeout(t);
+    }
+  }, [isPending, isError, data, isExpired, navigate]);
+
   const [mealplanDays, setMealplanDays] = useState<MealPlanDay[]>(
     initialMealplanPayload
   );
 
   const [error, setError] = useState<string | null>(null);
 
-  const navigate = useNavigate();
-
   const { mutate } = useCreateMealplanData();
 
   const createMealplan = () => {
-    const week_start_date = getStartOfWeek(new Date("2026-1-10"));
+    const week_start_date = getStartOfWeek();
 
     mutate(normalizeWeeklyMeals({ week_start_date, days: mealplanDays }), {
       onSuccess: () => {
