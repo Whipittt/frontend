@@ -25,8 +25,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { isPlanExpired, NUMBER_TO_DAY } from "@/utils/mealplan";
-import { getStartOfWeek } from "@/utils/date";
+import {
+  getMealplanValidDays,
+  isPlanExpired,
+  NUMBER_TO_DAY,
+} from "@/utils/mealplan";
 
 type AddToMealplanProps = {
   open: boolean;
@@ -52,6 +55,10 @@ export function AddToMealplan({
     }
     return isPlanExpired(new Date(latestMealplan.week_start_date));
   }, [latestMealplan]);
+
+  const validDays = useMemo(() => {
+    return getMealplanValidDays();
+  }, []);
 
   const { mutateAsync: updateLatestPlan, isPending: isUpdatePending } =
     useUpdateOneMealplanMealData();
@@ -91,7 +98,6 @@ export function AddToMealplan({
         toast.success("Meal plan updated successfully.");
       } else {
         await createPlan({
-          week_start_date: getStartOfWeek(),
           days: [
             {
               day_of_week: Number(day),
@@ -130,15 +136,14 @@ export function AddToMealplan({
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  {Array.from({ length: 7 }).map((_, index) => {
-                    const dayNumber = index + 1;
+                  {validDays.map((dow) => {
                     return (
                       <SelectItem
-                        key={dayNumber}
-                        value={String(dayNumber)}
+                        key={dow}
+                        value={String(dow)}
                         disabled={isPending}
                       >
-                        {NUMBER_TO_DAY[dayNumber]}
+                        {NUMBER_TO_DAY[dow]}
                       </SelectItem>
                     );
                   })}

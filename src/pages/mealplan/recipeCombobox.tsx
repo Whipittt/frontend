@@ -22,12 +22,14 @@ import { useEffect, useState } from "react";
 type RestrictionComboboxProps = {
   value: RecipeSupBrief | null;
   loading?: boolean;
+  disabled?: boolean;
   onSelect?: (selectedRecipe: RecipeSupBrief) => void;
 };
 
 export function RecipeCombobox({
   value,
   loading,
+  disabled,
   onSelect,
 }: RestrictionComboboxProps) {
   const [open, setOpen] = useState(false);
@@ -94,7 +96,7 @@ export function RecipeCombobox({
   }, [recipeSearchQuery]);
 
   const selectedId = selected?.id ?? value?.id;
-  const isDisabled = !!loading;
+  const isDisabled = !!loading || disabled;
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

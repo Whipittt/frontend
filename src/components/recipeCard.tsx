@@ -1,10 +1,8 @@
 import { Card } from "@/components/ui/card";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-// import FavouriteButton from "./favouriteButton";
 import type { RecipeBrief } from "@/types";
 import { Link } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
-
 
 interface RecipeCardProps {
   recipe: RecipeBrief;

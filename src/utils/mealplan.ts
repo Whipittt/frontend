@@ -28,7 +28,6 @@ export const initialMealplanPayload: MealPlanDay[] = [
 
 export function normalizeWeeklyMeals(payload: MealPlanOut): MealplanPayload {
   return {
-    week_start_date: payload.week_start_date,
     days: payload.days
       .map((day) => {
         const meals: Partial<Record<keyof MealPlanDayMealsOut, string>> = {};
@@ -125,9 +124,6 @@ export function upcomingMealFromTime(
   mealplan: MealPlanOut
 ): RecipeSupBriefWithMealType | null {
   const daySchedule = dayScheduleFromMeaplan(mealplan);
-  if (daySchedule == null) {
-    return null;
-  }
 
   const upcomingMealType = upcomingMealTypeFromTime();
   if (upcomingMealType === "nextBreakfast") {
@@ -145,6 +141,9 @@ export function upcomingMealFromTime(
       type: UPCOMING_MEAL_LABEL[upcomingMealType],
     };
   } else {
+    if (daySchedule == null) {
+      return null;
+    }
     const meal = daySchedule.meals[upcomingMealType];
     if (meal == null) {
       return null;
@@ -154,4 +153,19 @@ export function upcomingMealFromTime(
       type: UPCOMING_MEAL_LABEL[upcomingMealType],
     };
   }
+}
+
+export function getMealplanValidDays(): number[] {
+  let today = new Date().getDay();
+  today = today == 0 ? 7 : today;
+
+  const validDays: number[] = [];
+
+  if (today == 7) validDays.push(today);
+
+  for (let i = 1; i < 7; i++) {
+    i >= today && validDays.push(i);
+  }
+
+  return validDays;
 }

@@ -8,8 +8,9 @@ import {
 } from "@/components/ui/table";
 import { RecipeCombobox } from "./recipeCombobox";
 import type { MealPlanDay, MealType, RecipeSupBrief } from "@/types";
-import { Fragment, type SetStateAction } from "react";
-import { NUMBER_TO_DAY } from "@/utils/mealplan";
+import { Fragment, useMemo, type SetStateAction } from "react";
+import { getMealplanValidDays, NUMBER_TO_DAY } from "@/utils/mealplan";
+import { cn } from "@/lib/utils";
 
 export default function MealplanForm({
   mealplanPayload,
@@ -50,6 +51,8 @@ export default function MealplanForm({
     );
   };
 
+  const validDays = useMemo(() => getMealplanValidDays(), []);
+
   return (
     <div>
       <Table>
@@ -63,10 +66,15 @@ export default function MealplanForm({
 
         <TableBody>
           {mealplanPayload.flatMap((day) => {
+            const disabled = !validDays.includes(day.day_of_week);
+
             return (
               <Fragment key={day.day_of_week}>
                 <TableRow className="border-b-0 hover:bg-muted/0">
-                  <TableCell rowSpan={3} className="align-top py-8">
+                  <TableCell
+                    rowSpan={3}
+                    className={cn("align-top py-8", disabled && "opacity-50")}
+                  >
                     {NUMBER_TO_DAY[day.day_of_week]}
                   </TableCell>
                   <TableCell className="md:max-w-[200px] md:min-w-[200px] min-w-[140px] max-w-[140px] py-2 pt-8">
@@ -80,9 +88,15 @@ export default function MealplanForm({
                             selectedRecipe
                           );
                       }}
+                      disabled={disabled}
                     />
                   </TableCell>
-                  <TableCell className="text-right py-2 pt-8 text-muted-foreground">
+                  <TableCell
+                    className={cn(
+                      "text-right py-2 pt-8 text-muted-foreground",
+                      disabled && "opacity-50"
+                    )}
+                  >
                     Breakfast
                   </TableCell>
                 </TableRow>
@@ -95,9 +109,15 @@ export default function MealplanForm({
                         selectedRecipe &&
                           updateMeal(day.day_of_week, "lunch", selectedRecipe);
                       }}
+                      disabled={disabled}
                     />
                   </TableCell>
-                  <TableCell className="text-right py-2 text-muted-foreground">
+                  <TableCell
+                    className={cn(
+                      "text-right py-2 text-muted-foreground",
+                      disabled && "opacity-50"
+                    )}
+                  >
                     Lunch
                   </TableCell>
                 </TableRow>
@@ -110,9 +130,15 @@ export default function MealplanForm({
                         selectedRecipe &&
                           updateMeal(day.day_of_week, "dinner", selectedRecipe);
                       }}
+                      disabled={disabled}
                     />
                   </TableCell>
-                  <TableCell className="text-right py-2 pb-8 text-muted-foreground">
+                  <TableCell
+                    className={cn(
+                      "text-right py-2 pb-8 text-muted-foreground",
+                      disabled && "opacity-50"
+                    )}
+                  >
                     Dinner
                   </TableCell>
                 </TableRow>

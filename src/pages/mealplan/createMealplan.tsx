@@ -16,11 +16,10 @@ import {
 } from "@/utils/mealplan";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useNavigate } from "react-router-dom";
-import { getStartOfWeek } from "@/utils/date";
 
 export default function CreateMealplan() {
-  const { data, isPending, isError } = useLatestMealplanData();
   const navigate = useNavigate();
+  const { data, isPending, isError } = useLatestMealplanData();
 
   const isExpired = useMemo(() => {
     if (!data?.week_start_date) return false;
@@ -48,9 +47,7 @@ export default function CreateMealplan() {
   const { mutate } = useCreateMealplanData();
 
   const createMealplan = () => {
-    const week_start_date = getStartOfWeek();
-
-    mutate(normalizeWeeklyMeals({ week_start_date, days: mealplanDays }), {
+    mutate(normalizeWeeklyMeals({ days: mealplanDays }), {
       onSuccess: () => {
         toast.success("Mealplan created successfully.");
         navigate("/mealplan");

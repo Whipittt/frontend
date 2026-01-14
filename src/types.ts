@@ -162,12 +162,11 @@ export type MealPlanDayOut = {
 
 export type MealPlanOut = {
   id?: string;
-  week_start_date: string;
+  week_start_date?: string;
   days: MealPlanDay[];
 };
 
 export type MealplanPayload = {
-  week_start_date: string;
   days: {
     day_of_week: number;
     meals: Partial<Record<keyof MealPlanDayMealsOut, string>>;

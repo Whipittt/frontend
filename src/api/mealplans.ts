@@ -52,7 +52,7 @@ export const mealplanAPI = {
     });
 
     if (res.status === 404) {
-      return {};
+      return null;
     }
 
     if (!res.ok)
