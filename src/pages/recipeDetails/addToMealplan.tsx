@@ -1,4 +1,12 @@
 import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer";
+import {
   Dialog,
   DialogClose,
   DialogContent,
@@ -30,6 +38,7 @@ import {
   isPlanExpired,
   NUMBER_TO_DAY,
 } from "@/utils/mealplan";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type AddToMealplanProps = {
   open: boolean;
@@ -42,6 +51,8 @@ export function AddToMealplan({
   onOpenChange,
   recipeID,
 }: AddToMealplanProps) {
+  const isMobile = useIsMobile();
+
   const [day, setDay] = useState<string>("");
   const [mealType, setMealType] = useState<string>("");
 
@@ -113,6 +124,100 @@ export function AddToMealplan({
       setError(err instanceof Error ? err.message : "Something went wrong");
     }
   };
+
+  if (isMobile) {
+    return (
+      <Drawer open={open} onOpenChange={onOpenChange}>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>Edit Personal Information</DrawerTitle>
+          </DrawerHeader>
+
+          <div className="px-4">
+            {error && (
+              <Alert variant="destructive">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+
+            <form onSubmit={handleSubmit} noValidate className="space-y-6">
+              <Field>
+                <FieldLabel>Day</FieldLabel>
+                <Select value={day} onValueChange={setDay} disabled={isPending}>
+                  <SelectTrigger className="w-[180px] border-none outline-none bg-[#202020]">
+                    <SelectValue placeholder="Select day" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {validDays.map((dow) => {
+                        return (
+                          <SelectItem
+                            key={dow}
+                            value={String(dow)}
+                            disabled={isPending}
+                          >
+                            {NUMBER_TO_DAY[dow]}
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </Field>
+
+              <Field>
+                <FieldLabel>Meal type</FieldLabel>
+                <Select
+                  value={mealType}
+                  onValueChange={setMealType}
+                  disabled={isPending}
+                >
+                  <SelectTrigger className="w-[180px] border-none outline-none bg-[#202020]">
+                    <SelectValue placeholder="Select meal type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="Breakfast" disabled={isPending}>
+                        Breakfast
+                      </SelectItem>
+                      <SelectItem value="Lunch" disabled={isPending}>
+                        Lunch
+                      </SelectItem>
+                      <SelectItem value="Dinner" disabled={isPending}>
+                        Dinner
+                      </SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </Field>
+
+              <Button
+                type="submit"
+                disabled={isPending || !day || !mealType}
+                className="w-full"
+              >
+                {isPending ? (
+                  <>
+                    <Spinner className="mr-2 h-4 w-4" /> Saving...
+                  </>
+                ) : (
+                  "Save changes"
+                )}
+              </Button>
+            </form>
+          </div>
+
+          <DrawerFooter className="py-2 ">
+            <DrawerClose asChild>
+              <Button variant="outline" className="mt-1">
+                Cancel
+              </Button>
+            </DrawerClose>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+    );
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

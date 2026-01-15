@@ -22,6 +22,8 @@ import { AspectRatio } from "@radix-ui/react-aspect-ratio";
 import { cn } from "@/lib/utils";
 import { ShoppingListPopup } from "@/components/shoppingListPopup";
 import { AddToMealplan } from "./addToMealplan";
+import { useIsMobile } from "@/hooks/use-mobile";
+import ImagePreview from "../admin/recipes/recipeForm/imagePreview";
 
 type Params = {
   recipe_id: string;
@@ -70,19 +72,22 @@ export default function RecipeDetails(): JSX.Element {
   const { isAuthenticated, authFetch } = useAuth();
   const { recipe_id } = useParams<Params>();
 
-  // Local display state (seeded from query data)
   const [recipe, setRecipe] = useState<Recipe | null>(null);
 
+  const isMobile = useIsMobile();
+
+  const [previewImgURL, setPreviewImgUrl] = useState("");
+
   // Image state
-  const [imgIsLoading, setImgIsLoading] = useState<boolean>(true);
-  const [imgError, setImgError] = useState<boolean>(false);
+  const [imgIsLoading, setImgIsLoading] = useState(true);
+  const [imgError, setImgError] = useState(false);
+  const [imgOpen, setImgOpen] = useState(false);
 
   // Favourite toggle specific state
-  const [favouriteLoading, setFavouriteLoading] = useState<boolean>(false);
+  const [favouriteLoading, setFavouriteLoading] = useState(false);
   const [favouriteError, setFavouriteError] = useState<string | null>(null);
   const { refetch: refreshFavouritesCache } = useFavouriteRecipesCache();
 
-  // Use cache hook instead of manual fetching
   const recipeId = recipe_id?.trim() ?? "";
   const {
     data: fetchedRecipe,
@@ -90,9 +95,8 @@ export default function RecipeDetails(): JSX.Element {
     error: queryError,
   } = useOneRecipeData(recipeId);
 
-  // Handle "no recipe id" professionally
   const noRecipeId = !recipe_id;
-  const loading = noRecipeId ? false : !!queryLoading;
+
   const error = useMemo(() => {
     if (noRecipeId) return "No Recipe ID provided in URL.";
     if (queryError)
@@ -102,7 +106,6 @@ export default function RecipeDetails(): JSX.Element {
     return null;
   }, [noRecipeId, queryError]);
 
-  // Keep local recipe in sync with fetched data
   useEffect(() => {
     setRecipe(fetchedRecipe ?? null);
   }, [fetchedRecipe]);
@@ -164,7 +167,7 @@ export default function RecipeDetails(): JSX.Element {
         <UserAvatar />
       </section>
 
-      {loading && (
+      {queryLoading && (
         <section
           className="flex flex-col gap-8 py-2"
           aria-busy="true"
@@ -191,13 +194,13 @@ export default function RecipeDetails(): JSX.Element {
         </section>
       )}
 
-      {!loading && error && (
+      {!queryLoading && error && (
         <div className="py-12 text-center text-destructive" role="alert">
           {error}
         </div>
       )}
 
-      {!loading && !error && recipe && (
+      {!queryLoading && !error && recipe && (
         <section className="flex flex-col gap-8">
           <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4 items-start">
             <div className="flex flex-col gap-2">
@@ -236,7 +239,14 @@ export default function RecipeDetails(): JSX.Element {
             </div>
           </div>
 
-          <AspectRatio ratio={16 / 10} className="relative">
+          <AspectRatio
+            ratio={isMobile ? 1 : 4 / 2}
+            className="relative cursor-zoom-in"
+            onClick={() => {
+              setPreviewImgUrl(recipe.display_image ?? "");
+              setImgOpen((prev) => !prev);
+            }}
+          >
             <img
               src={
                 imgError
@@ -255,9 +265,12 @@ export default function RecipeDetails(): JSX.Element {
             <div className="absolute bottom-0 left-0 w-full h-28 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
             <Button
               variant="ghost"
-              className="absolute bottom-2 left-4 text-white hover:bg-accent/20"
+              className="absolute bottom-2 left-1 px-2 text-white hover:bg-accent/20"
               aria-label="Add to meal plan"
-              onClick={() => setIsAddToMealplanOpen((prev) => !prev)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsAddToMealplanOpen((prev) => !prev);
+              }}
             >
               <AddRoundedIcon />
               Add to meal plan
@@ -293,13 +306,21 @@ export default function RecipeDetails(): JSX.Element {
             </div>
           </div>
 
-          <RenderRawHTML header="Description" content={descriptionHtml} />
+          <RenderRawHTML
+            image={{ setActiveImg: setPreviewImgUrl, setImgOpen: setImgOpen }}
+            header="Description"
+            content={descriptionHtml}
+          />
 
-          <RenderRawHTML header="Instructions" content={instructionsHtml} />
+          <RenderRawHTML
+            image={{ setActiveImg: setPreviewImgUrl, setImgOpen: setImgOpen }}
+            header="Instructions"
+            content={instructionsHtml}
+          />
         </section>
       )}
 
-      {!loading && !error && !recipe && (
+      {!queryLoading && !error && !recipe && (
         <div className="py-12 text-center text-muted-foreground">
           No recipe data.
         </div>
@@ -320,6 +341,12 @@ export default function RecipeDetails(): JSX.Element {
         open={isAddToMealplanOpen}
         onOpenChange={setIsAddToMealplanOpen}
         recipeID={recipe?.id ?? ""}
+      />
+
+      <ImagePreview
+        open={imgOpen}
+        setOpen={setImgOpen}
+        imageURL={previewImgURL}
       />
     </MainLayout>
   );

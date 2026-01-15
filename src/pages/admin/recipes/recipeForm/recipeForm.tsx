@@ -333,7 +333,7 @@ export default function RefipeForm({
       <ImagePreview
         imageURL={display_image}
         open={previewImageOpen}
-        onOpenChange={setPreviewImageOpen}
+        setOpen={setPreviewImageOpen}
       />
     </>
   );

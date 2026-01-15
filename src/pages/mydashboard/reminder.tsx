@@ -11,12 +11,35 @@ import type { MealPlanOut } from "@/types";
 import { upcomingMealFromTime } from "@/utils/mealplan";
 import { Dot } from "lucide-react";
 import { useMemo } from "react";
+import { Link } from "react-router-dom";
 
 type ReminderProps = {
   mealplan: MealPlanOut | null;
   isPending: boolean;
   isError: boolean;
 };
+
+function Empty({
+  message,
+  destructive,
+}: {
+  message: string;
+  destructive?: boolean;
+}) {
+  return (
+    <div className="flex flex-col gap-2">
+      <span
+        className={
+          destructive
+            ? "text-destructive"
+            : "text-sm md:text-left text-center text-muted-foreground"
+        }
+      >
+        {message}
+      </span>
+    </div>
+  );
+}
 
 export default function Reminder({
   mealplan,
@@ -51,27 +74,15 @@ export default function Reminder({
         )}
 
         {!isPending && isError && (
-          <div className="flex flex-col gap-2">
-            <span className="text-sm text-destructive">
-              Failed to load reminders
-            </span>
-          </div>
+          <Empty destructive message="Failed to load reminders" />
         )}
 
         {!isPending && !isError && !hasActiveMealplan && (
-          <div className="flex flex-col gap-2">
-            <span className="text-sm">
-              No meal plan yet, Add a meal plan to see reminders here.
-            </span>
-          </div>
+          <Empty message="No meal plan yet, Add a meal plan to see reminders here." />
         )}
 
         {isEmpty && (
-          <div className="flex flex-col gap-2">
-            <span className="text-sm">
-              No upcoming meals, Add a meal to see reminders here.
-            </span>
-          </div>
+          <Empty message="No upcoming meals, Add a meal to see reminders here." />
         )}
 
         {!isPending && !isError && upcomingMeal && (
@@ -84,7 +95,9 @@ export default function Reminder({
             </Badge>
 
             <span className="text-2xl font-medium truncate">
-              {upcomingMeal.title}
+              <Link to={`/recipes/${upcomingMeal.id}`}>
+                {upcomingMeal.title}
+              </Link>
             </span>
           </div>
         )}

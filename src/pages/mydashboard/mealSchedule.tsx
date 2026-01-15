@@ -14,6 +14,35 @@ type MealScheduleProps = {
   isError: boolean;
 };
 
+function Empty({
+  message,
+  destructive,
+  button,
+}: {
+  message: string;
+  destructive?: boolean;
+  button?: {
+    label: string;
+    onClick: () => void;
+  };
+}) {
+  return (
+    <div className="px-4 md:px-8 py-6 text-sm flex flex-col gap-4 items-center text-muted-foreground">
+      <span className={destructive ? "text-destructive" : ""}>{message}</span>
+      {button && (
+        <Button
+          variant="outline"
+          size="sm"
+          className="bg-transparent"
+          onClick={button.onClick}
+        >
+          {button.label}
+        </Button>
+      )}
+    </div>
+  );
+}
+
 export default function MealSchedule({
   mealplan,
   isPending,
@@ -31,14 +60,15 @@ export default function MealSchedule({
     !isPending && !isError && hasActiveMealplan && todaySchedule === null;
 
   return (
-    <Card className="rounded-3xl py-6">
-      <CardHeader className="flex flex-row justify-between items-start px-8">
+    <Card className="md:rounded-3xl md:py-6">
+      <CardHeader className="flex flex-row justify-between items-center p-4 md:px-8 md:pt-0">
         <span className="font-medium">Meal Schedule</span>
 
         {!isPending && !isError && (
           <Button
             className="rounded-full font-medium"
             onClick={() => navigate("/mealplan")}
+            size="sm"
           >
             View <ArrowRight />
           </Button>
@@ -47,49 +77,36 @@ export default function MealSchedule({
 
       <CardDescription className="mt-4">
         {!isPending && isError && (
-          <div className="px-4 md:px-8 py-6 flex flex-col gap-2">
-            <span className="text-sm text-destructive">
-              Failed to load meal schedule
-            </span>
-          </div>
+          <Empty destructive message="Failed to load meal schedule" />
         )}
 
         {!isError && isPending && <MealplanTableSkeleton days={1} />}
 
         {!isError && !isPending && !hasActiveMealplan && (
-          <div className="px-4 md:px-8 py-6 text-sm flex flex-col gap-4 items-center text-muted-foreground">
-            <span>
-              No meal plan yet. Create one to see your weekly schedule.
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              className="bg-transparent"
-              onClick={() => navigate("/mealplan/new")}
-            >
-              Create meal plan
-            </Button>
-          </div>
+          <Empty
+            message="No meal plan yet. Create one to see your weekly schedule."
+            button={{
+              label: "Create meal plan",
+              onClick: () => navigate("/mealplan/new"),
+            }}
+          />
         )}
 
         {!isError && isScheduleEmpty && (
-          <div className="px-4 md:px-8 py-6 text-sm flex flex-col gap-4 items-center text-muted-foreground">
-            <span>
-              No schedule for today. Add one to see your daily schedule.
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              className="bg-transparent"
-              onClick={() => navigate(`/mealplan/${mealplan?.id}`)}
-            >
-              Update meal plan
-            </Button>
-          </div>
+          <Empty
+            message="No schedule for today. Add one to see your daily schedule."
+            button={{
+              label: "Update meal plan",
+              onClick: () => navigate(`/mealplan/${mealplan?.id}`),
+            }}
+          />
         )}
 
         {!isError && !isPending && todaySchedule && (
-          <MealplanTable meals={[todaySchedule]} />
+          <>
+            <MealplanTable meals={[todaySchedule]} />
+            <hr />
+          </>
         )}
       </CardDescription>
     </Card>

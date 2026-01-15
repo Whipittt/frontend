@@ -7,7 +7,7 @@ import { FileWarning } from "lucide-react";
 
 type ImagePreviewProps = {
   open: boolean;
-  onOpenChange: (open: boolean) => void;
+  setOpen: (open: boolean) => void;
   imageURL?: string;
 };
 
@@ -15,7 +15,7 @@ type ImageStatus = "loading" | "loaded" | "error";
 
 export default function ImagePreview({
   open,
-  onOpenChange,
+  setOpen: onOpenChange,
   imageURL,
 }: ImagePreviewProps) {
   const [status, setStatus] = useState<ImageStatus>("loading");
@@ -32,9 +32,9 @@ export default function ImagePreview({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px] p-2">
+      <DialogContent className="md:max-w-[500px] p-2 rounded-xl">
         <DialogHeader>
-          <h1 className="text-sm">Image Preview</h1>
+          <h1 className="text-sm text-center">Image Preview</h1>
         </DialogHeader>
         <AspectRatio
           ratio={1}
@@ -67,7 +67,7 @@ export default function ImagePreview({
 
           {isError && (
             <div className="flex h-full w-full flex-col items-center justify-center bg-muted text-muted-foreground">
-              <FileWarning/>
+              <FileWarning />
               <p className="mt-2 text-sm">Image not available</p>
             </div>
           )}

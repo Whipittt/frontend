@@ -24,7 +24,7 @@ export function MealplanTable({ meals }: MealplanTableProps) {
   return (
     <Table>
       <TableHeader>
-        <TableRow className="border-t">
+        <TableRow className="border-t hover:bg-muted/0 transition-colors">
           <TableHead className="md:pl-8 pl-4 py-4">Day</TableHead>
           <TableHead>Recipe</TableHead>
           <TableHead className="text-right pr-4 md:pr-[40px]">Meal</TableHead>

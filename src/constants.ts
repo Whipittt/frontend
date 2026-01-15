@@ -1,7 +1,7 @@
 export const API_URL = String(import.meta.env.VITE_BACKEND_BASE_URL);
 
 export const DEFAULT_CACHE_STALE_TIME = Number(
-  import.meta.env.VITE_DEFAULT_CACHE_STALE_TIME ?? 1000 * 60 * 5
+  import.meta.env.VITE_DEFAULT_CACHE_STALE_TIME ?? 1000 * 60 * 10
 );
 
 export const ACCESS_TOKEN_EXPIRES_MINUTES = Number(
