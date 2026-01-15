@@ -163,8 +163,8 @@ export function VisitorChart() {
   });
 
   return (
-    <Card className="@container/card py-4 rounded-3xl">
-      <CardHeader className="flex flex-row justify-between">
+    <Card className="@container/card md:rounded-3xl">
+      <CardHeader className="flex flex-row justify-between align-top">
         <div className="flex flex-col gap-2">
           <CardTitle className="font-normal">Total Visitors</CardTitle>
           <CardDescription>
@@ -179,26 +179,31 @@ export function VisitorChart() {
         <div>
           <ToggleGroup
             type="single"
-            size={"sm"}
             value={timeRange}
             onValueChange={setTimeRange}
             variant="outline"
-            className="hidden md:flex"
+            className="hidden md:flex border-line gap-0"
           >
-            <ToggleGroupItem value="90d" size={"sm"}>
+            <ToggleGroupItem
+              className="rounded-none rounded-l-lg border-r-0"
+              value="90d"
+            >
               Last 3 months
             </ToggleGroupItem>
-            <ToggleGroupItem value="30d" size={"sm"}>
+            <ToggleGroupItem className="rounded-none" value="30d">
               Last 30 days
             </ToggleGroupItem>
-            <ToggleGroupItem value="7d" size={"sm"}>
+            <ToggleGroupItem
+              className="rounded-none rounded-r-lg border-l-0"
+              value="7d"
+            >
               Last 7 days
             </ToggleGroupItem>
           </ToggleGroup>
 
           <Select value={timeRange} onValueChange={setTimeRange}>
             <SelectTrigger
-              className="flex md:hidden w-40 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate @[767px]/card:hidden"
+              className="flex md:hidden w-40 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate @[767px]/card:hidden border-card-line"
               aria-label="Select a value"
             >
               <SelectValue placeholder="Last 3 months" />

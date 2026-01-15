@@ -15,6 +15,8 @@ import {
   Link as LinkIcon,
   Image as ImageIcon,
 } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
 
 function isValidUrl(url: string) {
   try {
@@ -26,10 +28,11 @@ function isValidUrl(url: string) {
 }
 
 export default function RichTextToolbar({ editor }: { editor: Editor }) {
+  const isMobile = useIsMobile();
   if (!editor) return null;
 
   return (
-    <div className="flex items-center gap-2 p-2">
+    <div className="flex items-center gap-2 p-2 flex-wrap">
       <Select
         value={
           editor.isActive("heading", { level: 1 })
@@ -52,14 +55,21 @@ export default function RichTextToolbar({ editor }: { editor: Editor }) {
           }
         }}
       >
-        <SelectTrigger className="w-[140px] border-line focus:ring-0">
+        <SelectTrigger
+          className={cn(
+            "border-line focus:ring-0",
+            isMobile ? "w-[80px]" : "w-[140px]"
+          )}
+        >
           <SelectValue placeholder="Text" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="paragraph">Paragraph</SelectItem>
-          <SelectItem value="h1">Heading 1</SelectItem>
-          <SelectItem value="h2">Heading 2</SelectItem>
-          <SelectItem value="h3">Heading 3</SelectItem>
+          <SelectItem value="paragraph">
+            {isMobile ? "Text" : "Paragraph"}
+          </SelectItem>
+          <SelectItem value="h1">{isMobile ? "H1" : "Heading 1"}</SelectItem>
+          <SelectItem value="h2">{isMobile ? "H2" : "Heading 2"}</SelectItem>
+          <SelectItem value="h3">{isMobile ? "H3" : "Heading 3"}</SelectItem>
         </SelectContent>
       </Select>
 

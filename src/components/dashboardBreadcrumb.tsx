@@ -27,7 +27,7 @@ export function DashboardBreadcrumb() {
   };
 
   return (
-    <Breadcrumb>
+    <Breadcrumb className="px-1">
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink asChild>

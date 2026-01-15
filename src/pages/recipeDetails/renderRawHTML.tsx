@@ -15,9 +15,9 @@ export default function RenderRawHTML({
   image,
 }: RenderRawHTMLProps) {
   const style: string =
-    "max-w-none font-sans prose prose-invert list-disc list-inside space-y-4 text-foreground prose-img:rounded-lg prose-img:shadow prose-image:brightness-[0.85] prose-img: aspect-square";
-  
-    return (
+    "max-w-none font-sans prose prose-invert list-disc list-inside space-y-4 text-foreground prose-img:rounded-lg prose-img:shadow prose-img:brightness-[0.85]";
+
+  return (
     <section className="flex flex-col gap-4">
       <h2 className="text-xl font-medium">{header}</h2>
 

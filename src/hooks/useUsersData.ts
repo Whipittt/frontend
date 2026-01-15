@@ -73,6 +73,7 @@ export function useUpdateUserDataByID() {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["metrics", "users"] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY] });
     },
   });
 }

@@ -161,7 +161,7 @@ export default function RefipeForm({
         <FieldGroup>
           {id && (
             <Field>
-              <FieldLabel htmlFor="recipe_id">Id</FieldLabel>
+              <FieldLabel htmlFor="recipe_id">ID</FieldLabel>
               <Input
                 id="recipe_id"
                 type="text"

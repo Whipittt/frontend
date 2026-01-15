@@ -60,7 +60,7 @@ export default function MealSchedule({
     !isPending && !isError && hasActiveMealplan && todaySchedule === null;
 
   return (
-    <Card className="md:rounded-3xl md:py-6">
+    <Card className="md:py-6">
       <CardHeader className="flex flex-row justify-between items-center p-4 md:px-8 md:pt-0">
         <span className="font-medium">Meal Schedule</span>
 

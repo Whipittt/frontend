@@ -4,6 +4,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { DashboardSidebar } from "@/components/dashboardSidebar";
 import { DashboardBreadcrumb } from "@/components/dashboardBreadcrumb";
+import MobileNavbar from "@/components/mobileNavbar";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -26,10 +27,12 @@ export default function DashboardLayout({
 
           <main
             className={cn(
-              "flex flex-col flex-1 gap-8 px-2 md:px-8 py-4 md:py-8 overflow-auto md:scrollbar hide-scrollbar",
+              "flex flex-col flex-1 gap-4 px-2 md:px-8 py-4 md:py-8 overflow-auto md:scrollbar hide-scrollbar",
               className
             )}
           >
+            <MobileNavbar />
+
             <DashboardBreadcrumb />
 
             {children}

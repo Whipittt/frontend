@@ -1,7 +1,7 @@
 import { UserAPI } from "@/api/users";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Field,
@@ -182,16 +182,18 @@ export default function UpdateUser() {
           </Alert>
         )}
 
-        <Card className="w-full p-4">
-          <CardHeader>
+        <Card className="p-2 md:p-4">
+          <CardHeader className="p-2 md:p-4">
+            <h1 className="text-lg mb-4 font-medium">Update User Details</h1>
+          </CardHeader>
+
+          <CardContent className="p-2 md:p-4">
             <form
               noValidate
               onSubmit={handleDelailsUpdate}
-              className={"flex flex-col gap-6"}
+              className="flex flex-col gap-6"
             >
               <FieldGroup>
-                <FieldTitle className="text-md">User Details</FieldTitle>
-
                 {UpdateDetailsError && (
                   <Alert
                     variant="destructive"
@@ -201,6 +203,7 @@ export default function UpdateUser() {
                     <AlertDescription>{UpdateDetailsError}</AlertDescription>
                   </Alert>
                 )}
+
                 <Field>
                   <FieldLabel htmlFor="uid">User ID</FieldLabel>
                   <Input
@@ -279,17 +282,16 @@ export default function UpdateUser() {
               </FieldGroup>
             </form>
 
-            <FieldTitle className="text-md pt-4">
-              Reset User's password
-            </FieldTitle>
-
             <form
               noValidate
               onSubmit={handlePasswordReset}
-              className={"flex flex-col gap-6"}
+              className="flex flex-col gap-6"
             >
               <FieldGroup>
-                <div className="flex flex-col gap-1"></div>
+                <FieldTitle className="text-md pt-6">
+                  Change User Password
+                </FieldTitle>
+
                 {updatePasswordError && (
                   <Alert
                     variant="destructive"
@@ -299,8 +301,9 @@ export default function UpdateUser() {
                     <AlertDescription>{updatePasswordError}</AlertDescription>
                   </Alert>
                 )}
+
                 <Field>
-                  <Field className="grid grid-cols-2 gap-4">
+                  <Field className="grid md:grid-cols-2 gap-4">
                     <Field>
                       <FieldLabel htmlFor="password">Password</FieldLabel>
                       <Input
@@ -354,7 +357,8 @@ export default function UpdateUser() {
                 </Field>
               </FieldGroup>
             </form>
-          </CardHeader>
+          </CardContent>
+          <CardHeader></CardHeader>
         </Card>
       </DashboardLayout>
     </>

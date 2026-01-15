@@ -61,7 +61,7 @@ export default function DashboardTable<T>({
   const TABLE_COLUMNS = table.getAllColumns();
 
   return (
-    <Card className="w-full p-6">
+    <Card className="w-full p-3 md:p-6">
       <div className="flex py-4 flex-col md:flex-row md:justify-between md:items-center gap-4">
         <div className="flex justify-between md:justify-start gap-4 flex-wrap">
           <DropdownMenu>

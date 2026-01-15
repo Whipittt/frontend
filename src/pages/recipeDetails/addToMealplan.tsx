@@ -130,7 +130,7 @@ export function AddToMealplan({
       <Drawer open={open} onOpenChange={onOpenChange}>
         <DrawerContent>
           <DrawerHeader>
-            <DrawerTitle>Edit Personal Information</DrawerTitle>
+            <DrawerTitle>Add Recipe to Meal plan</DrawerTitle>
           </DrawerHeader>
 
           <div className="px-4">

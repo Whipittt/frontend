@@ -164,16 +164,18 @@ export default function UpdateRecipe() {
   return (
     <>
       <DashboardLayout pageTitle="Add recipe">
-        <Card className="w-full md:p-4">
-          <CardHeader>
+        <Card className="p-2 md:p-4">
+          <CardHeader className="p-2 md:p-4">
             <h1 className="text-lg mb-4 font-medium">Update Recipe</h1>
           </CardHeader>
-          <CardContent className="flex flex-col gap-6">
+
+          <CardContent className="flex flex-col gap-6 p-2 md:p-4">
             {error && (
               <Alert variant="destructive">
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
+
             <RecipeForm
               id={{
                 value: id,
@@ -211,7 +213,7 @@ export default function UpdateRecipe() {
                 fn: (data) => updateRecipe(data),
                 isLoading: loading,
                 loadingText: "Saving changes...",
-                disabled: false,
+                disabled: loading,
               }}
             />
           </CardContent>
