@@ -15,6 +15,15 @@ import { toast } from "sonner";
 import { useUpdateProfileData } from "@/hooks/useUsersData";
 import type { User } from "@/types";
 import { Input } from "@/components/ui/input";
+import { useIsMobile } from "@/hooks/use-mobile";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer";
 
 type UpdateIngredientDialogProps = {
   open: boolean;
@@ -27,6 +36,8 @@ export function UpdateProfile({
   onOpenChange,
   user,
 }: UpdateIngredientDialogProps) {
+  const isMobile = useIsMobile();
+
   const [id, setId] = useState<string>("");
   const [fullname, setFullname] = useState<string>("");
   const [email, setEmail] = useState<string>("");
@@ -67,6 +78,68 @@ export function UpdateProfile({
       setError(err instanceof Error ? err.message : "Something went wrong");
     }
   };
+
+  if (isMobile) {
+    return (
+      <Drawer open={open} onOpenChange={onOpenChange}>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>Edit Personal Information</DrawerTitle>
+          </DrawerHeader>
+
+          <div className="px-4">
+            {error && (
+              <Alert variant="destructive">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+
+            <form onSubmit={handleSubmit} noValidate className="space-y-6">
+              <Field>
+                <FieldLabel htmlFor="name">Full Name</FieldLabel>
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="Loading..."
+                  value={fullname}
+                  onChange={(e) => setFullname(e.target.value)}
+                />
+              </Field>
+
+              <Field>
+                <FieldLabel htmlFor="email">Email</FieldLabel>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Loading..."
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </Field>
+
+              <Button type="submit" disabled={isPending} className="w-full">
+                {isPending ? (
+                  <>
+                    <Spinner className="mr-2 h-4 w-4" /> Saving...
+                  </>
+                ) : (
+                  "Save changes"
+                )}
+              </Button>
+            </form>
+          </div>
+
+          <DrawerFooter className="py-2 ">
+            <DrawerClose asChild>
+              <Button variant="outline" className="mt-1">
+                Cancel
+              </Button>
+            </DrawerClose>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+    );
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
