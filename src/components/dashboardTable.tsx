@@ -18,7 +18,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "./ui/button";
-import type { ChangeEvent } from "react";
+import { useEffect, type ChangeEvent } from "react";
+import { cn } from "@/lib/utils";
 
 type DashboardTableProps<T> = {
   table: TableType<T>;
@@ -59,6 +60,13 @@ export default function DashboardTable<T>({
   pagination,
 }: DashboardTableProps<T>) {
   const TABLE_COLUMNS = table.getAllColumns();
+
+  useEffect(() => {
+    const idColumn = table.getColumn("id");
+    if (idColumn && idColumn.getIsVisible()) {
+      idColumn.toggleVisibility(false);
+    }
+  }, [table]);
 
   return (
     <Card className="w-full p-3 md:p-6">
@@ -159,14 +167,22 @@ export default function DashboardTable<T>({
             {isLoading ? (
               Array.from({ length: 10 }).map((_, idx) => (
                 <TableRow key={`skeleton-${idx}`}>
-                  {table.getAllLeafColumns().map((col) => (
-                    <TableCell
-                      key={`skeleton-cell-${col.id}-${idx}`}
-                      className="py-4"
-                    >
-                      <div className="h-4 w-3/4 animate-pulse rounded bg-muted" />
-                    </TableCell>
-                  ))}
+                  {table
+                    .getAllLeafColumns()
+                    .filter((col) => col.getIsVisible())
+                    .map((col) => (
+                      <TableCell
+                        key={`skeleton-cell-${col.id}-${idx}`}
+                        className="py-4"
+                      >
+                        <div
+                          className={cn(
+                            "h-4 w-3/4 animate-pulse rounded bg-muted",
+                            col.id == "select" ? "w-[16px]" : "w-3/4"
+                          )}
+                        />
+                      </TableCell>
+                    ))}
                 </TableRow>
               ))
             ) : isError ? (

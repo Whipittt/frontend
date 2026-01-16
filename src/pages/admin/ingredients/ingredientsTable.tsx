@@ -95,7 +95,7 @@ export default function IngredientsTable() {
       accessorKey: "id",
       header: "ID",
       cell: ({ row }) => {
-        return <div>{row.getValue("id")}</div>;
+        return <span>{row.getValue("id")}</span>;
       },
     },
     {
@@ -112,7 +112,7 @@ export default function IngredientsTable() {
         );
       },
       cell: ({ row }) => {
-        return <div>{row.getValue("name")}</div>;
+        return <span>{row.getValue("name")}</span>;
       },
     },
     {
@@ -122,10 +122,12 @@ export default function IngredientsTable() {
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal />
-              </Button>
+              <div className="flex w-full justify-end">
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <span className="sr-only">Open menu</span>
+                  <MoreHorizontal />
+                </Button>
+              </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem

@@ -25,7 +25,7 @@ import { NewIngredientDialog } from "../ingredients/newIngredient";
 import { UpdateIngredientDialog } from "../ingredients/UpdateIngredient";
 import { DEFAULT_LIMIT } from "@/utils/urlWithPagination";
 import { useRecipesData } from "@/hooks/useRecipeData";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import DeleteRecipe from "./deleteRecipe";
 import { useSessionStorage } from "@/hooks/useSessionStorage";
 import { RecipeAPI } from "@/api/recipes";
@@ -98,15 +98,7 @@ export default function RecipesTable() {
       accessorKey: "id",
       header: "ID",
       cell: ({ row }) => {
-        return (
-          <Button
-            variant="link"
-            onClick={() => navigate(`/recipes/${row.getValue("id")}`)}
-            className="text-foreground hover:text-primary"
-          >
-            {row.getValue("id")}
-          </Button>
-        );
+        return <span>{row.getValue("id")}</span>;
       },
     },
     {
@@ -124,7 +116,14 @@ export default function RecipesTable() {
       },
       cell: ({ row }) => {
         return (
-          <div className="md:max-w-52 truncate">{row.getValue("title")}</div>
+          <Link
+            to={`/recipes/${row.getValue("id")}`}
+            className="text-foreground hover:text-primary"
+          >
+            <span className="!md:max-w-56 truncate">
+              {row.getValue("title")}
+            </span>
+          </Link>
         );
       },
     },
@@ -142,7 +141,7 @@ export default function RecipesTable() {
         );
       },
       cell: ({ row }) => {
-        return <div>{row.getValue("time_minutes")}</div>;
+        return <span>{row.getValue("time_minutes")}</span>;
       },
     },
     {
@@ -159,7 +158,7 @@ export default function RecipesTable() {
         );
       },
       cell: ({ row }) => {
-        return <div>{row.getValue("rating")}</div>;
+        return <span>{row.getValue("rating")}</span>;
       },
     },
     {
@@ -176,7 +175,7 @@ export default function RecipesTable() {
         );
       },
       cell: ({ row }) => {
-        return <div>{row.getValue("favourites_count")}</div>;
+        return <span>{row.getValue("favourites_count")}</span>;
       },
     },
     {
