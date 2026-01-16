@@ -1,9 +1,10 @@
-import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
-import { FileWarning } from "lucide-react";
+import { FileWarning, X } from "lucide-react";
+import { DialogClose } from "@radix-ui/react-dialog";
 
 type ImagePreviewProps = {
   open: boolean;
@@ -32,14 +33,16 @@ export default function ImagePreview({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="md:max-w-[500px] p-2 rounded-xl">
-        <DialogHeader>
-          <h1 className="text-sm text-center">Image Preview</h1>
-        </DialogHeader>
-        <AspectRatio
-          ratio={1}
-          className="relative overflow-hidden rounded-md bg-muted"
-        >
+      <DialogContent className="md:max-w-[500px] p-2 bg-transparent border-none [&>button]:hidden">
+        <div className="flex justify-end">
+          <DialogClose>
+            <button>
+              <X className="h-5 w-5" />
+              <span className="sr-only">Close</span>
+            </button>
+          </DialogClose>
+        </div>
+        <AspectRatio ratio={1} className="relative overflow-hidden rounded-md">
           {status === "loading" && (
             <Skeleton className="absolute inset-0 h-full w-full" />
           )}
