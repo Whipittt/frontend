@@ -12,7 +12,6 @@ export default function MobileNavbar({
   className?: string;
   noMenuButton?: boolean;
 }) {
-  const { toggleSidebar } = useSidebar();
   return (
     <nav
       className={cn("flex justify-between md:hidden items-center", className)}
@@ -25,7 +24,7 @@ export default function MobileNavbar({
       <div className="flex gap-2 items-center">
         <UserAvatar />
         {!noMenuButton && (
-          <button onClick={toggleSidebar}>
+          <button onClick={useSidebar().toggleSidebar}>
             <Menu />
           </button>
         )}
