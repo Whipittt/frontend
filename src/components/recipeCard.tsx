@@ -88,7 +88,7 @@ export const RecipeCardLg: React.FC<RecipeCardProps> = ({ recipe }) => {
 
   return (
     <Link to={`/recipes/${recipe.id}`}>
-      <Card className="w-[15rem] flex flex-col shrink-0 gap-6 border-none rounded-sm bg-transparent shadow-none text-sm text-[#FFFFFFBF]">
+      <Card className="w-[17.8rem] flex flex-col shrink-0 gap-6 border-none rounded-sm bg-transparent shadow-none text-sm text-[#FFFFFFBF]">
         <AspectRatio ratio={16 / 9}>
           <img
             src={imgSrc}
