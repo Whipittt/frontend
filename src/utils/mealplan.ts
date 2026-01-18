@@ -160,8 +160,8 @@ export function getMealplanValidDays(): number[] {
   
   const validDays: number[] = [];
 
-  for (let i = 1; i < 7; i++) {
-    i >= today && validDays.push(i === 0 ? 7 : 1);
+  for (let i = 0; i < 7; i++) {
+    i >= today && validDays.push(i === 0 ? 7 : i);
   }
 
   return validDays;
