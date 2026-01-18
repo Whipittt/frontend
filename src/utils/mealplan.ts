@@ -157,14 +157,11 @@ export function upcomingMealFromTime(
 
 export function getMealplanValidDays(): number[] {
   let today = new Date().getDay();
-  today = today == 0 ? 7 : today;
-
+  
   const validDays: number[] = [];
 
-  if (today == 7) validDays.push(today);
-
   for (let i = 1; i < 7; i++) {
-    i >= today && validDays.push(i);
+    i >= today && validDays.push(i === 0 ? 7 : 1);
   }
 
   return validDays;
